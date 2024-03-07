@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="css.css">
 </head>
 <body>
-    <audio controls autoplay>
-      <source src="music.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
+    <div class="fullscreen-bg">
+        <video loop muted autoplay poster="img/background.jpg" class="fullscreen-bg__video">
+            <source src="video/background.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <div class="container">
         <img src="choishes-white.png" alt="choishes" class="logo">
         <form id="passwordForm">
