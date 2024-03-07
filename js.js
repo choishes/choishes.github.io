@@ -7,11 +7,17 @@ form.addEventListener("submit", function(event) {
     
     // Cek password dan arahkan ke URL yang sesuai
     switch(password) {
-        case "0001":
-            window.location.href = "https://www.google.com/";
+        case "test":
+            window.location.href = "https://telegra.ph/Haloooooo-03-07/";
             break;
         case "chelin":
             window.location.href = "https://telegra.ph/Testingg-03-07";
+            break;
+        case "0001":
+            window.location.href = "https://google.com";
+            break;
+        case "0002":
+            window.location.href = "https://google.com";
             break;
         // Tambahkan case untuk password lainnya sesuai kebutuhan
         default:
