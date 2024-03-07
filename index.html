@@ -3,11 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaki Tasnim's Grad Letters</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css.css">
+    <title>Search Engine Password</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <div class="search-box">
+            <form id="passwordForm">
+                <input type="password" id="password" name="password" placeholder="Masukkan password...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="search-results" id="searchResults">
+            <!-- Hasil pencarian akan muncul di sini -->
+        </div>
+    </div>
+    
     <div class="container">
         <div class="logo-container">
             <img src="choishes-white.png" alt="Your Logo" class="logo">
@@ -17,7 +28,7 @@
             <button type="submit" class="btn btn-primary btn-block mt-3">Enter</button>
         </div>
     </div>
-    
-    <script type="text/javascript" src="js.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
