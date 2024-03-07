@@ -1,50 +1,54 @@
-body {
-    font-family: Helvetica, Arial, sans-serif;
-    background-color: #1e1e1e;
-    color: #ffffff;
+/* Reset default margin and padding */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Helvetica", sans-serif;
+    background-color: #1a1a1a; /* Warna latar belakang tema gelap */
+    color: #fff; /* Warna teks */
 }
 
 .container {
-    width: 300px;
+    max-width: 400px; /* Lebar maksimum kontainer */
+    margin: 100px auto; /* Tengah secara horizontal */
     padding: 20px;
-    background-color: #333333;
+    background-color: #333; /* Warna latar belakang kotak */
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Efek bayangan */
 }
 
+/* Stil untuk kotak password */
 input[type="password"] {
-    width: 100%;
+    width: calc(100% - 80px); /* Lebar input password */
     padding: 10px;
-    margin-bottom: 10px;
     border: none;
-    border-radius: 5px;
-    background-color: #555555;
-    color: #ffffff;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    box-sizing: border-box;
+    background-color: #444; /* Warna latar belakang input password */
+    border-radius: 5px; /* Sudut melengkung */
     outline: none;
+    color: #fff; /* Warna teks */
+    font-size: 16px;
 }
 
 button {
-    width: 100%;
+    width: 80px; /* Lebar tombol */
     padding: 10px;
+    background-color: #4CAF50; /* Warna tombol */
     border: none;
-    border-radius: 5px;
-    background-color: #4CAF50;
-    color: #ffffff;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    color: #fff; /* Warna teks tombol */
+    border-radius: 0 5px 5px 0;
     cursor: pointer;
-    outline: none;
 }
 
-button:hover {
-    background-color: #45a049;
+/* Responsif untuk tampilan di perangkat kecil */
+@media only screen and (max-width: 600px) {
+    .container {
+        max-width: 90%; /* Membuat kotak berukuran responsif */
+    }
+
+    input[type="password"] {
+        width: calc(100% - 60px); /* Membuat input password responsif */
+    }
 }
