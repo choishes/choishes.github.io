@@ -7,48 +7,47 @@
 
 body {
     font-family: "Helvetica", sans-serif;
-    background-color: #1a1a1a; /* Warna latar belakang tema gelap */
-    color: #fff; /* Warna teks */
+    background-color: #000; /* Dark background */
+    color: #fff; /* Text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .container {
-    max-width: 400px; /* Lebar maksimum kontainer */
-    margin: 100px auto; /* Tengah secara horizontal */
+    width: 300px; /* Width of the container */
     padding: 20px;
-    background-color: #333; /* Warna latar belakang kotak */
+    background-color: #333; /* Background color of the container */
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Efek bayangan */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Box shadow */
 }
 
-/* Stil untuk kotak password */
+/* Style for the password box */
 input[type="password"] {
-    width: calc(100% - 80px); /* Lebar input password */
-    padding: 10px;
+    width: 100%; /* Full width */
+    padding: 15px;
+    margin-bottom: 20px;
     border: none;
-    background-color: #444; /* Warna latar belakang input password */
-    border-radius: 5px; /* Sudut melengkung */
+    background-color: #444; /* Background color of the password box */
+    border-radius: 5px; /* Rounded corners */
     outline: none;
-    color: #fff; /* Warna teks */
+    color: #fff; /* Text color */
     font-size: 16px;
 }
 
 button {
-    width: 80px; /* Lebar tombol */
-    padding: 10px;
-    background-color: #4CAF50; /* Warna tombol */
+    width: 100%; /* Full width */
+    padding: 15px;
+    background-color: #e50914; /* Netflix red */
     border: none;
-    color: #fff; /* Warna teks tombol */
-    border-radius: 0 5px 5px 0;
+    border-radius: 5px; /* Rounded corners */
     cursor: pointer;
+    outline: none;
+    color: #fff; /* Text color */
+    font-size: 16px;
 }
 
-/* Responsif untuk tampilan di perangkat kecil */
-@media only screen and (max-width: 600px) {
-    .container {
-        max-width: 90%; /* Membuat kotak berukuran responsif */
-    }
-
-    input[type="password"] {
-        width: calc(100% - 60px); /* Membuat input password responsif */
-    }
+button:hover {
+    background-color: #ff1419; /* Darker red on hover */
 }
