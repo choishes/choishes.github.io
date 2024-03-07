@@ -10,6 +10,6 @@ document.getElementById("passwordForm").addEventListener("submit", function(even
             break;
         // Tambahkan case untuk password dan link baru sesuai kebutuhan
         default:
-            alert("Password salah. Silakan coba lagi.");
+            alert("Kode salah, silahkan coba lagi. Hubungi Zaki untuk informasi lebih lanjut.");
     }
 });
