@@ -16,8 +16,8 @@ form.addEventListener("submit", function(event) {
         case "0001":
             window.location.href = "https://google.com";
             break;
-        case "0002":
-            window.location.href = "https://google.com";
+        case "ara":
+            window.location.href = "https://telegra.ph/Araarararar-03-07";
             break;
         // Tambahkan case untuk password lainnya sesuai kebutuhan
         default:
