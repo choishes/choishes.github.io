@@ -18,7 +18,7 @@ document.getElementById("passwordForm").addEventListener("submit", function(even
             window.location.href = "https://telegra.ph/Untuk-kamu-temanku-03-07";
             break;
         case "ARA#04":
-            window.location.href = "";
+            window.location.href = "https://telegra.ph/Untuk--Siti-Zahra-Aura-Dhya-03-08";
             break;
         case "RAFA#05":
             window.location.href = "https://telegra.ph/Untuk--Rafa-Ramadhani-M-03-07";
