@@ -50,6 +50,15 @@ document.getElementById("passwordForm").addEventListener("submit", function(even
         case "TC#14": //Buat guru berjenis kelamin laki-laki
             window.location.href = "";
             break;
+        case "KETOS#15": //DEBAT CAKETOS
+            window.location.href = "";
+            break;
+        case "KETMPK#16": //KET MPK 
+            window.location.href = "";
+            break;
+        case "0000000": 
+            window.location.href = "";
+            break;
     
         // Tambahkan case untuk password dan link baru sesuai kebutuhan
         default:
