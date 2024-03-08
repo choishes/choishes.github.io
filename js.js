@@ -2,6 +2,9 @@ document.getElementById("passwordForm").addEventListener("submit", function(even
     event.preventDefault();
     const password = document.getElementById("password").value;
     switch(password) {
+        case "test": //Buat testing
+            window.location.href = "https://instagram.com/zakitasnim";
+            break;
         case "SURAT#01":
             window.location.href = "https://telegra.ph/Untuk-kamu-temanku-03-07";
             break;
@@ -23,16 +26,28 @@ document.getElementById("passwordForm").addEventListener("submit", function(even
         case "AVIRA#06":
             window.location.href = "https://telegra.ph/Untuk--Avira-Mayzeilasari-03-07";
             break;
-        case "DKMX#07":
+        case "DKMXXI#07": //angkatan baru
             window.location.href = "";
             break;
-        case "DKMXI#08":
+        case "DKMXII#08": //al faruq
             window.location.href = "";
             break;
-        case "X3#09":
+        case "X3#09": //Anak kelas X3 2021
             window.location.href = "";
             break;
-        case "XII7#10":
+        case "XII7#10": //11-7 dan 12-7 2023-2024
+            window.location.href = "";
+            break;
+        case "MAKRAB#11": //Panitia makrab
+            window.location.href = "";
+            break;
+        case "JC#12": //Japanese club
+            window.location.href = "";
+            break;
+        case "TC#13": //Buat guru berjenis kelamin perempuan
+            window.location.href = "";
+            break;
+        case "TC#14": //Buat guru berjenis kelamin laki-laki
             window.location.href = "";
             break;
     
