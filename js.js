@@ -1,128 +1,72 @@
-function _0x5722(_0x2ed385, _0x42958d) {
-	const _0x3b7ca4 = _0x3866();
-	return _0x5722 = function(_0x215690, _0x1cea48) {
-		_0x215690 = _0x215690 - (0x78b * -0x1 + 0xc89 * -0x1 + -0x6c * -0x32);
-		let _0x28c236 = _0x3b7ca4[_0x215690];
-		return _0x28c236;
-	}, _0x5722(_0x2ed385, _0x42958d);
-}
-
-function _0x3866() {
-	const _0x54a209 = ['RAFA#05', '36lIgGer', 'haring', '-M-03-07', 'cs.google.', 'test', 'm/zakitasn', 'RV#01', 'addEventLi', 'GGCBl', 'wrG86MlcA/', 'RAYA#03', 'QSysp', 'KETMPK#16', 'submit', 'stener', 'ntuk--Siti', '2129918QVRfwb', 'ClOHV', 'getElement', 'MBlfo', 'edit?usp=s', '1465Hroods', 'DKMXXI#07', 'temanku-03', 'QvGCe', 'JC#12', '-Zahra-Aur', 'passwordFo', 'cLEIC', 'sari-03-07', 'YwwBR', 'OqXzn', 'ZSznm', '-XlbDKnehP', 'Kode\x20salah', 'href', 'ubkWA', 'ault', 'X3#09', 'https://in', 'value', '-Ramadhani', 'ZyodM', 'preventDef', 'com/docume', '843RDAwqR', '368sEbkfL', 'is-Aqilah-', 'a-Mayzeila', 'XII7#10', 'BILQIS#02', '\x20coba\x20lagi', 'MAKRAB#11', 'KETOS#15', 'SURAT#01', 'DKMXII#08', 'ARA#04', 'stagram.co', 'Fzctv', 'a-Dhya-03-', '0000000', '286451jSuSrS', '425992nHRXft', '310qvtQox', 'fKLsP', 'password', ',\x20silahkan', '-07', 'S-03-07', 'nNWwo', 'LeEun', 'ocByK', 'https://do', '7YET1C3XKl', 'nt/d/10eyC', 'TC#14', '\x20informasi', 'BaBBz', 'wjgdD', 'moIwx', 'qGGrY', 'ntuk--Avir', '1046KFbDXA', '88714nbGfWs', '.\x20Hubungi\x20', 'Zaki\x20untuk', 'location', 'AVIRA#06', '\x20lebih\x20lan', 'xGaZM', 'ntuk-kamu-', 'ntuk--Rafa', 'fZoIL', 'ntuk--Bilq', 'rJbNj', 'DrBSH', 'legra.ph/U', 'ById', 'https://te', 'e7jHI7_eHc', 'TC#13', 'GvCAA', 'FLDCB', '219492smAcEX', 'sJsxj', 'jut.', 'kyksE', 'QaQXI'];
-	_0x3866 = function() {
-		return _0x54a209;
-	};
-	return _0x3866();
-}
-const _0x2b6ad1 = _0x5722;
-(function(_0x93ec31, _0x462409) {
-	const _0x109721 = _0x5722,
-		_0x2f68c6 = _0x93ec31();
-	while (!![]) {
-		try {
-			const _0x57c89e = parseInt(_0x109721(0x132)) / (-0xc22 * 0x1 + 0x17 * 0x6a + -0xdf * -0x3) + parseInt(_0x109721(0x131)) / (0x269 * -0xd + 0xb24 + 0x1433) * (-parseInt(_0x109721(0x10c)) / (-0xad2 + 0x1130 + -0x65b)) + -parseInt(_0x109721(0x10d)) / (-0x1a9f + -0x15bd + -0x3060 * -0x1) * (parseInt(_0x109721(0x161)) / (0x13 * -0x82 + -0x462 + -0x6d * -0x21)) + -parseInt(_0x109721(0x146)) / (-0xbed + 0x224f + 0x24 * -0x9f) + -parseInt(_0x109721(0x15c)) / (0xcf7 * 0x1 + 0x363 + -0x1053) + -parseInt(_0x109721(0x11d)) / (-0x703 + 0x102c + -0x921) * (parseInt(_0x109721(0x14c)) / (-0x7 * 0x318 + -0x1 * -0x26bc + 0x110b * -0x1)) + parseInt(_0x109721(0x11e)) / (-0x2024 + 0x40f + 0x1c1f) * (parseInt(_0x109721(0x11c)) / (0x89 * -0x33 + 0xa82 + -0x435 * -0x4));
-			if (_0x57c89e === _0x462409) break;
-			else _0x2f68c6['push'](_0x2f68c6['shift']());
-		} catch (_0x5c7a24) {
-			_0x2f68c6['push'](_0x2f68c6['shift']());
-		}
-	}
-}(_0x3866, -0x431f0 + -0x8bdc + 0x3a771 * 0x2), document[_0x2b6ad1(0x15e) + _0x2b6ad1(0x140)](_0x2b6ad1(0x167) + 'rm')[_0x2b6ad1(0x153) + _0x2b6ad1(0x15a)](_0x2b6ad1(0x159), function(_0x4dfef9) {
-	const _0x181674 = _0x2b6ad1,
-		_0x50f5bb = {
-			'moIwx': _0x181674(0x120),
-			'Fzctv': _0x181674(0x150),
-			'fKLsP': _0x181674(0x106) + _0x181674(0x118) + _0x181674(0x151) + 'im',
-			'ubkWA': _0x181674(0x115),
-			'ocByK': _0x181674(0x141) + _0x181674(0x13f) + _0x181674(0x139) + _0x181674(0x163) + _0x181674(0x122),
-			'nNWwo': _0x181674(0x152),
-			'ClOHV': _0x181674(0x127) + _0x181674(0x14f) + _0x181674(0x10b) + _0x181674(0x129) + _0x181674(0x128) + _0x181674(0x142) + _0x181674(0x16d) + _0x181674(0x155) + _0x181674(0x160) + _0x181674(0x14d),
-			'cLEIC': _0x181674(0x111),
-			'MBlfo': _0x181674(0x141) + _0x181674(0x13f) + _0x181674(0x13c) + _0x181674(0x10e) + _0x181674(0x123),
-			'LeEun': _0x181674(0x156),
-			'QSysp': _0x181674(0x117),
-			'BaBBz': _0x181674(0x141) + _0x181674(0x13f) + _0x181674(0x15b) + _0x181674(0x166) + _0x181674(0x11a) + '08',
-			'ZyodM': _0x181674(0x14b),
-			'QaQXI': _0x181674(0x141) + _0x181674(0x13f) + _0x181674(0x13a) + _0x181674(0x108) + _0x181674(0x14e),
-			'sJsxj': _0x181674(0x136),
-			'OqXzn': _0x181674(0x141) + _0x181674(0x13f) + _0x181674(0x130) + _0x181674(0x10f) + _0x181674(0x169),
-			'FLDCB': _0x181674(0x162),
-			'wjgdD': _0x181674(0x116),
-			'QvGCe': _0x181674(0x105),
-			'YwwBR': _0x181674(0x110),
-			'qGGrY': _0x181674(0x113),
-			'ZSznm': _0x181674(0x165),
-			'rJbNj': _0x181674(0x143),
-			'DrBSH': _0x181674(0x12a),
-			'GvCAA': _0x181674(0x114),
-			'fZoIL': _0x181674(0x158),
-			'xGaZM': _0x181674(0x11b),
-			'GGCBl': function(_0x4548da, _0x2fd096) {
-				return _0x4548da(_0x2fd096);
-			},
-			'kyksE': _0x181674(0x16e) + _0x181674(0x121) + _0x181674(0x112) + _0x181674(0x133) + _0x181674(0x134) + _0x181674(0x12b) + _0x181674(0x137) + _0x181674(0x148)
-		};
-	_0x4dfef9[_0x181674(0x10a) + _0x181674(0x104)]();
-	const _0x2fc39e = document[_0x181674(0x15e) + _0x181674(0x140)](_0x50f5bb[_0x181674(0x12e)])[_0x181674(0x107)];
-	switch (_0x2fc39e) {
-		case _0x50f5bb[_0x181674(0x119)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x11f)];
-			break;
-		case _0x50f5bb[_0x181674(0x170)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x126)];
-			break;
-		case _0x50f5bb[_0x181674(0x124)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x15d)];
-			break;
-		case _0x50f5bb[_0x181674(0x168)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x15f)];
-			break;
-		case _0x50f5bb[_0x181674(0x125)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x126)];
-			break;
-		case _0x50f5bb[_0x181674(0x157)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x12c)];
-			break;
-		case _0x50f5bb[_0x181674(0x109)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x14a)];
-			break;
-		case _0x50f5bb[_0x181674(0x147)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = _0x50f5bb[_0x181674(0x16b)];
-			break;
-		case _0x50f5bb[_0x181674(0x145)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x12d)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x164)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x16a)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x12f)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x16c)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x13d)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x13e)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x144)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x13b)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		case _0x50f5bb[_0x181674(0x138)]:
-			window[_0x181674(0x135)][_0x181674(0x16f)] = '';
-			break;
-		default:
-			_0x50f5bb[_0x181674(0x154)](alert, _0x50f5bb[_0x181674(0x149)]);
-	}
-}));
+document.getElementById("passwordForm").addEventListener("submit", function (_0x4dfef9) {
+  _0x4dfef9.preventDefault();
+  const _0x2fc39e = document.getElementById("password").value;
+  switch (_0x2fc39e) {
+    case "test":
+      window.location.href = "https://instagram.com/zakitasnim";
+      break;
+    case "SURAT#01":
+      window.location.href = "https://telegra.ph/Untuk-kamu-temanku-03-07";
+      break;
+    case "RV#001":
+      window.location.href = "https://docs.google.com/document/d/10eyC7YET1C3XKle7jHI7_eHc-XlbDKnehPwrG86MlcA/edit?usp=sharing";
+      break;
+    case "BILQIS#02":
+      window.location.href = "https://telegra.ph/Untuk--Bilqis-Aqilah-S-03-07";
+      break;
+    case "RAYA#03":
+      window.location.href = "https://telegra.ph/Untuk-kamu-temanku-03-07";
+      break;
+    case "ARA#04":
+      window.location.href = "https://telegra.ph/Untuk--Siti-Zahra-Aura-Dhya-03-08";
+      break;
+    case "RAFA#05":
+      window.location.href = "https://telegra.ph/Untuk--Rafa-Ramadhani-M-03-07";
+      break;
+    case "AVIRA#06":
+      window.location.href = "https://telegra.ph/Untuk--Avira-Mayzeilasari-03-07";
+      break;
+    case "DKMXXI#07":
+      window.location.href = '';
+      break;
+    case "DKMXII#08":
+      window.location.href = '';
+      break;
+    case "X3#09":
+      window.location.href = '';
+      break;
+    case "XII7#10":
+      window.location.href = '';
+      break;
+    case "MAKRAB#11":
+      window.location.href = '';
+      break;
+    case "JC#12":
+      window.location.href = '';
+      break;
+    case "TC#13":
+      window.location.href = '';
+      break;
+    case "TC#14":
+      window.location.href = '';
+      break;
+    case "KETOS#15":
+      window.location.href = '';
+      break;
+    case "KETMPK#16":
+      window.location.href = '';
+      break;
+    case "CELTIESCLASS":
+      window.location.href = '';
+      break;
+	 case "GURUKU":
+      window.location.href = '';
+      break;
+	 case "AXYLD2421":
+      window.location.href = "https://monogr.ph/6646a325a736dd7db0a96aea/";
+      break;
+		  
+    default:
+      alert("Kode salah, silahkan coba lagi. Hubungi Zaki untuk informasi lebih lanjut.");
+  }
+});
