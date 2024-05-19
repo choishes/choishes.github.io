@@ -9,7 +9,7 @@ document.getElementById("passwordForm").addEventListener("submit", function (_0x
       window.location.href = "https://telegra.ph/Untuk-kamu-temanku-03-07";
       break;
     case "RV#001":
-      window.location.href = "https://docs.google.com/document/d/10eyC7YET1C3XKle7jHI7_eHc-XlbDKnehPwrG86MlcA/edit?usp=sharing";
+      window.location.href = "https://monogr.ph/6649d218e37f2db212d23a16";
       break;
     case "BILQIS#02":
       window.location.href = "https://telegra.ph/Untuk--Bilqis-Aqilah-S-03-07";
