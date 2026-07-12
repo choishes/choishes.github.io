@@ -1,8 +1,20 @@
 # SINYAL — Lab Forensik Media Sintetis
 
 Game edukasi web: uji kemampuan membedakan konten buatan **manusia** vs **AI**
-(teks, gambar, video). Dibuat untuk proyek Peminatan Kajian Media —
+(teks, gambar, video). Dibuat untuk proyek mata kuliah Analisa Data Raya dan AI - Peminatan Kajian Media —
 Produksi & Analisis Aplikasi.
+
+Developer:
+Muhammad Zaki Tasnim Mubarak (24321148)
+
+Presenter:
+Haidar Al Ghozi (24321180)
+Syahadan Deka Allesio Destiansyah (24321173)
+
+Laporan:
+D. Rajbani Gibran Ahmad (24321052)
+Maulana Malik Alfajri (24321054)
+
 
 ## Struktur
 
@@ -16,32 +28,6 @@ sinyal/
 ├── js/game.js          ← logika 3 mode
 └── assets/bgm/         ← taruh theme.mp3 di sini (placeholder BGM)
 ```
-
-## Cara hosting di GitHub Pages
-
-1. Buat repo baru di GitHub (mis. `sinyal`), upload semua file/folder ini.
-2. Repo → **Settings → Pages** → Source: `Deploy from a branch`,
-   Branch: `main`, folder `/ (root)` → Save.
-3. Tunggu ±1 menit. Situs live di `https://USERNAME.github.io/sinyal/`.
-
-Tidak perlu build, tidak perlu npm — murni HTML/CSS/JS statis.
-
-## Mengisi konten
-
-- **Teks**: edit array `BANK` di `js/bank.js`. Untuk versi final, ganti
-  contoh teks "manusia" dengan kutipan asli bersumber jelas + atribusi.
-- **Gambar/Video**: taruh file di `assets/` lalu isi field `src`
-  (mis. `src:"assets/img/01.jpg"`). Item media tanpa `src` otomatis
-  dilewati di mode Infinite & Tanding.
-- **BGM (dua jalur)**:
-  - Intro/cinematic: `assets/bgm/Cold_Light_of_Dawn.mp3` (sudah terpasang) —
-    mengalun saat boot & narasi, fade-out saat masuk hub.
-  - Dalam game: taruh loop musikmu sebagai `assets/bgm/game_theme.mp3`
-    (PLACEHOLDER). Kalau file belum ada, otomatis fallback ke *ambient pad
-    generatif* WebAudio, jadi game tetap beratmosfer.
-  - Musik dimulai dari tombol "▶ MASUKI LAB" — browser memblokir autoplay
-    audio tanpa interaksi, gerbang ini yang membuka izinnya.
-  - Gunakan musik bebas lisensi + cantumkan atribusi di laporan.
 
 ## Mode permainan
 
