@@ -1,0 +1,126 @@
+/* ================================================================
+   SINYAL — AUDIO
+   1) SFX: dibangkitkan lewat WebAudio (tanpa file), toggle 🔊.
+   2) BGM: <audio id="bgm"> memutar assets/bgm/theme.mp3 (PLACEHOLDER —
+      taruh file mp3-mu di sana). Kalau file tidak ada, otomatis
+      fallback ke ambient generatif (pad sintetis) supaya tetap ada
+      atmosfer. Toggle ♪ di bar atas.
+   ================================================================ */
+let sfxOn = true, actx = null;
+
+function ctx(){
+  actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==="suspended") actx.resume();
+  return actx;
+}
+
+function beep(freq, dur=0.09, type="sine", gain=0.05){
+  if(!sfxOn) return;
+  try{
+    const c=ctx(), o=c.createOscillator(), g=c.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(gain,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime+dur);
+  }catch(e){}
+}
+
+const sfx = {
+  click:()=>beep(520,.05,"square",.03),
+  scan:()=>{beep(880,.4,"sine",.02); setTimeout(()=>beep(660,.3,"sine",.02),150);},
+  ok:()=>{beep(660,.08); setTimeout(()=>beep(990,.14),90);},
+  no:()=>{beep(330,.12,"sawtooth",.04); setTimeout(()=>beep(220,.18,"sawtooth",.04),110);},
+  lose:()=>{[392,330,262,196].forEach((f,i)=>setTimeout(()=>beep(f,.16,"sawtooth",.04),i*140));},
+  done:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.12),i*120));}
+};
+
+/* ---------- BGM: DUA JALUR ----------
+   1) INTRO  : assets/bgm/Cold_Light_of_Dawn.mp3 — hanya saat cinematic.
+   2) GAME   : assets/bgm/game_theme.mp3 (PLACEHOLDER — taruh file loop-mu
+               di sana). Kalau file tidak ada → fallback ambient generatif.
+   Toggle ♪ = master on/off. Default: ON (aktif setelah klik pertama). */
+let bgmOn = true;
+let currentCtx = null; // "intro" | "game" | null
+const trackIntro = new Audio("assets/bgm/Cold_Light_of_Dawn.mp3");
+trackIntro.loop = true; trackIntro.preload = "auto";
+const trackGame  = new Audio("assets/bgm/game_theme.mp3");
+trackGame.loop = true; trackGame.preload = "auto";
+let ambient = null; // fallback generatif untuk jalur game
+
+function fade(el, to, ms=700){
+  const from=el.volume, start=performance.now();
+  function step(t){
+    const k=Math.min(1,(t-start)/ms);
+    el.volume=from+(to-from)*k;
+    if(k<1) requestAnimationFrame(step);
+    else if(to===0){ el.pause(); }
+  }
+  requestAnimationFrame(step);
+}
+
+function startAmbient(){
+  if(ambient) return;
+  try{
+    const c=ctx();
+    const g=c.createGain(); g.gain.value=0.035;
+    const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=520;
+    const o1=c.createOscillator(); o1.type="sine";     o1.frequency.value=110;
+    const o2=c.createOscillator(); o2.type="triangle"; o2.frequency.value=164.8;
+    const o3=c.createOscillator(); o3.type="sine";     o3.frequency.value=220.6;
+    const lfo=c.createOscillator(); lfo.frequency.value=0.08;
+    const lfoG=c.createGain(); lfoG.gain.value=0.02;
+    lfo.connect(lfoG); lfoG.connect(g.gain);
+    [o1,o2,o3].forEach(o=>o.connect(lp));
+    lp.connect(g); g.connect(c.destination);
+    [o1,o2,o3,lfo].forEach(o=>o.start());
+    ambient={stop(){[o1,o2,o3,lfo].forEach(o=>{try{o.stop()}catch(e){}}); ambient=null;}};
+  }catch(e){}
+}
+function stopAmbient(){ if(ambient) ambient.stop(); }
+
+/* Jalur INTRO — dipanggil cine.js */
+function bgmIntroStart(){
+  currentCtx="intro";
+  if(!bgmOn) return;
+  trackIntro.volume=0; trackIntro.currentTime=0;
+  trackIntro.play().then(()=>fade(trackIntro,0.4,1200)).catch(()=>{});
+}
+function bgmIntroStop(){
+  if(currentCtx==="intro") currentCtx=null;
+  fade(trackIntro,0,900);
+}
+
+/* Jalur GAME — dipanggil game.js */
+function bgmGameStart(){
+  if(currentCtx==="game" && (!trackGame.paused || ambient)) return; // sudah berjalan
+  currentCtx="game";
+  if(!bgmOn) return;
+  trackGame.volume=0; trackGame.currentTime=0;
+  trackGame.play()
+    .then(()=>fade(trackGame,0.3,1000))
+    .catch(()=>startAmbient()); // file belum ada → ambient generatif
+}
+function bgmGameStop(){
+  if(currentCtx==="game") currentCtx=null;
+  fade(trackGame,0,700);
+  stopAmbient();
+}
+
+function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); stopAmbient(); }
+
+function toggleBgm(btn){
+  bgmOn=!bgmOn;
+  btn.textContent = bgmOn ? "♪ BGM ON" : "♪ BGM OFF";
+  btn.classList.toggle("on", bgmOn);
+  if(!bgmOn){ bgmStopAll(); return; }
+  // nyalakan lagi sesuai konteks berjalan
+  if(currentCtx==="intro") bgmIntroStart();
+  else if(currentCtx==="game") bgmGameStart();
+}
+function toggleSfx(btn){
+  sfxOn=!sfxOn;
+  btn.textContent = sfxOn ? "🔊 SFX ON" : "🔇 SFX OFF";
+  btn.classList.toggle("on", sfxOn);
+  if(sfxOn) sfx.click();
+}
