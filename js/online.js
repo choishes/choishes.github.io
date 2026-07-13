@@ -49,7 +49,16 @@ function olHost(){
   olIsHost = true;
 
   olPeer = new Peer(
-    OL_PREFIX + code.toLowerCase()
+    OL_PREFIX + code.toLowerCase(),
+    {
+      config: {
+        'iceServers': [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun.cloudflare.com:3478' }
+        ]
+      }
+    }
   );
 
   olPeer.on("open", id => {
@@ -147,7 +156,16 @@ function olJoin(){
   olStatus("mencari room " + code + "…");
 
   olIsHost = false;
-  olPeer = new Peer();
+  
+  olPeer = new Peer({
+    config: {
+      'iceServers': [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun.cloudflare.com:3478' }
+      ]
+    }
+  });
 
   olPeer.on("open", id => {
 
