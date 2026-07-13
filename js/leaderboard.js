@@ -50,3 +50,42 @@ function lbRender(container){
   });
   container.innerHTML=rows;
 }
+
+/* ================================================================
+   PAPAN SKOR GLOBAL — via server relay Deno Deploy (lihat js/online.js)
+   Fallback diam-diam kalau server relay belum diatur / offline.
+   ================================================================ */
+function lbHttpBase(){
+  if(typeof OL_WS_URL==="undefined" || OL_WS_URL.includes("GANTI-DENGAN")) return null;
+  return OL_WS_URL.replace(/^ws/,"http");
+}
+async function lbSubmitGlobal(name, score, mode){
+  const base=lbHttpBase(); if(!base) return;
+  try{
+    await fetch(base+"/leaderboard", {
+      method:"POST", headers:{"content-type":"application/json"},
+      body:JSON.stringify({ name:(name||"ANON").toUpperCase().slice(0,12), score, mode })
+    });
+  }catch(e){ /* offline — skor lokal tetap tersimpan */ }
+}
+async function lbRenderGlobal(container){
+  const base=lbHttpBase();
+  if(!base){ container.innerHTML='<div class="empty">Server global belum diatur.</div>'; return; }
+  container.innerHTML='<div class="empty">memuat papan skor global…</div>';
+  try{
+    const res=await fetch(base+"/leaderboard");
+    const list=await res.json();
+    if(!Array.isArray(list) || list.length===0){
+      container.innerHTML='<div class="empty">Belum ada skor global tercatat.</div>'; return;
+    }
+    let rows='<div class="row head"><span>#</span><span>NAMA</span><span>MODE</span><span style="text-align:right">SKOR</span></div>';
+    list.slice(0,10).forEach((e,i)=>{
+      rows+=`<div class="row"><span class="rank">${String(i+1).padStart(2,"0")}</span>
+        <span class="nm">${e.name}</span><span class="md">${e.mode}</span>
+        <span class="sc">${e.score}</span></div>`;
+    });
+    container.innerHTML=rows;
+  }catch(e){
+    container.innerHTML='<div class="empty">Gagal memuat — cek koneksi internet.</div>';
+  }
+}

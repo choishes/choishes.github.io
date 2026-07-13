@@ -2,69 +2,98 @@
    SINYAL — TANDING ONLINE (relay via WebSocket / Deno Deploy)
    Semua data duel lewat server relay (bukan WebRTC P2P) — jalan
    lintas device & jaringan apa pun, karena tidak butuh NAT traversal.
-   Alur: host BUAT ROOM (kode 4 huruf) → lawan GABUNG dengan kode
-   → keduanya memainkan paket & urutan soal yang sama di perangkat
-   masing-masing → progres lawan tampil live → hasil dibandingkan.
+   Dua cara main: (1) lihat daftar pemain online → klik AJAK MAIN,
+   atau (2) BUAT ROOM (kode 4 huruf) / GABUNG dengan kode ke teman.
    ================================================================ */
 const OL_WS_URL = "wss://keen-myna-8956.choishes.deno.net";
 
-let olWS=null, olIsHost=false, olMyRoom=null;
+let olWS=null, olIsHost=false, olMyId=null;
 let olOppName="LAWAN", olOppIdx=0, olOppScore=0, olOppDone=false, olOppFinal=0;
 let olLocalDoneFlag=false, olActive=false;
 
 const duel=$("duel");
-MODE_META.online={label:"ONLINE", promptQ:"SIAPA PEMBUATNYA?", tag:"SPESIMEN TEKS"};
 
 /* ---------- util ---------- */
 function olStatus(t){ const el=$("duelStatus"); if(el) el.textContent=t; }
 function olSend(obj){ try{ if(olWS && olWS.readyState===1) olWS.send(JSON.stringify(obj)); }catch(e){} }
-function olCleanup(){
-  olActive=false; olLocalDoneFlag=false; olOppDone=false; olOppIdx=0; olOppScore=0;
-  olMyRoom=null;
-  try{ if(olWS) olWS.close(); }catch(e){}
-  olWS=null;
-  $("duelMenu").classList.remove("hidden");
-  $("duelWait").classList.add("hidden");
-}
-function olConnect(onOpen){
+function olShowWait(){ $("duelMenu").classList.add("hidden"); $("duelWait").classList.remove("hidden"); }
+function olShowMenu(){ $("duelMenu").classList.remove("hidden"); $("duelWait").classList.add("hidden"); }
+
+/* ---------- koneksi lobby (dibuka begitu layar TANDING → online dibuka) ---------- */
+function olEnterLobby(){
+  if(olWS && (olWS.readyState===0 || olWS.readyState===1)) return; // sudah connect/menyambung
+  olRenderOnlineList([]);
+  const box=$("onlineList"); if(box) box.innerHTML='<div class="olempty">menghubungkan…</div>';
   if(!/^wss?:\/\//.test(OL_WS_URL) || OL_WS_URL.includes("GANTI-DENGAN")){
-    olStatus("server relay belum diatur — isi OL_WS_URL di js/online.js");
+    if(box) box.innerHTML='<div class="olempty">server relay belum diatur.</div>';
     return;
   }
   olWS=new WebSocket(OL_WS_URL);
-  olWS.onopen=onOpen;
+  olWS.onopen=()=>olSend({t:"hello", name:PLAYER||"ANON"});
   olWS.onmessage=olOnMessage;
   olWS.onclose=()=>{ if(olActive) olDropped(); };
-  olWS.onerror=()=>olStatus("gangguan koneksi ke server relay.");
+  olWS.onerror=()=>{ if(box && !olActive) box.innerHTML='<div class="olempty">gagal terhubung ke server relay.</div>'; };
+}
+function olLeaveLobby(){
+  olActive=false; olLocalDoneFlag=false; olOppDone=false; olOppIdx=0; olOppScore=0; olMyId=null;
+  try{ if(olWS) olWS.close(); }catch(e){}
+  olWS=null;
+  olShowMenu();
+}
+/* jalankan fn begitu koneksi lobby siap (menunggu sebentar kalau masih connecting) */
+function olWithConn(fn){
+  if(olWS && olWS.readyState===1){ fn(); return; }
+  olEnterLobby();
+  let tries=0;
+  const iv=setInterval(()=>{
+    tries++;
+    if(olWS && olWS.readyState===1){ clearInterval(iv); fn(); }
+    else if(tries>60){ clearInterval(iv); olStatus("gagal terhubung ke server relay."); }
+  },100);
 }
 
-/* ---------- HOST ---------- */
-function olHost(){
-  sfx.click();
-  $("duelMenu").classList.add("hidden");
-  $("duelWait").classList.remove("hidden");
-  $("roomCode").textContent="…";
-  olStatus("menghubungi server relay…");
-  olIsHost=true;
-  olConnect(()=>{
-    olStatus("room aktif · menunggu lawan…");
-    olSend({t:"create", name:PLAYER||"HOST"});
+/* ---------- daftar pemain online ---------- */
+function olRenderOnlineList(players){
+  const box=$("onlineList"); if(!box) return;
+  if(!players || players.length===0){
+    box.innerHTML='<div class="olempty">belum ada pemain lain online. Tunggu sebentar, atau pakai kode room.</div>';
+    return;
+  }
+  box.innerHTML=players.map(p=>
+    '<div class="olrow"><span class="olname">'+p.name+'</span>'+
+    '<button class="cta small ghost olinvite" data-id="'+p.id+'" data-name="'+p.name+'">AJAK MAIN</button></div>'
+  ).join("");
+  box.querySelectorAll(".olinvite").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      sfx.click();
+      box.querySelectorAll(".olinvite").forEach(b=>b.disabled=true);
+      olStatus("mengajak "+btn.dataset.name+"…");
+      olSend({t:"invite", to:btn.dataset.id});
+    });
   });
 }
 
-/* ---------- JOIN ---------- */
+/* ---------- BUAT ROOM (kode manual) ---------- */
+function olHost(){
+  sfx.click(); olIsHost=true;
+  $("roomCode").textContent="…";
+  olShowWait();
+  olStatus("membuat room…");
+  olWithConn(()=>{
+    olSend({t:"create"});
+  });
+}
+
+/* ---------- GABUNG (kode manual) ---------- */
 function olJoin(){
   const code=($("joinCode").value||"").trim().toUpperCase();
   if(code.length!==4){ beep(160,.1,"sawtooth",.03); return; }
-  sfx.click();
-  $("duelMenu").classList.add("hidden");
-  $("duelWait").classList.remove("hidden");
+  sfx.click(); olIsHost=false;
   $("roomCode").textContent=code;
+  olShowWait();
   olStatus("mencari room "+code+"…");
-  olIsHost=false;
-  olConnect(()=>{
-    olMyRoom=code;
-    olSend({t:"join", room:code, name:PLAYER||"TAMU"});
+  olWithConn(()=>{
+    olSend({t:"join", room:code});
   });
 }
 
@@ -73,8 +102,10 @@ function olOnMessage(e){
   let msg; try{ msg=JSON.parse(e.data); }catch(err){ return; }
   if(!msg||!msg.t) return;
 
+  if(msg.t==="hello_ok"){ olMyId=msg.id; }
+  if(msg.t==="online"){ olRenderOnlineList(msg.players); }
+
   if(msg.t==="created"){
-    olMyRoom=msg.room;
     $("roomCode").textContent=msg.room;
     olStatus("room "+msg.room+" aktif · menunggu lawan…");
   }
@@ -82,8 +113,11 @@ function olOnMessage(e){
     olStatus(msg.msg||"gagal terhubung ke room.");
   }
   if(msg.t==="matched"){
+    olIsHost=!!msg.host;
     olOppName=(msg.opp||"LAWAN").slice(0,12);
-    if(msg.host){
+    olShowWait();
+    $("roomCode").textContent="VS "+olOppName;
+    if(olIsHost){
       olStatus("lawan terhubung! menyiapkan arena…");
       currentPaket=PAKET[Math.floor(Math.random()*PAKET.length)];
       const order=shuffle(currentPaket.soal.map((_,i)=>i));
@@ -161,8 +195,7 @@ function olEnd(){
     "Dua orang di dua tempat menatap spesimen identik dan sampai pada vonis berbeda — persis cara hoaks membelah persepsi publik. <b>Sinyalnya sama; pembacanya yang berbeda.</b>",
     false, false);
   $("restart").textContent="Arena Tanding";
-  $("restart").onclick=()=>{ sfx.click(); olCleanup(); show(duel); };
-  olTeardownSoft();
+  $("restart").onclick=()=>{ sfx.click(); olLeaveLobby(); show(duel); olEnterLobby(); };
 }
 function olDropped(){
   olActive=false;
@@ -172,16 +205,11 @@ function olDropped(){
     "Skormu sejauh ini tetap tercatat di layar. Coba buat room baru.",
     false, false);
   $("restart").textContent="Arena Tanding";
-  $("restart").onclick=()=>{ sfx.click(); olCleanup(); show(duel); };
-  olTeardownSoft();
-}
-function olTeardownSoft(){
-  try{ if(olWS) olWS.close(); }catch(e){}
-  olWS=null;
+  $("restart").onclick=()=>{ sfx.click(); olLeaveLobby(); show(duel); olEnterLobby(); };
 }
 function onlineAbort(){ // dipanggil saat pemain menekan "kembali ke lab" di tengah duel
   olSend({t:"relay", data:{t:"done", s:score, name:PLAYER||"AKU"}});
-  olActive=false; olTeardownSoft(); olCleanup();
+  olActive=false; olLeaveLobby();
 }
 
 /* ---------- events ---------- */
@@ -189,4 +217,4 @@ $("duelLocal").addEventListener("click",()=>{ startGame("tanding"); });
 $("duelHost").addEventListener("click",olHost);
 $("duelJoin").addEventListener("click",olJoin);
 $("joinCode").addEventListener("keydown",e=>{ if(e.key==="Enter") olJoin(); });
-$("duelBack").addEventListener("click",()=>{ olCleanup(); });
+$("duelBack").addEventListener("click",()=>{ olLeaveLobby(); });

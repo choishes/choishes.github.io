@@ -166,6 +166,8 @@
           </div>
           <p class="duelhint">Online: kamu dan temanmu membuka situs ini di perangkat masing-masing.
           Satu orang membuat room, satunya memasukkan kode. Data lewat server relay, jadi jalan lintas jaringan.</p>
+          <div class="duelsep">PEMAIN ONLINE SEKARANG</div>
+          <div id="onlineList" class="onlinelist"><div class="olempty">menghubungkan…</div></div>
         </div>
         <div id="duelWait" class="hidden" style="margin-top:18px">
           <div class="roomcode" id="roomCode">····</div>
@@ -246,8 +248,12 @@
 
       <!-- ============ PAPAN SKOR ============ -->
       <section id="board" class="center hidden">
-        <div class="eyebrow">PAPAN SKOR LOKAL</div>
-        <p class="sub" style="margin-bottom:16px">Tersimpan di perangkat ini.</p>
+        <div class="eyebrow">PAPAN SKOR</div>
+        <div class="lbtabs">
+          <button class="lbtab on" id="lbTabLocal">LOKAL</button>
+          <button class="lbtab" id="lbTabGlobal">GLOBAL</button>
+        </div>
+        <p class="sub" style="margin:10px 0 16px" id="lbCaption">Tersimpan di perangkat ini.</p>
         <div class="lb" id="lbList"></div>
         <div class="endbtns" style="margin-top:22px">
           <button class="cta ghost backhub">← Kembali</button>

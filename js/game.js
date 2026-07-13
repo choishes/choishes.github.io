@@ -28,6 +28,7 @@ function careerLoad(){
 function careerSave(pr){ try{ localStorage.setItem(CAREER_KEY, JSON.stringify(pr)); }catch(e){} }
 let careerProg = careerLoad();
 let p1=0, p2=0, turn=1, firstGuess=null;      // tanding
+let careerSeenThisRun=new Set(); // hindari soal yg sama terulang antar-level dalam satu ekspedisi karir
 let bestInfinite=null, rankIdx=0;
 let answeredTotal=0, runTwistShown=false; // pemicu twist ending
 
@@ -89,7 +90,7 @@ function playLoading(m, extra, done){
 /* ================= MULAI MODE ================= */
 function startGame(m){
   mode=m; sfx.click();
-  if(m==="karir"){ renderPlanets(); show(levels); return; } // peta dulu
+  if(m==="karir"){ careerSeenThisRun=new Set(); renderPlanets(); show(levels); return; } // peta dulu, mulai ekspedisi baru
   bgmGameStart();
   let extra="";
   if(m==="tanding"){
@@ -162,8 +163,11 @@ function startLevel(i){
   currentLevel=i; sfx.click(); bgmGameStart();
   playLoading("karir", CAREER[i].name, ()=>{
     const lv=CAREER[i];
-    let pool=FULL_POOL.filter(lv.filter);
-    deck=shuffle(pool).slice(0, Math.min(lv.n, pool.length));
+    const pool=FULL_POOL.filter(lv.filter);
+    let fresh=pool.filter(s=>!careerSeenThisRun.has(s));
+    if(fresh.length<lv.n) fresh=pool; // stok soal baru kurang → boleh ulang drpd macet
+    deck=shuffle(fresh).slice(0, Math.min(lv.n, fresh.length));
+    deck.forEach(s=>careerSeenThisRun.add(s));
     idx=0; score=0;
     setupBoardUI({track:true, lives:false, turn:false, chip:lv.name});
     show(game); render();
@@ -452,15 +456,30 @@ function endCareerFinal(){
 let pendingLB=null;
 $("saveScore").addEventListener("click",()=>{
   if(!pendingLB) return;
-  lbAdd($("nameinput").value, pendingLB.score, pendingLB.mode);
+  const nm=$("nameinput").value;
+  lbAdd(nm, pendingLB.score, pendingLB.mode);
+  if(typeof lbSubmitGlobal==="function") lbSubmitGlobal(nm, pendingLB.score, pendingLB.mode);
   pendingLB=null; sfx.ok();
   $("namebox").classList.add("hidden");
   openBoard();
 });
-function openBoard(){ lbRender($("lbList")); show(board); }
+let lbMode="local";
+function openBoard(){ lbMode="local"; renderCurrentBoard(); show(board); }
+function renderCurrentBoard(){
+  $("lbTabLocal").classList.toggle("on", lbMode==="local");
+  $("lbTabGlobal").classList.toggle("on", lbMode==="global");
+  $("lbCaption").textContent = lbMode==="local" ? "Tersimpan di perangkat ini." : "Skor semua pemain — via server relay online.";
+  if(lbMode==="local") lbRender($("lbList"));
+  else if(typeof lbRenderGlobal==="function") lbRenderGlobal($("lbList"));
+}
+$("lbTabLocal").addEventListener("click",()=>{ sfx.click(); lbMode="local"; renderCurrentBoard(); });
+$("lbTabGlobal").addEventListener("click",()=>{ sfx.click(); lbMode="global"; renderCurrentBoard(); });
 
 /* ================= EVENTS ================= */
-document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>{ if(m.dataset.start==="tanding"){ sfx.click(); show(duelSec); } else startGame(m.dataset.start); }));
+document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>{
+  if(m.dataset.start==="tanding"){ sfx.click(); show(duelSec); if(typeof olEnterLobby==="function") olEnterLobby(); }
+  else startGame(m.dataset.start);
+}));
 $("btnHuman").addEventListener("click",()=>choose(false));
 $("btnAI").addEventListener("click",()=>choose(true));
 $("next").addEventListener("click",next);
