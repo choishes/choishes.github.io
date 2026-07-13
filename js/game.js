@@ -7,6 +7,10 @@ const hub=$("hub"), game=$("game"), end=$("end"), board=$("board"),
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 const playable = s => s.type==="teks" || (s.src && s.src.length>0);
+/* Pool gabungan: 100 soal teks dari js/paket.js + media dari js/bank.js */
+const TEXT_POOL  = (typeof PAKET_ALL!=="undefined") ? PAKET_ALL : BANK.filter(s=>s.type==="teks");
+const MEDIA_POOL = BANK.filter(s=>s.type!=="teks");
+const FULL_POOL  = [...TEXT_POOL, ...MEDIA_POOL];
 
 /* ---------- STATE ---------- */
 let mode="infinite";        // "karir" | "infinite" | "tanding"
@@ -16,7 +20,6 @@ let lives=3;                // infinite
 let missionIdx=0, careerTotal=0, careerMax=0; // karir
 let p1=0, p2=0, turn=1, firstGuess=null;      // tanding
 let bestInfinite=null, rankIdx=0;
-const TANDING_N=6;
 
 /* ================= NAVIGASI LAYAR ================= */
 function show(sec){
@@ -24,25 +27,83 @@ function show(sec){
   sec.classList.remove("hidden");
 }
 
+/* ================= LOADING SINEMATIK ================= */
+const LOAD_LINES = {
+  karir:[
+    "membuka arsip misi terklasifikasi…",
+    "memverifikasi pangkat operator…",
+    "menghubungkan ke sistem AI…",
+    "kalibrasi selesai. selamat bertugas."
+  ],
+  infinite:[
+    "membuka saluran tanpa batas…",
+    "mengisi tiga nyawa cadangan…",
+    "menghubungkan ke sistem AI…",
+    "peringatan: spesimen tidak akan berhenti datang."
+  ],
+  tanding:[
+    "menyiapkan arena duel…",
+    "__PAKET__", // diganti nama paket terpilih
+    "menghubungkan ke sistem AI…",
+    "dua kursi terpasang. jangan saling intip."
+  ]
+};
+
+function playLoading(m, extra, done){
+  const scr=$("loadscreen");
+  if(reducedMotion){ done(); return; }
+  const lines=LOAD_LINES[m].map(l=>l==="__PAKET__"?("memuat "+extra.toLowerCase()+"…"):l);
+  $("ldTitle").textContent="MODE: "+m.toUpperCase();
+  const fill=$("ldFill"), log=$("ldLog");
+  fill.style.width="0"; log.textContent="";
+  scr.classList.remove("hidden","fadeout");
+  let i=0;
+  (function step(){
+    if(i<lines.length){
+      log.textContent=lines[i];
+      fill.style.width=Math.round(((i+1)/lines.length)*100)+"%";
+      beep(600+i*140,.06,"square",.02);
+      i++;
+      setTimeout(step, 480+Math.random()*320);
+    }else{
+      setTimeout(()=>{
+        scr.classList.add("fadeout"); sfx.scan();
+        setTimeout(()=>{ scr.classList.add("hidden"); done(); }, 450);
+      }, 320);
+    }
+  })();
+}
+
 /* ================= MULAI MODE ================= */
 function startGame(m){
   mode=m; sfx.click(); bgmGameStart();
+  let extra="";
+  if(m==="tanding"){
+    currentPaket = PAKET[Math.floor(Math.random()*PAKET.length)];
+    extra = currentPaket.nama;
+  }
+  playLoading(m, extra, ()=>bootMode(m));
+}
+
+let currentPaket=null;
+function bootMode(m){
   if(m==="karir"){ missionIdx=0; careerTotal=0; careerMax=0; startMission(); return; }
   if(m==="infinite"){
-    deck=shuffle(BANK.filter(playable)); idx=0; score=0; lives=3;
+    deck=shuffle(FULL_POOL.filter(playable)); idx=0; score=0; lives=3;
     setupBoardUI({track:false, lives:true, turn:false, chip:"MODE: INFINITE"});
   }
   if(m==="tanding"){
-    deck=shuffle(BANK.filter(playable)).slice(0,TANDING_N);
+    deck=shuffle(currentPaket.soal.map(s=>({type:"teks",...s})));
     idx=0; p1=0; p2=0; turn=1; firstGuess=null;
-    setupBoardUI({track:true, lives:false, turn:true, chip:"MODE: TANDING"});
+    setupBoardUI({track:true, lives:false, turn:true,
+      chip:"TANDING · PAKET "+String(currentPaket.id).padStart(2,"0")});
   }
   show(game); render();
 }
 
 function startMission(){
   const m=CAREER[missionIdx];
-  let pool=BANK.filter(m.filter);
+  let pool=FULL_POOL.filter(m.filter);
   deck=shuffle(pool).slice(0, Math.min(m.n, pool.length));
   idx=0; score=0; careerMax+=deck.length;
   setupBoardUI({track:true, lives:false, turn:false, chip:m.name});
@@ -193,7 +254,7 @@ function next(){
   if(mode==="infinite"){
     if(lives<=0){ endInfinite(); return; }
     idx++;
-    if(idx>=deck.length){ deck=shuffle(BANK.filter(playable)); idx=0; } // loop tanpa akhir
+    if(idx>=deck.length){ deck=shuffle(FULL_POOL.filter(playable)); idx=0; } // loop tanpa akhir
     render(); return;
   }
 

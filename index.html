@@ -46,6 +46,14 @@
   </div>
 </div>
 
+<!-- layar loading sinematik antar-mode -->
+<div id="loadscreen" class="hidden">
+  <div class="clogo in" style="font-size:30px">SIN<span>YAL</span></div>
+  <div class="ldtitle" id="ldTitle">MODE</div>
+  <div class="cbar" style="width:min(340px,72vw)"><div id="ldFill"></div></div>
+  <div class="clog" id="ldLog">menghubungkan…</div>
+</div>
+
 <div class="app">
   <div class="card">
 
@@ -75,7 +83,7 @@
           <button class="mitem stagger" data-start="tanding">
             <span class="mi-idx">03</span>
             <span class="mi-name">TANDING</span>
-            <span class="mi-desc">duel 2 pemain · 1 perangkat</span>
+            <span class="mi-desc">duel 2 pemain · 1 paket acak</span>
           </button>
           <div class="mdiv stagger"></div>
           <button class="mitem sub stagger" id="openBoard">
@@ -243,6 +251,7 @@
 </div>
 
 <script src="js/bank.js"></script>
+<script src="js/paket.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/space.js"></script>
 <script src="js/leaderboard.js"></script>
