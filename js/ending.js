@@ -53,7 +53,8 @@ async function playTwistEnding(done){
   const ov=tw("twist");
   ov.classList.remove("hidden","fadeout");
   ["twGlitch","twError","twLoad","twReveal","twFinal"].forEach(i=>tw(i).classList.add("hidden"));
-  bgmGameStop(); // senyap mendadak = bagian dari dramanya
+  bgmGameStop();
+  bgmTwistStart(); // Observing the Glass Moon — mengalun sejak intervensi (intro lagunya sudah fade-in)
 
   if(!twistReduced){
     /* --- A: INTERVENSI GLITCH --- */
@@ -112,7 +113,7 @@ async function playTwistEnding(done){
   setTwistSeen(); showEndingBadge();
 
   tw("twBack").onclick=()=>{
-    sfx.click();
+    sfx.click(); bgmTwistStop();
     ov.classList.add("fadeout");
     setTimeout(()=>{ ov.classList.add("hidden"); done(); }, twistReduced?0:600);
   };

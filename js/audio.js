@@ -47,6 +47,8 @@ const trackIntro = new Audio("assets/bgm/The_Third_Moon.mp3");
 trackIntro.loop = true; trackIntro.preload = "auto";
 const trackGame  = new Audio("assets/bgm/Cinematic_Retro_Synth_Progression.mp3");
 trackGame.loop = true; trackGame.preload = "auto";
+const trackTwist = new Audio("assets/bgm/Observing_the_Glass_Moon.mp3");
+trackTwist.loop = true; trackTwist.preload = "auto";
 let ambient = null; // fallback generatif untuk jalur game
 
 function fade(el, to, ms=700){
@@ -108,7 +110,19 @@ function bgmGameStop(){
   stopAmbient();
 }
 
-function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); stopAmbient(); }
+/* Jalur TWIST — dipanggil ending.js saat layar error dimulai */
+function bgmTwistStart(){
+  currentCtx="twist";
+  if(!bgmOn) return;
+  trackTwist.volume=0; trackTwist.currentTime=0;
+  trackTwist.play().then(()=>fade(trackTwist,bgmVol,300)).catch(()=>{}); // fade singkat: lagunya sendiri sudah fade-in
+}
+function bgmTwistStop(){
+  if(currentCtx==="twist") currentCtx=null;
+  fade(trackTwist,0,800);
+}
+
+function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); fade(trackTwist,0,300); stopAmbient(); }
 
 /* ---------- API untuk layar Pengaturan ---------- */
 let bgmVol = 0.35; // 0..1, dikontrol slider
@@ -117,11 +131,13 @@ function setBgmVolume(v){
   bgmVol = Math.max(0, Math.min(1, v));
   if(!trackIntro.paused) trackIntro.volume = bgmVol;
   if(!trackGame.paused)  trackGame.volume  = bgmVol;
+  if(!trackTwist.paused) trackTwist.volume = bgmVol;
 }
 function setBgm(on){
   bgmOn = on;
   if(!on){ bgmStopAll(); return; }
   if(currentCtx==="intro") { trackIntro.volume=0; trackIntro.play().then(()=>fade(trackIntro,bgmVol,600)).catch(()=>{}); }
+  else if(currentCtx==="twist"){ trackTwist.volume=0; trackTwist.play().then(()=>fade(trackTwist,bgmVol,600)).catch(()=>{}); }
   else if(currentCtx==="game"){ trackGame.volume=0; trackGame.play().then(()=>fade(trackGame,bgmVol,600)).catch(()=>startAmbient()); }
 }
 function setSfx(on){ sfxOn = on; if(on) sfx.click(); }

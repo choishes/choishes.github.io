@@ -45,6 +45,7 @@ Dua jalur musik, keduanya dirujuk di `js/audio.js` baris atas:
 |---|---|---|
 | Intro | `assets/bgm/The_Third_Moon.mp3` | selama cinematic (boot + narasi + nama) |
 | Game  | `assets/bgm/Cinematic_Retro_Synth_Progression.mp3` | looping selama bermain, fade-out saat kembali ke lab |
+| Twist | `assets/bgm/Observing_the_Glass_Moon.mp3` | masuk saat layar error twist ending, sampai debrief |
 
 **Cara ganti:** taruh file mp3 di `assets/bgm/`, lalu samakan namanya di
 `js/audio.js`:
