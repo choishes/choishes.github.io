@@ -162,6 +162,27 @@ pembagian peran ada di sana sebagai HTML biasa.
   bila ingin lanjut: PeerJS (WebRTC) → backend WebSocket ringan. Mode Tanding
   hot-seat adalah solusi tanpa server yang sudah jalan.
 
+## 7. Twist Ending — `js/ending.js`
+
+Ending rahasia "ARSIP TERBUKA" terpicu saat **Karir tuntas 3 misi** atau
+**Infinite melewati 100 spesimen terjawab**: layar glitch → error sistem →
+pemulihan → pengungkapan bahwa seluruh arsip (termasuk yang berlabel
+"manusia") dihasilkan AI → debrief.
+
+- Naskah bisa diedit di `ERR_LINES`, `REVEAL_LINES`, dan `DEBRIEF_HTML`
+  di bagian atas `js/ending.js`.
+- **Debrief-nya jujur dan itu disengaja**: teks "manusia" di game ini memang
+  ditulis AI saat pengembangan (fakta), sementara foto asli tetap karya
+  fotografer manusia. Twist = fiksi dramatis; pelajarannya = nyata.
+  Ini poin emas untuk bagian analisis laporan: pemain yang percaya kunci
+  jawaban game tanpa verifikasi mengalami persis masalah yang diajarkan game.
+- Pemain yang sudah membuka ending mendapat lencana "◈ ARSIP TERBUKA" di menu.
+- **Akses developer (tes cepat)**: buka `index.html?dev=ending` — twist
+  langsung diputar tanpa bermain. Alternatif: dari konsol browser (F12)
+  jalankan `playTwistEnding(()=>show(hub))`. Untuk menguji pemicu Infinite
+  sungguhan tanpa 100 soal, ubah sementara angka `100` pada
+  `answeredTotal>=100` di `js/game.js` menjadi mis. `5`.
+
 ## Etika konten (untuk laporan)
 
 - Spesimen AI: dicatat dihasilkan model apa + prompt-nya.

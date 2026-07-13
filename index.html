@@ -54,8 +54,42 @@
   <div class="clog" id="ldLog">menghubungkan…</div>
 </div>
 
+<!-- ============ TWIST ENDING ============ -->
+<div id="twist" class="hidden">
+  <!-- A: intervensi glitch -->
+  <div id="twGlitch" class="cstage hidden">
+    <div class="twglitch" data-text="SINYAL">SINYAL</div>
+    <div class="twwarn">⚠ ANOMALI TERDETEKSI PADA ARSIP</div>
+  </div>
+  <!-- B: layar error -->
+  <div id="twError" class="cstage hidden">
+    <div class="twerrbox">
+      <div class="twerrhead">✕ SISTEM SINYAL — KEGAGALAN KRITIS</div>
+      <div id="twErrLog" class="twerrlog"></div>
+    </div>
+  </div>
+  <!-- C: pemulihan -->
+  <div id="twLoad" class="cstage hidden">
+    <div class="ldtitle">MEMULIHKAN ARSIP…</div>
+    <div class="cbar" style="width:min(340px,72vw)"><div id="twFill" class="twfill"></div></div>
+    <div class="clog">jangan tutup halaman ini</div>
+  </div>
+  <!-- D: pengungkapan -->
+  <div id="twReveal" class="cstage hidden">
+    <p id="twLine" class="cline"></p>
+    <div class="chint">KLIK UNTUK LANJUT</div>
+  </div>
+  <!-- E: judul + debrief -->
+  <div id="twFinal" class="cstage hidden">
+    <div class="twtitle">SIAPA YANG MEMBERI LABEL?</div>
+    <div class="twsub">ENDING TERBUKA — ARSIP SINYAL</div>
+    <div class="twdebrief" id="twDebrief"></div>
+    <button class="cta" id="twBack" style="margin-top:24px">Kembali ke Hasil →</button>
+  </div>
+</div>
+
 <div class="app">
-  <div class="card">
+  <div class="card bare">
 
     <div class="bar">
       <div class="brand"><span class="dot"></span>SINYAL // LAB FORENSIK MEDIA</div>
@@ -68,6 +102,7 @@
       <section id="hub" class="center">
         <div class="title stagger">SIN<span class="accent">YAL</span></div>
         <div class="opchip stagger" id="hubGreet"></div>
+        <div class="opchip gold stagger hidden" id="endingBadge">◈ ARSIP TERBUKA</div>
 
         <nav class="menu">
           <button class="mitem stagger" data-start="karir">
@@ -255,6 +290,7 @@
 <script src="js/audio.js"></script>
 <script src="js/space.js"></script>
 <script src="js/leaderboard.js"></script>
+<script src="js/ending.js"></script>
 <script src="js/cine.js"></script>
 <script src="js/game.js"></script>
 </body>

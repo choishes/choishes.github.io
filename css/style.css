@@ -438,3 +438,72 @@ body::before{opacity:.08}
   box-shadow:0 0 12px var(--cyan); transition:width .45s ease}
 .ldtitle{font-family:var(--mono); font-size:11px; letter-spacing:.34em; color:var(--cyan);
   margin-top:16px; text-transform:uppercase}
+
+/* ================= TWIST ENDING ================= */
+#twist{
+  position:fixed; inset:0; z-index:130; background:#03060a;
+  display:flex; align-items:center; justify-content:center;
+  opacity:1; transition:opacity .6s ease; cursor:pointer;
+}
+#twist.fadeout{opacity:0; pointer-events:none}
+
+/* A: glitch */
+.twglitch{
+  position:relative; font-family:var(--mono); font-weight:700;
+  font-size:clamp(40px,9vw,72px); letter-spacing:.18em; color:#eaf6f3;
+  animation:twshake .12s infinite;
+}
+.twglitch::before,.twglitch::after{
+  content:attr(data-text); position:absolute; inset:0;
+}
+.twglitch::before{color:var(--danger); clip-path:inset(20% 0 40% 0); animation:twslice1 .35s infinite; transform:translateX(-4px)}
+.twglitch::after{color:var(--cyan); clip-path:inset(60% 0 10% 0); animation:twslice2 .28s infinite; transform:translateX(4px)}
+@keyframes twshake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(2px,-3px)}75%{transform:translate(-2px,-2px)}}
+@keyframes twslice1{0%,100%{clip-path:inset(15% 0 55% 0)}50%{clip-path:inset(45% 0 20% 0)}}
+@keyframes twslice2{0%,100%{clip-path:inset(65% 0 5% 0)}50%{clip-path:inset(30% 0 45% 0)}}
+.twwarn{margin-top:26px; font-family:var(--mono); font-size:12px; letter-spacing:.26em;
+  color:var(--danger); animation:blinkc .4s infinite}
+#twGlitch::before{ /* kilat merah fullscreen */
+  content:""; position:fixed; inset:0; pointer-events:none;
+  background:rgba(255,93,115,.07); animation:twflash .3s infinite;
+}
+@keyframes twflash{0%,100%{opacity:0}50%{opacity:1}}
+
+/* B: error */
+.twerrbox{
+  width:min(560px,90vw); text-align:left; border:1px solid rgba(255,93,115,.5);
+  border-radius:12px; background:#0b0d12; overflow:hidden;
+  box-shadow:0 0 60px -18px var(--danger);
+}
+.twerrhead{padding:12px 18px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  color:#fff; background:rgba(255,93,115,.18); border-bottom:1px solid rgba(255,93,115,.4)}
+.twerrlog{padding:18px; font-family:var(--mono); font-size:12px; line-height:2.1;
+  color:var(--danger); min-height:150px; white-space:pre-wrap}
+
+/* C: pemulihan */
+.twfill{height:100%; width:0; background:linear-gradient(90deg,var(--danger),var(--amber));
+  box-shadow:0 0 12px var(--amber); transition:width .25s ease}
+
+/* E: final */
+.twtitle{font-family:var(--mono); font-weight:700; font-size:clamp(22px,5vw,40px);
+  letter-spacing:.14em; color:#eaf6f3; text-shadow:0 0 34px rgba(63,224,197,.35); text-align:center}
+.twsub{margin-top:10px; font-family:var(--mono); font-size:10px; letter-spacing:.3em; color:var(--cyan)}
+.twdebrief{
+  margin-top:26px; width:min(540px,88vw); text-align:left;
+  border:1px solid var(--line2); border-radius:12px; background:var(--bg2);
+  padding:18px 20px; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:#c9dbd7;
+}
+.twdebrief b{color:var(--amber)}
+.opchip.gold{color:var(--amber); border-color:rgba(255,194,71,.4)}
+
+@media (prefers-reduced-motion:reduce){
+  .twglitch,.twglitch::before,.twglitch::after,#twGlitch::before{animation:none}
+}
+
+/* ================= MENU POLOS (tanpa kartu) ================= */
+.card.bare{background:none; border-color:transparent; box-shadow:none}
+.card.bare .bar,.card.bare .foot{display:none}
+.card.bare .body{padding:8vh 24px 48px}
+.card.bare .title{font-size:clamp(40px,7vw,54px); text-shadow:0 0 40px rgba(63,224,197,.25)}
+.card.bare .menu{margin-top:14px}
+.card.bare .mitem{backdrop-filter:blur(2px)}

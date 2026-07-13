@@ -20,11 +20,14 @@ let lives=3;                // infinite
 let missionIdx=0, careerTotal=0, careerMax=0; // karir
 let p1=0, p2=0, turn=1, firstGuess=null;      // tanding
 let bestInfinite=null, rankIdx=0;
+let answeredTotal=0, runTwistShown=false; // pemicu twist ending
 
 /* ================= NAVIGASI LAYAR ================= */
 function show(sec){
   [hub,game,end,board,settings,credits].forEach(s=>s.classList.add("hidden"));
   sec.classList.remove("hidden");
+  /* menu awal tampil polos tanpa kartu; layar lain memakai kartu */
+  document.querySelector(".card").classList.toggle("bare", sec===hub);
 }
 
 /* ================= LOADING SINEMATIK ================= */
@@ -90,6 +93,7 @@ function bootMode(m){
   if(m==="karir"){ missionIdx=0; careerTotal=0; careerMax=0; startMission(); return; }
   if(m==="infinite"){
     deck=shuffle(FULL_POOL.filter(playable)); idx=0; score=0; lives=3;
+    answeredTotal=0; runTwistShown=false;
     setupBoardUI({track:false, lives:true, turn:false, chip:"MODE: INFINITE"});
   }
   if(m==="tanding"){
@@ -123,7 +127,7 @@ function render(){
   answered=false; busy=false; firstGuess=null;
   const r=deck[idx];
   $("roundlabel").textContent = mode==="infinite"
-    ? "Spesimen "+String(idx+1).padStart(2,"0")+" · TANPA BATAS"
+    ? "Spesimen "+String(answeredTotal+1).padStart(3,"0")+" · TANPA BATAS"
     : "Spesimen "+String(idx+1).padStart(2,"0")+" / "+String(deck.length).padStart(2,"0");
   updateHeader();
   $("spectag").textContent="SPESIMEN "+r.type.toUpperCase();
@@ -216,6 +220,7 @@ function choose(guessAI){
       const seg=$("seg"+idx); seg.classList.remove("now"); seg.classList.add((c1&&c2)?"done":(!c1&&!c2)?"wrong":"now");
     }else{
       const correct=(guessAI===r.isAI);
+      if(mode==="infinite") answeredTotal++;
       if(correct){score++; sfx.ok();}
       else{
         sfx.no();
@@ -251,6 +256,11 @@ function next(){
 
   if(mode==="infinite"){
     if(lives<=0){ endInfinite(); return; }
+    if(answeredTotal>=100 && !runTwistShown){
+      runTwistShown=true;
+      playTwistEnding(()=>endInfinite());
+      return;
+    }
     idx++;
     if(idx>=deck.length){ deck=shuffle(FULL_POOL.filter(playable)); idx=0; } // loop tanpa akhir
     render(); return;
@@ -265,7 +275,7 @@ function next(){
   const m=CAREER[missionIdx];
   if(score>=m.pass){
     missionIdx++;
-    if(missionIdx>=CAREER.length){ endCareer(true); }
+    if(missionIdx>=CAREER.length){ playTwistEnding(()=>endCareer(true)); }
     else{ briefNextMission(); }
   }else{
     endCareer(false);
