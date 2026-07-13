@@ -12,6 +12,7 @@ let olOppName="LAWAN", olOppIdx=0, olOppScore=0, olOppDone=false, olOppFinal=0;
 let olLocalDoneFlag=false, olActive=false;
 
 const duel=$("duel");
+window.MODE_META = window.MODE_META || {}; // tambahkan baris ini
 MODE_META.online={label:"ONLINE", promptQ:"SIAPA PEMBUATNYA?", tag:"SPESIMEN TEKS"};
 
 /* ---------- util ---------- */
