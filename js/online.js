@@ -39,13 +39,16 @@ function olHost(){
   }
 
   sfx.click();
+
   $("duelMenu").classList.add("hidden");
   $("duelWait").classList.remove("hidden");
 
   const code = olCode();
+
   $("roomCode").textContent = code;
 
   olStatus("menghubungi broker…");
+
   olIsHost = true;
 
   olPeer = new Peer(
@@ -54,26 +57,33 @@ function olHost(){
 
   olPeer.on("open", id => {
     console.log("HOST OPEN:", id);
-    olStatus("room aktif · menunggu lawan…");
+    olStatus(
+      "room aktif · menunggu lawan…"
+    );
   });
 
   olPeer.on("error", e => {
-    console.error("HOST ERROR:", e);
+    console.error(
+      "HOST ERROR:",
+      e
+    );
 
     if(e.type === "unavailable-id"){
       olCleanup();
-      olHost(); // buat kode baru kalau bentrok
-    } else {
-      olStatus(
-        "gangguan koneksi: " + e.type
-      );
+      olHost();
+      return;
     }
+
+    olStatus(
+      "gangguan koneksi: " +
+      e.type
+    );
   });
 
   olPeer.on("connection", conn => {
 
     if(olConn){
-      conn.close(); // room penuh
+      conn.close();
       return;
     }
 
@@ -83,45 +93,45 @@ function olHost(){
     );
 
     olConn = conn;
+
     olWire();
 
-    conn.on("open", () => {
+    console.log("HOST READY");
 
-      console.log(
-        "DATA CHANNEL OPEN"
+    olStatus(
+      "lawan terhubung! menyiapkan arena…"
+    );
+
+    currentPaket =
+      PAKET[
+        Math.floor(
+          Math.random() *
+          PAKET.length
+        )
+      ];
+
+    const order =
+      shuffle(
+        currentPaket.soal.map(
+          (_,i)=>i
+        )
       );
 
-      olStatus(
-        "lawan terhubung! menyiapkan arena…"
-      );
-
-      currentPaket =
-        PAKET[
-          Math.floor(
-            Math.random() *
-            PAKET.length
-          )
-        ];
-
-      const order =
-        shuffle(
-          currentPaket.soal.map(
-            (_,i)=>i
-          )
-        );
+    setTimeout(() => {
 
       conn.send({
         t:"start",
-        paketId:currentPaket.id,
+        paketId: currentPaket.id,
         order,
-        name:PLAYER || "HOST"
+        name: PLAYER || "HOST"
       });
 
       olBegin(
         currentPaket,
         order
       );
-    });
+
+    }, 500);
 
     conn.on("error", e => {
       console.error(
@@ -131,9 +141,10 @@ function olHost(){
     });
   });
 }
+
 /* ---------- JOIN ---------- */
 function olJoin(){
-  if(typeof Peer==="undefined"){
+  if(typeof Peer === "undefined"){
     olStatus("PeerJS gagal dimuat — cek koneksi internet.");
     return;
   }
@@ -148,12 +159,15 @@ function olJoin(){
   }
 
   sfx.click();
+
   $("duelMenu").classList.add("hidden");
   $("duelWait").classList.remove("hidden");
+
   $("roomCode").textContent = code;
   olStatus("mencari room " + code + "…");
 
   olIsHost = false;
+
   olPeer = new Peer();
 
   olPeer.on("open", id => {
@@ -161,8 +175,13 @@ function olJoin(){
 
     olConn = olPeer.connect(
       OL_PREFIX + code.toLowerCase(),
-      { reliable: true }
+      {
+        reliable: true
+      }
     );
+
+    // INI YANG HILANG TADI
+    olWire();
 
     console.log(
       "CONNECT TO:",
@@ -170,22 +189,37 @@ function olJoin(){
     );
 
     olConn.on("open", () => {
-      console.log("CONNECTED!");
-      olStatus("terhubung! menunggu host memulai…");
+      console.log("JOIN DATA OPEN");
+
+      olStatus(
+        "terhubung! menunggu host memulai…"
+      );
 
       olConn.send({
-        t:"hello",
-        name:PLAYER || "TAMU"
+        t: "hello",
+        name: PLAYER || "TAMU"
       });
     });
 
     olConn.on("error", e => {
-      console.error("CONNECTION ERROR:", e);
+      console.error(
+        "CONNECTION ERROR:",
+        e
+      );
+    });
+
+    olConn.on("close", () => {
+      console.log(
+        "JOIN CONNECTION CLOSED"
+      );
     });
   });
 
   olPeer.on("error", e => {
-    console.error("JOIN ERROR:", e);
+    console.error(
+      "JOIN ERROR:",
+      e
+    );
 
     if(e.type === "peer-unavailable"){
       olStatus(
@@ -194,7 +228,8 @@ function olJoin(){
       );
     } else {
       olStatus(
-        "gangguan koneksi: " + e.type
+        "gangguan koneksi: " +
+        e.type
       );
     }
   });
