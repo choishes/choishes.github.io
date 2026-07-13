@@ -138,9 +138,7 @@ function render(){
     body.innerHTML='<p id="specimenText"></p>';
     revealText($("specimenText"), r.text);
   }else if(r.src){
-    body.innerHTML = r.type==="gambar"
-      ? '<div class="media"><img src="'+r.src+'" alt="Spesimen visual"></div>'
-      : '<div class="media"><video src="'+r.src+'" controls playsinline></video></div>';
+    body.innerHTML = '<div class="media"><img src="'+r.src+'" alt="Spesimen visual"></div>';
   }else{
     body.innerHTML='<div class="slotinfo"><b>[ SLOT '+r.type.toUpperCase()+' KOSONG ]</b><br>'
       +'Isi field <b>src</b> item ini di js/bank.js dengan path/URL<br>hasil kurasimu (mis. assets/img/01.jpg).</div>';

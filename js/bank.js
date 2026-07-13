@@ -3,12 +3,12 @@
    Edit file ini untuk kurasi konten. Tidak perlu sentuh game.js.
 
    Format tiap item:
-   { type:"teks"|"gambar"|"video", isAI:true/false, cue:"...",
-     text:"..." (untuk teks) ATAU src:"..." (untuk gambar/video),
+   { type:"teks"|"gambar", isAI:true/false, cue:"...",
+     text:"..." (untuk teks) ATAU src:"..." (untuk gambar),
      explain:"penjelasan edukatif", trap:true (opsional),
      level:1|2|3 (dipakai mode Karir) }
 
-   gambar/video: isi "src" dengan path lokal (mis. "assets/img/01.jpg")
+   gambar: isi "src" dengan path lokal (mis. "assets/img/01.jpg")
    atau URL. Item media TANPA src otomatis di-skip di mode Infinite
    & Tanding, tapi tetap muncul sebagai slot demo di Karir Misi 3.
    ================================================================ */
@@ -53,17 +53,46 @@ const BANK = [
     text:"Berdasarkan hasil observasi, dapat disimpulkan bahwa tingkat partisipasi warga dalam kegiatan ini tergolong tinggi. Faktor pendukungnya antara lain sosialisasi yang efektif serta keterlibatan tokoh masyarakat setempat.",
     explain:"JEBAKAN sebaliknya. Ini tulisan MANUSIA (gaya laporan mahasiswa), tapi register formal-akademiknya (“dapat disimpulkan bahwa”, “faktor pendukungnya antara lain”) sangat mirip AI. Inilah false positive: penulis manusia yang formal sering dituduh mesin. Menebak dari “rasa” sangat rawan salah." },
 
-  /* ---------- GAMBAR (isi src untuk mengaktifkan) ---------- */
-  { type:"gambar", level:3, isAI:true, src:"", cue:"Anatomi & tekstur",
-    explain:"Slot demo. Saat kurasi, pakai gambar dari generator gratis. Petunjuk khas: jari aneh, teks kacau di latar, pantulan tak konsisten, kulit terlalu mulus, latar “meleleh”." },
-  { type:"gambar", level:3, isAI:false, src:"", cue:"Ketidaksempurnaan alami",
-    explain:"Slot demo. Foto asli: noise sensor alami, fokus tak sempurna, detail latar konsisten. Gunakan sumber bebas lisensi (Unsplash/Wikimedia) + catat atribusi untuk laporan." },
+  /* ---------- GAMBAR (16 spesimen, 8 pasang asli vs AI) ---------- */
+  /* PEMANDANGAN */
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_scenery.jpg", cue:"Foto astro asli",
+    explain:"FOTO ASLI. Gunung berapi meletus di bawah langit berbintang — noise sensor pada langit malam, jejak lava tak simetris, dan awan yang terekam long-exposure. Ketidaksempurnaan optik ini sulit dipalsukan." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_scenery.jpg", cue:"Cahaya terlalu sempurna",
+    explain:"AI. Sorotan cahaya vertikal dari puncak gunung terlalu bersih, Milky Way terlalu dramatis sempurna, dan pantulan di danau kurang konsisten dengan sumber cahaya. 'Terlalu indah untuk nyata'." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_scenery__2_.jpg", cue:"Bukit hijau nyata",
+    explain:"FOTO ASLI. Lereng bukit hijau, langit biru polos — gradasi cahaya matahari alami pada rumput, tekstur batu tak berulang, horizon wajar. Kesederhanaan justru menandai keaslian." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_scenery__2_.jpg", cue:"Tekstur berulang",
+    explain:"AI. Perhatikan pola tekstur berulang dan detail latar yang 'meleleh' di kejauhan — ciri generator yang kesulitan menjaga konsistensi pada area luas yang seragam." },
 
-  /* ---------- VIDEO (isi src untuk mengaktifkan) ---------- */
-  { type:"video", level:3, isAI:true, src:"", cue:"Wajah & sinkronisasi",
-    explain:"Slot demo. Petunjuk video sintetis/deepfake: kedipan tak wajar, bibir meleset dari audio, tepi wajah bergetar, arah cahaya wajah beda dengan lingkungan." },
-  { type:"video", level:3, isAI:false, src:"", cue:"Kontinuitas nyata",
-    explain:"Slot demo. Video asli: guncangan kamera alami, audio ruangan konsisten, mikro-ekspresi halus. Simpan klip pendek (mp4) di assets/ dan isi field src." }
+  /* SENI / LUKISAN */
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_art.jpg", cue:"Sapuan tanpa arah",
+    explain:"AI. Lukisan abstrak meniru gaya ekspresionis, tapi sapuan kuasnya tak punya 'logika tangan' — arah goresan acak tanpa tekanan konsisten, tepi warna terlalu bersih untuk cat minyak sungguhan." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_art.jpg", cue:"Palet cat nyata",
+    explain:"FOTO ASLI. Close-up palet cat pelukis — tumpukan cat berlapis fisik dengan bayangan nyata, tekstur kering-basah bercampur, kilau minyak yang merespons cahaya. Materialitas yang tak bisa direka mesin." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_art__2_.jpg", cue:"Makro autentik",
+    explain:"FOTO ASLI. Detail permukaan cat dengan depth-of-field makro yang wajar — sebagian fokus, sebagian blur alami. Retakan cat mengikuti fisika pengeringan nyata." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_park.jpg", cue:"Bokeh artifisial",
+    explain:"AI. Meski tampak seperti foto taman, blur latar (bokeh) tidak konsisten dengan jarak, dan dedaunan detailnya 'berulang'. Generator sering salah mensimulasikan optik lensa." },
+
+  /* MESIN / TEKNOLOGI */
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_machine.jpg", cue:"Teks & angka kacau",
+    explain:"AI. Mesin retro rumit dengan teknisi — lihat teks pada label dan angka pada dial: kabur, tak terbaca, 'seperti tulisan'. Teks kacau adalah petunjuk citra sintetis paling andal." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_machine.jpg", cue:"Foto produk nyata",
+    explain:"FOTO ASLI. Meja kerja dengan perangkat — pantulan cahaya konsisten pada layar, bayangan sesuai satu sumber cahaya, tekstur (kayu, kain, logam) stabil di seluruh frame." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_machine__2_.jpg", cue:"Geometri mustahil",
+    explain:"AI. Setup gawai di meja — periksa detail 'hampir benar': tepi perangkat menyatu aneh, port/kabel tidak logis, permukaan terlalu mulus. Konsistensi geometri adalah kelemahan AI." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_park.jpg", cue:"Motor trail nyata",
+    explain:"FOTO ASLI. Close-up mesin motor trail berlumpur — cipratan lumpur acak, karat dan goresan tak sengaja, tetesan air pada logam. Keausan tak beraturan menandakan objek nyata." },
+
+  /* MANUSIA / WAJAH */
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_human.jpg", cue:"Kulit terlalu mulus",
+    explain:"AI. Potret pria memegang ikan di tepi sungai — kulit terlalu mulus dan merata, detail manik/aksesori tak logis bila ditelusuri, latar desa 'meleleh'. Wajah AI kini meyakinkan; periksa tangan dan latar." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_human.jpg", cue:"Kelas nyata",
+    explain:"FOTO ASLI. Mahasiswa berkolaborasi di kelas — pori kulit, refleksi kacamata yang benar, teks pada layar/papan yang terbaca. Kedalaman ruang dan pencahayaan konsisten." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_human__2_.jpg", cue:"Senyum & rambut",
+    explain:"AI. Dua pria tersenyum di taman — waspadai gigi terlalu seragam, helai rambut yang menyatu tak wajar, kilau kulit berlebihan. Simetri senyum yang sempurna sering menandai wajah sintetis." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_human__2_.jpg", cue:"Perpustakaan nyata",
+    explain:"FOTO ASLI. Tiga pelajar di perpustakaan — ekspresi mikro natural (satu fokus, satu bicara), judul buku di rak terbaca, bayangan tubuh konsisten. Interaksi spontan sulit dipalsukan." },
 ];
 
 /* Konfigurasi mode Karir */
@@ -72,7 +101,7 @@ const CAREER = [
     brief:"Empat spesimen teks tingkat dasar. Lulus: minimal 3 benar." },
   { name:"MISI 2 — ZONA JEBAKAN", filter:s=>s.type==="teks"&&s.level===2, n:6, pass:4,
     brief:"Enam spesimen — termasuk jebakan. Lulus: minimal 4 benar." },
-  { name:"MISI 3 — FORENSIK VISUAL", filter:s=>s.type!=="teks", n:4, pass:3,
-    brief:"Gambar dan video. Lulus: minimal 3 benar." }
+  { name:"MISI 3 — FORENSIK VISUAL", filter:s=>s.type==="gambar", n:8, pass:5,
+    brief:"Delapan spesimen gambar. Lulus: minimal 5 benar." }
 ];
 const RANKS = ["KADET","ANALIS","INSPEKTUR","FORENSIKAWAN"];

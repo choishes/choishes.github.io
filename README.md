@@ -1,7 +1,7 @@
 # SINYAL — Lab Forensik Media Sintetis
 
 Game edukasi web: uji kemampuan membedakan konten buatan **manusia** vs **AI**
-(teks, gambar, video). Proyek Peminatan Kajian Media — Produksi & Analisis
+(teks & gambar). Proyek Peminatan Kajian Media — Produksi & Analisis
 Aplikasi, Ilmu Komunikasi UII.
 
 **Kru:** Muhammad Zaki Tasnim Mubarak / 24321148 (developer) ·
@@ -100,35 +100,38 @@ Semua soal ada di array `BANK`. Satu item teks:
   Ganti dengan kutipan asli bersumber jelas (tweet, berita, chat dengan izin)
   dan simpan daftar sumbernya untuk laporan — ini poin metodologi.
 
-## 4. Spesimen GAMBAR & VIDEO — `js/bank.js` + folder `assets/`
+## 4. Spesimen GAMBAR — `js/bank.js` + folder `assets/img/`
 
-Item media punya field `src` yang sekarang kosong (`src:""` = slot demo).
-Mengaktifkannya:
+Sudah terisi 16 gambar (8 pasang asli vs AI) di `assets/img/`, dipakai
+di Misi 3 (Karir) dan tercampur di Infinite. Untuk mengganti/menambah:
 
-1. Buat folder `assets/img/` dan/atau `assets/vid/`.
-2. Taruh filenya, mis. `assets/img/01.jpg`, `assets/vid/01.mp4`.
-3. Isi di bank.js:
+1. Taruh file di `assets/img/`, mis. `assets/img/kucing_ai.jpg`.
+2. Isi/ubah item di `BANK` (bagian GAMBAR) pada `js/bank.js`:
 
 ```js
-{ type:"gambar", level:3, isAI:true,  src:"assets/img/01.jpg",
-  cue:"Jari tangan aneh",
-  explain:"Perhatikan jari kelingking kiri — enam ruas. Ciri khas generator…" },
-{ type:"video",  level:3, isAI:false, src:"assets/vid/01.mp4",
-  cue:"Guncangan kamera alami",
-  explain:"Handheld asli: blur gerak dan audio ruangan konsisten…" },
+{ type:"gambar", level:3, isAI:true, src:"assets/img/kucing_ai.jpg",
+  cue:"Anatomi kaki",
+  explain:"Kaki depan kucing ada lima jari — generator sering salah hitung." },
 ```
 
-Tips kurasi:
-- **Gambar AI**: buat sendiri via generator gratis (Bing Image Creator,
-  Ideogram). Catat prompt-nya — bagus untuk metodologi laporan.
-- **Foto/video asli**: sumber bebas lisensi (Unsplash, Pexels, Wikimedia
-  Commons) + tulis atribusi.
-- Video: mp4 H.264, ≤10–15 detik, ≤5–10 MB per file supaya cepat dimuat.
-- Tulis `explain` **spesifik per file** ("lihat pantulan di kacamata") —
-  jauh lebih edukatif daripada penjelasan generik.
-- Item media tanpa `src` otomatis dilewati di Infinite & Tanding, tapi tampil
-  sebagai slot demo di Karir Misi 3 — jadi isi minimal 4 item media agar
-  Misi 3 hidup.
+- **`isAI`** tetap kunci jawaban (true = AI, false = foto asli).
+- **`cue`** = label singkat ciri khas (chip di layar vonis).
+- **`explain`** sebaiknya SPESIFIK per gambar ("lihat teks papan yang kabur")
+  — jauh lebih edukatif daripada penjelasan umum.
+
+Tips kurasi & ukuran:
+- **Gambar AI**: buat via generator gratis (Bing Image Creator, Ideogram);
+  catat prompt-nya untuk metodologi laporan.
+- **Foto asli**: sumber bebas lisensi (Unsplash, Pexels, Wikimedia) + atribusi.
+- Kompres gambar (lebar ≤1400px, JPEG ~80%) agar situs cepat. 16 gambar di
+  proyek ini sudah dikompres dari ~68 MB menjadi ~4 MB dengan cara ini.
+- Jumlah soal Misi 3 mengikuti jumlah gambar: `n:8` di config `CAREER`
+  (`js/bank.js`) menampilkan 8 dari 16 tiap run. Ubah `n` bila menambah gambar.
+
+> **Mode video sudah dihapus** dari versi ini. Bila ingin menghidupkannya lagi
+> sebagai "pengembangan lanjutan", tambahkan item `type:"video"` dengan
+> `src:"assets/vid/xx.mp4"` dan kembalikan cabang render `<video>` di
+> `js/game.js` — tapi untuk demo tugas, gambar sudah cukup.
 
 ## 5. Naskah intro sinematik — `js/cine.js`
 
