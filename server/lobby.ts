@@ -1,82 +1,96 @@
-/* ================================================================
-   SINYAL — LOBBY SERVER (opsional, pengembangan lanjutan)
-   WebSocket relay sederhana untuk: daftar pemain online, matchmaking
-   otomatis, dan relay pesan duel (pengganti PeerJS bila diperlukan).
+/* ==========================================================
+   SINYAL — Deno WebRTC Signaling Server
+   Supports:
+   - 4 character room codes
+   - create room
+   - join room
+   - offer / answer / ICE relay
+   ========================================================== */
 
-   DEPLOY GRATIS KE DENO DEPLOY (tanpa kartu kredit):
-   1. Buat akun di https://dash.deno.com (login GitHub).
-   2. New Project → pilih repo ini → entry point: server/lobby.ts
-      (atau paste file ini di playground project).
-   3. Deploy. Kamu dapat URL: wss://NAMAPROYEK.deno.dev
-   4. Di client, ganti PeerJS dengan koneksi WebSocket ke URL itu.
+const rooms = new Map();
 
-   Protokol (JSON):
-   → {t:"join",  name}                    daftar ke lobby
-   ← {t:"lobby", players:[{id,name}]}     siaran daftar online
-   → {t:"invite", to}                     ajak pemain
-   ← {t:"match", room, opp, host:bool}    dipasangkan
-   → {t:"relay", room, data}              teruskan data duel
-   ← {t:"relay", data}                    data duel dari lawan
-   ================================================================ */
-const players = new Map(); // id -> {ws, name, room}
-let nextId = 1;
-
-function lobbyList() {
-  return [...players.entries()]
-    .filter(([, p]) => !p.room)
-    .map(([id, p]) => ({ id, name: p.name }));
-}
-function broadcastLobby() {
-  const msg = JSON.stringify({ t: "lobby", players: lobbyList() });
-  for (const [, p] of players) if (!p.room) try { p.ws.send(msg); } catch {}
-}
-function send(id, obj) {
-  const p = players.get(id);
-  if (p) try { p.ws.send(JSON.stringify(obj)); } catch {}
+function makeCode() {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let out = "";
+  for (let i = 0; i < 4; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
 }
 
 Deno.serve((req) => {
   if (req.headers.get("upgrade") !== "websocket") {
-    return new Response("SINYAL lobby aktif. Sambungkan via WebSocket.", { status: 200 });
+    return new Response("SINYAL signaling server online");
   }
+
   const { socket, response } = Deno.upgradeWebSocket(req);
-  const id = "p" + (nextId++);
 
-  socket.onopen = () => players.set(id, { ws: socket, name: "ANON", room: null });
+  let roomId = null;
 
-  socket.onmessage = (e) => {
-    let m; try { m = JSON.parse(e.data); } catch { return; }
-    const me = players.get(id); if (!me) return;
+  socket.onmessage = (ev) => {
+    let msg;
+    try { msg = JSON.parse(ev.data); }
+    catch { return; }
 
-    if (m.t === "join") {
-      me.name = String(m.name || "ANON").slice(0, 12).toUpperCase();
-      broadcastLobby();
+    if (msg.t === "create") {
+      let code;
+      do code = makeCode();
+      while (rooms.has(code));
+
+      rooms.set(code, new Set([socket]));
+      roomId = code;
+
+      socket.send(JSON.stringify({
+        t: "created",
+        room: code
+      }));
     }
-    if (m.t === "invite" && players.has(m.to)) {
-      const opp = players.get(m.to);
-      if (opp.room || me.room) return;
-      const room = "r" + Date.now().toString(36);
-      me.room = room; opp.room = room;
-      send(id,   { t: "match", room, opp: opp.name, oppId: m.to, host: true  });
-      send(m.to, { t: "match", room, opp: me.name,  oppId: id,   host: false });
-      broadcastLobby();
+
+    if (msg.t === "join") {
+      const room = rooms.get(msg.room);
+
+      if (!room || room.size >= 2) {
+        socket.send(JSON.stringify({
+          t: "error",
+          message: "room_not_found"
+        }));
+        return;
+      }
+
+      room.add(socket);
+      roomId = msg.room;
+
+      for (const peer of room) {
+        peer.send(JSON.stringify({ t: "ready" }));
+      }
     }
-    if (m.t === "relay" && me.room) {
-      for (const [pid, p] of players)
-        if (pid !== id && p.room === me.room) send(pid, { t: "relay", data: m.data });
+
+    if (["offer", "answer", "candidate"].includes(msg.t)) {
+      const room = rooms.get(roomId);
+      if (!room) return;
+
+      for (const peer of room) {
+        if (peer !== socket) {
+          peer.send(ev.data);
+        }
+      }
     }
   };
 
-  const drop = () => {
-    const me = players.get(id);
-    if (me?.room) // beri tahu lawan
-      for (const [pid, p] of players)
-        if (pid !== id && p.room === me.room) { p.room = null; send(pid, { t: "opp_left" }); }
-    players.delete(id);
-    broadcastLobby();
+  socket.onclose = () => {
+    if (!roomId) return;
+
+    const room = rooms.get(roomId);
+    if (!room) return;
+
+    room.delete(socket);
+
+    for (const peer of room) {
+      peer.send(JSON.stringify({ t: "opp_left" }));
+    }
+
+    if (room.size === 0) {
+      rooms.delete(roomId);
+    }
   };
-  socket.onclose = drop;
-  socket.onerror = drop;
 
   return response;
 });
