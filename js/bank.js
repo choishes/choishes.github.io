@@ -53,55 +53,74 @@ const BANK = [
     text:"Berdasarkan hasil observasi, dapat disimpulkan bahwa tingkat partisipasi warga dalam kegiatan ini tergolong tinggi. Faktor pendukungnya antara lain sosialisasi yang efektif serta keterlibatan tokoh masyarakat setempat.",
     explain:"JEBAKAN sebaliknya. Ini tulisan MANUSIA (gaya laporan mahasiswa), tapi register formal-akademiknya (“dapat disimpulkan bahwa”, “faktor pendukungnya antara lain”) sangat mirip AI. Inilah false positive: penulis manusia yang formal sering dituduh mesin. Menebak dari “rasa” sangat rawan salah." },
 
-  /* ---------- GAMBAR (16 spesimen, 8 pasang asli vs AI) ---------- */
+  /* ---------- GAMBAR (16 spesimen, 8 pasang asli vs AI) ----------
+     Penjelasan ditulis sesuai ISI gambar (bukan nama file). */
+
   /* PEMANDANGAN */
   { type:"gambar", level:3, isAI:false, src:"assets/img/human_scenery.jpg", cue:"Foto astro asli",
-    explain:"FOTO ASLI. Gunung berapi meletus di bawah langit berbintang — noise sensor pada langit malam, jejak lava tak simetris, dan awan yang terekam long-exposure. Ketidaksempurnaan optik ini sulit dipalsukan." },
-  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_scenery.jpg", cue:"Cahaya terlalu sempurna",
-    explain:"AI. Sorotan cahaya vertikal dari puncak gunung terlalu bersih, Milky Way terlalu dramatis sempurna, dan pantulan di danau kurang konsisten dengan sumber cahaya. 'Terlalu indah untuk nyata'." },
+    explain:"FOTO ASLI. Gunung berapi meletus di bawah langit berbintang — noise sensor pada langit malam, jejak lava tak simetris, dan lintasan pijar yang terekam long-exposure. Ketidaksempurnaan optik seperti ini sulit dipalsukan." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_scenery.jpg", cue:"Papan nama tak terbaca",
+    explain:"AI. Jalanan malam bergaya Jepang dengan motion blur — periksa papan-papan neonnya: hurufnya 'seperti tulisan' tapi kacau bila dibaca, dan lampu taksi menampilkan teks tak bermakna. Grain dan blur kamera bisa ditiru; teks yang koheren belum." },
   { type:"gambar", level:3, isAI:false, src:"assets/img/human_scenery__2_.jpg", cue:"Bukit hijau nyata",
-    explain:"FOTO ASLI. Lereng bukit hijau, langit biru polos — gradasi cahaya matahari alami pada rumput, tekstur batu tak berulang, horizon wajar. Kesederhanaan justru menandai keaslian." },
-  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_scenery__2_.jpg", cue:"Tekstur berulang",
-    explain:"AI. Perhatikan pola tekstur berulang dan detail latar yang 'meleleh' di kejauhan — ciri generator yang kesulitan menjaga konsistensi pada area luas yang seragam." },
+    explain:"FOTO ASLI. Lereng pegunungan hijau dengan langit biru polos — gradasi cahaya matahari alami pada rumput, lipatan lereng dan tekstur batu yang tidak berulang. Komposisi sederhana tanpa 'drama' justru sering menandai keaslian." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_scenery__2_.jpg", cue:"Cahaya terlalu sempurna",
+    explain:"AI. Desa pegunungan malam dengan sorot cahaya vertikal menembus langit — sorotnya terlalu bersih dan lurus sempurna, Milky Way terlalu dramatis, dan pantulan di danau tidak konsisten dengan arah sumber cahaya. 'Terlalu indah untuk nyata' adalah sinyal untuk curiga." },
 
-  /* SENI / LUKISAN */
+  /* SENI & JALANAN */
   { type:"gambar", level:3, isAI:true, src:"assets/img/ai_art.jpg", cue:"Sapuan tanpa arah",
-    explain:"AI. Lukisan abstrak meniru gaya ekspresionis, tapi sapuan kuasnya tak punya 'logika tangan' — arah goresan acak tanpa tekanan konsisten, tepi warna terlalu bersih untuk cat minyak sungguhan." },
-  { type:"gambar", level:3, isAI:false, src:"assets/img/human_art.jpg", cue:"Palet cat nyata",
-    explain:"FOTO ASLI. Close-up palet cat pelukis — tumpukan cat berlapis fisik dengan bayangan nyata, tekstur kering-basah bercampur, kilau minyak yang merespons cahaya. Materialitas yang tak bisa direka mesin." },
-  { type:"gambar", level:3, isAI:false, src:"assets/img/human_art__2_.jpg", cue:"Makro autentik",
-    explain:"FOTO ASLI. Detail permukaan cat dengan depth-of-field makro yang wajar — sebagian fokus, sebagian blur alami. Retakan cat mengikuti fisika pengeringan nyata." },
-  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_park.jpg", cue:"Bokeh artifisial",
-    explain:"AI. Meski tampak seperti foto taman, blur latar (bokeh) tidak konsisten dengan jarak, dan dedaunan detailnya 'berulang'. Generator sering salah mensimulasikan optik lensa." },
+    explain:"AI. Lukisan abstrak meniru gaya ekspresionis — tapi sapuan kuasnya tak punya 'logika tangan': arah goresan acak tanpa tekanan yang konsisten, dan tepi warna terlalu rapi untuk cat minyak sungguhan di kanvas." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_art.jpg", cue:"Jejak berlapis nyata",
+    explain:"FOTO ASLI. Van penuh grafiti di sudut jalan — coretan bertumpuk dari banyak tangan selama bertahun-tahun, stiker mengelupas, rambu jalan dengan teks yang benar-benar terbaca. Akumulasi sejarah visual seperti ini belum bisa direka generator secara koheren." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_art__2_.jpg", cue:"Materialitas cat",
+    explain:"FOTO ASLI. Close-up palet pelukis — gumpalan cat bertumpuk secara fisik dengan bayangan nyata, campuran tekstur kering-basah, dan kilau minyak yang merespons arah cahaya. Depth-of-field makronya juga wajar: sebagian fokus, sebagian blur alami." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_park.jpg", cue:"Detail kota janggal",
+    explain:"AI. Taman kota bergaya foto stok — sekilas meyakinkan, tapi periksa papan tokonya: teks generik yang 'hampir benar', sampah tersebar terlalu merata seperti ditata, dan sosok-sosok pejalan yang postur serta bayangannya sedikit meleset." },
 
-  /* MESIN / TEKNOLOGI */
-  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_machine.jpg", cue:"Teks & angka kacau",
-    explain:"AI. Mesin retro rumit dengan teknisi — lihat teks pada label dan angka pada dial: kabur, tak terbaca, 'seperti tulisan'. Teks kacau adalah petunjuk citra sintetis paling andal." },
-  { type:"gambar", level:3, isAI:false, src:"assets/img/human_machine.jpg", cue:"Foto produk nyata",
-    explain:"FOTO ASLI. Meja kerja dengan perangkat — pantulan cahaya konsisten pada layar, bayangan sesuai satu sumber cahaya, tekstur (kayu, kain, logam) stabil di seluruh frame." },
-  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_machine__2_.jpg", cue:"Geometri mustahil",
-    explain:"AI. Setup gawai di meja — periksa detail 'hampir benar': tepi perangkat menyatu aneh, port/kabel tidak logis, permukaan terlalu mulus. Konsistensi geometri adalah kelemahan AI." },
-  { type:"gambar", level:3, isAI:false, src:"assets/img/human_park.jpg", cue:"Motor trail nyata",
-    explain:"FOTO ASLI. Close-up mesin motor trail berlumpur — cipratan lumpur acak, karat dan goresan tak sengaja, tetesan air pada logam. Keausan tak beraturan menandakan objek nyata." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_park.jpg", cue:"Komposisi biasa yang jujur",
+    explain:"FOTO ASLI. Bangku taman di sore hari — cahaya menembus dedaunan membentuk bayangan berbintik yang konsisten, cat bangku mengelupas wajar, dan tak ada satu elemen pun yang 'dipamerkan'. Foto asli sering biasa-biasa saja; citra AI cenderung selalu ingin tampak menarik." },
 
-  /* MANUSIA / WAJAH */
+  /* MESIN & TEKNOLOGI */
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_machine__2_.jpg", cue:"Teks & angka kacau",
+    explain:"AI. Mesin retro rumit dengan seorang teknisi — lihat teks pada label dan angka pada dial: kabur, tak terbaca, 'seperti tulisan'. Kerumitan mekanisnya juga tidak fungsional bila ditelusuri: gir dan rantai tak benar-benar terhubung logis. Teks kacau adalah petunjuk citra sintetis paling andal." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_machine.jpg", cue:"Keausan tak beraturan",
+    explain:"FOTO ASLI. Close-up mesin motor trail berlumpur — cipratan lumpur yang acak, goresan dan karat di tempat yang tidak sengaja, tetesan air di logam. Keausan yang tidak beraturan seperti ini adalah jejak pemakaian nyata, bukan tekstur yang digenerate." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_machine.jpg", cue:"Detail produk 'hampir benar'",
+    explain:"AI. Meja kerja rapi penuh produk Apple — gayanya foto produk profesional, tapi periksa detailnya: tampilan jam pada smartwatch tidak cocok dengan antarmuka asli mana pun, teks di layar ponsel kabur tak bermakna, dan proporsi perangkat sedikit 'meleset'. AI meniru estetika, bukan spesifikasi." },
+
+  /* MANUSIA & AKTIVITAS */
   { type:"gambar", level:3, isAI:true, src:"assets/img/ai_human.jpg", cue:"Kulit terlalu mulus",
-    explain:"AI. Potret pria memegang ikan di tepi sungai — kulit terlalu mulus dan merata, detail manik/aksesori tak logis bila ditelusuri, latar desa 'meleleh'. Wajah AI kini meyakinkan; periksa tangan dan latar." },
-  { type:"gambar", level:3, isAI:false, src:"assets/img/human_human.jpg", cue:"Kelas nyata",
-    explain:"FOTO ASLI. Mahasiswa berkolaborasi di kelas — pori kulit, refleksi kacamata yang benar, teks pada layar/papan yang terbaca. Kedalaman ruang dan pencahayaan konsisten." },
-  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_human__2_.jpg", cue:"Senyum & rambut",
-    explain:"AI. Dua pria tersenyum di taman — waspadai gigi terlalu seragam, helai rambut yang menyatu tak wajar, kilau kulit berlebihan. Simetri senyum yang sempurna sering menandai wajah sintetis." },
+    explain:"AI. Potret pria tua tersenyum memegang ikan di tepi sungai — kulit terlalu mulus dan merata untuk usianya, pola manik pada aksesori tidak konsisten bila ditelusuri, dan sisik ikan terlalu seragam. Wajah AI kini sangat meyakinkan; periksa tekstur dan aksesori." },
+  { type:"gambar", level:3, isAI:true, src:"assets/img/ai_human__2_.jpg", cue:"Layar & papan kacau",
+    explain:"AI. Mahasiswa berdiskusi di kelas bergaya foto stok — komposisinya 'terlalu sempurna' khas stock photo, dan petunjuk utamanya: tulisan di papan, slide proyektor, dan layar laptop semuanya huruf kacau yang tak bisa dibaca. Latar yang penuh teks adalah titik lemah generator." },
+  { type:"gambar", level:3, isAI:false, src:"assets/img/human_human.jpg", cue:"Ekspresi candid",
+    explain:"FOTO ASLI. Dua pria paruh baya tertawa di bawah sinar matahari — ekspresi asimetris di tengah gerakan (satu memicingkan mata), kilap keringat, tekstur kulit dan gigi yang tidak seragam. Ketidaksempurnaan candid seperti ini sangat sulit disintesis meyakinkan." },
   { type:"gambar", level:3, isAI:false, src:"assets/img/human_human__2_.jpg", cue:"Perpustakaan nyata",
-    explain:"FOTO ASLI. Tiga pelajar di perpustakaan — ekspresi mikro natural (satu fokus, satu bicara), judul buku di rak terbaca, bayangan tubuh konsisten. Interaksi spontan sulit dipalsukan." },
+    explain:"FOTO ASLI. Tiga pelajar menatap laptop di perpustakaan — antarmuka situs di layar benar-benar terbaca, judul buku di rak koheren, dan ekspresi tiap orang berbeda arah fokusnya. Detail lingkungan yang konsisten menandai foto sungguhan." },
 ];
 
-/* Konfigurasi mode Karir */
+/* Konfigurasi mode Karir — 10 level + 1 final (peta planet) */
 const CAREER = [
-  { name:"MISI 1 — TEKS DASAR",   filter:s=>s.type==="teks"&&s.level===1, n:4, pass:3,
-    brief:"Empat spesimen teks tingkat dasar. Lulus: minimal 3 benar." },
-  { name:"MISI 2 — ZONA JEBAKAN", filter:s=>s.type==="teks"&&s.level===2, n:6, pass:4,
-    brief:"Enam spesimen — termasuk jebakan. Lulus: minimal 4 benar." },
-  { name:"MISI 3 — FORENSIK VISUAL", filter:s=>s.type==="gambar", n:8, pass:5,
-    brief:"Delapan spesimen gambar. Lulus: minimal 5 benar." }
+  { name:"LEVEL 1 — SINYAL PERTAMA",  n:4,  pass:3, filter:s=>s.type==="teks"&&s.level===1,
+    brief:"Empat teks dasar. Lulus: 3 benar." },
+  { name:"LEVEL 2 — POLA DASAR",      n:5,  pass:4, filter:s=>s.type==="teks"&&s.level===1,
+    brief:"Lima teks dasar. Lulus: 4 benar." },
+  { name:"LEVEL 3 — GELOMBANG CAMPUR",n:5,  pass:4, filter:s=>s.type==="teks",
+    brief:"Lima teks, mudah dan sulit tercampur. Lulus: 4 benar." },
+  { name:"LEVEL 4 — KABUT TIPIS",     n:5,  pass:4, filter:s=>s.type==="teks"&&s.level===2,
+    brief:"Lima teks tingkat sulit. Lulus: 4 benar." },
+  { name:"LEVEL 5 — MATA FORENSIK",   n:4,  pass:3, filter:s=>s.type==="gambar",
+    brief:"Empat spesimen gambar pertama. Lulus: 3 benar." },
+  { name:"LEVEL 6 — ZONA JEBAKAN",    n:5,  pass:4, filter:s=>s.type==="teks"&&s.trap===true,
+    brief:"Lima jebakan murni. Lulus: 4 benar." },
+  { name:"LEVEL 7 — FORENSIK VISUAL", n:6,  pass:4, filter:s=>s.type==="gambar",
+    brief:"Enam spesimen gambar. Lulus: 4 benar." },
+  { name:"LEVEL 8 — DUA DUNIA",       n:6,  pass:4, filter:s=>true,
+    brief:"Teks dan gambar tercampur. Lulus: 4 benar." },
+  { name:"LEVEL 9 — BADAI SUNYI",     n:8,  pass:6, filter:s=>s.type==="teks"&&s.level===2,
+    brief:"Delapan teks sulit beruntun. Lulus: 6 benar." },
+  { name:"LEVEL 10 — GERBANG ARSIP",  n:8,  pass:6, filter:s=>true,
+    brief:"Delapan spesimen campuran. Lulus: 6 benar." },
+  { name:"FINAL — INTI ARSIP",        n:12, pass:9, filter:s=>true, final:true,
+    brief:"Dua belas spesimen. Lulus: 9 benar. Sesuatu menunggumu di inti." },
 ];
 const RANKS = ["KADET","ANALIS","INSPEKTUR","FORENSIKAWAN"];

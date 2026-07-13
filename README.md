@@ -159,9 +159,9 @@ pembagian peran ada di sana sebagai HTML biasa.
   hapus data
 - Papan skor lokal (localStorage) — papan skor **global** butuh backend;
   opsi gratis bila ingin upgrade: Cloudflare Workers KV, PocketBase, Firebase.
-- Multiplayer online real-time tidak mungkin dari static hosting; jalurnya
-  bila ingin lanjut: PeerJS (WebRTC) → backend WebSocket ringan. Mode Tanding
-  hot-seat adalah solusi tanpa server yang sudah jalan.
+- **Tanding Online (P2P)** — sudah jalan tanpa server: menu TANDING →
+  Buat Room / Gabung dengan kode 4 huruf. Koneksi WebRTC langsung
+  antar-perangkat via broker publik PeerJS.
 
 ## 7. Twist Ending — `js/ending.js`
 
@@ -183,6 +183,57 @@ pemulihan → pengungkapan bahwa seluruh arsip (termasuk yang berlabel
   jalankan `playTwistEnding(()=>show(hub))`. Untuk menguji pemicu Infinite
   sungguhan tanpa 100 soal, ubah sementara angka `100` pada
   `answeredTotal>=100` di `js/game.js` menjadi mis. `5`.
+
+
+## Multiplayer Online — cara kerja & hosting gratis
+
+### Yang sudah jalan sekarang: duel P2P (tanpa server)
+
+Menu **TANDING** kini membuka pilihan arena: 1 perangkat (bergantian) atau
+**online**. Cara main online:
+
+1. Kedua pemain membuka situs (GitHub Pages) di perangkat masing-masing.
+2. Pemain A menekan **BUAT ROOM** → muncul kode 4 huruf (mis. `K7QX`).
+3. Pemain B mengetik kode itu → **GABUNG**.
+4. Keduanya memainkan paket & urutan soal yang identik; progres lawan
+   tampil live di chip atas; hasil akhir dibandingkan otomatis.
+
+Teknologinya **WebRTC via PeerJS**: kedua browser terhubung *langsung*
+satu sama lain (peer-to-peer). Satu-satunya pihak ketiga adalah broker
+publik PeerJS (gratis, hanya untuk "berkenalan" — data permainan tidak
+lewat sana). Karena itu fitur ini jalan dari hosting statis murni,
+tanpa deploy server, tanpa akun tambahan.
+
+Keterbatasan yang jujur: (1) butuh saling berbagi kode room lewat chat/
+lisan — tidak ada daftar "siapa yang online"; (2) segelintir jaringan
+kampus/kantor yang sangat ketat bisa memblokir WebRTC; (3) broker publik
+PeerJS adalah layanan komunitas — untuk produksi serius sebaiknya
+self-host PeerServer.
+
+### Upgrade berikutnya: lobby "siapa yang online" (butuh server kecil)
+
+Untuk matchmaking otomatis (lihat daftar pemain online → klik untuk
+menantang), perlu satu server WebSocket kecil. Kodenya SUDAH disiapkan
+di `server/lobby.ts` (~80 baris) lengkap dengan protokolnya.
+
+**Rekomendasi hosting gratis (per pertengahan 2026 — cek ulang syaratnya):**
+
+| Layanan | Cocok untuk | Catatan |
+|---|---|---|
+| **Deno Deploy** | `server/lobby.ts` ini, apa adanya | Paling mudah: login GitHub, tunjuk file, deploy. Free tier longgar, tanpa kartu kredit. WebSocket didukung. |
+| **Cloudflare Workers** | relay WS + Durable Objects | Free tier besar; kode perlu ditulis ulang ke gaya Workers. |
+| **Glitch / Render free** | server Node kecil | Render free tidur saat idle (koneksi WS putus) — kurang ideal untuk lobby. |
+| **PeerServer self-host** | mengganti broker publik PeerJS | Bisa ditumpangkan di layanan Node gratis mana pun. |
+
+Langkah Deno Deploy ada di komentar atas `server/lobby.ts`. Setelah
+server hidup, client tinggal diganti dari PeerJS ke WebSocket lobby —
+struktur pesannya sudah dirancang serupa supaya migrasinya kecil.
+
+### Kenapa tidak papan skor global sekalian?
+
+Server lobby yang sama bisa dipakai menyimpan skor global (tambah
+penyimpanan Deno KV, ±20 baris). Dicatat sebagai pengembangan lanjutan
+di laporan — menunjukkan pemahaman arsitektur tanpa membebani deadline.
 
 ## Etika konten (untuk laporan)
 

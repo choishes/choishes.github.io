@@ -3,7 +3,7 @@
    ================================================================ */
 const $=id=>document.getElementById(id);
 const hub=$("hub"), game=$("game"), end=$("end"), board=$("board"),
-      settings=$("settings"), credits=$("credits");
+      settings=$("settings"), credits=$("credits"), levels=$("levels"), duelSec=$("duel");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 const playable = s => s.type==="teks" || (s.src && s.src.length>0);
@@ -17,26 +17,35 @@ let mode="infinite";        // "karir" | "infinite" | "tanding"
 let deck=[], idx=0, answered=false, busy=false;
 let score=0;                // karir(misi aktif) & infinite
 let lives=3;                // infinite
-let missionIdx=0, careerTotal=0, careerMax=0; // karir
+let currentLevel=0; // karir: level yang sedang dimainkan
+/* Progres karir tersimpan di perangkat */
+const CAREER_KEY="sinyal_career_v1";
+function careerLoad(){
+  try{ const d=JSON.parse(localStorage.getItem(CAREER_KEY)||"{}");
+       return {unlocked:d.unlocked||0, done:d.done||[]}; }
+  catch(e){ return {unlocked:0, done:[]}; }
+}
+function careerSave(pr){ try{ localStorage.setItem(CAREER_KEY, JSON.stringify(pr)); }catch(e){} }
+let careerProg = careerLoad();
 let p1=0, p2=0, turn=1, firstGuess=null;      // tanding
 let bestInfinite=null, rankIdx=0;
 let answeredTotal=0, runTwistShown=false; // pemicu twist ending
 
 /* ================= NAVIGASI LAYAR ================= */
 function show(sec){
-  [hub,game,end,board,settings,credits].forEach(s=>s.classList.add("hidden"));
+  [hub,game,end,board,settings,credits,levels,duelSec].forEach(s=>s.classList.add("hidden"));
   sec.classList.remove("hidden");
   /* menu awal tampil polos tanpa kartu; layar lain memakai kartu */
-  document.querySelector(".card").classList.toggle("bare", sec===hub);
+  document.querySelector(".card").classList.toggle("bare", sec===hub || sec===levels);
 }
 
 /* ================= LOADING SINEMATIK ================= */
 const LOAD_LINES = {
   karir:[
-    "membuka arsip misi terklasifikasi…",
-    "memverifikasi pangkat operator…",
+    "menetapkan koordinat planet…",
+    "__PAKET__",
     "menghubungkan ke sistem AI…",
-    "kalibrasi selesai. selamat bertugas."
+    "pendaratan siap. selamat bertugas."
   ],
   infinite:[
     "membuka saluran tanpa batas…",
@@ -79,7 +88,9 @@ function playLoading(m, extra, done){
 
 /* ================= MULAI MODE ================= */
 function startGame(m){
-  mode=m; sfx.click(); bgmGameStart();
+  mode=m; sfx.click();
+  if(m==="karir"){ renderPlanets(); show(levels); return; } // peta dulu
+  bgmGameStart();
   let extra="";
   if(m==="tanding"){
     currentPaket = PAKET[Math.floor(Math.random()*PAKET.length)];
@@ -88,9 +99,79 @@ function startGame(m){
   playLoading(m, extra, ()=>bootMode(m));
 }
 
+/* ---- PETA PLANET: perjalanan vertikal zigzag ---- */
+function renderPlanets(){
+  const map=$("planetMap"); map.innerHTML="";
+  const W=map.clientWidth || Math.min(560, innerWidth-48);
+  /* pola kiri-kanan tak beraturan (persen lebar), final di tengah */
+  const XS=[26,68,32,72,22,64,35,74,27,61,50];
+  const hues=["#3fe0c5","#9b7bff","#ffc247","#ff5d73","#6fb3ff"];
+  let y=26; const pts=[];
+
+  CAREER.forEach((lv,i)=>{
+    const size = lv.final ? Math.min(128, W*0.34) : Math.round(46 + i*6);
+    const cx = XS[i]/100*W;
+    const cy = y + size/2;
+    pts.push([cx,cy]);
+
+    const node=document.createElement("div");
+    node.className="pnode";
+    node.style.left=(cx-size/2)+"px";
+    node.style.top=y+"px";
+    node.style.width=size+"px";
+
+    const pl=document.createElement("button");
+    pl.style.width=pl.style.height=size+"px";
+    pl.style.fontSize=(lv.final?26:13+i*0.9)+"px";
+    const hue=hues[i%hues.length];
+    pl.style.background="radial-gradient(circle at 30% 28%, "+hue+"66, #0b111c 72%)";
+    const done=!!careerProg.done[i];
+    const open=i<=careerProg.unlocked;
+    pl.className="planet"+(lv.final?" final":"")+(done?" done":open?" open":" locked");
+    pl.innerHTML="<span>"+(lv.final?"★":(i+1))+"</span>";
+    pl.setAttribute("aria-label",lv.name);
+    pl.onclick = open ? ()=>startLevel(i) : ()=>{ beep(160,.1,"sawtooth",.03); };
+
+    const lb=document.createElement("div");
+    lb.className="plabel"; lb.style.width=Math.max(size,110)+"px";
+    lb.style.marginLeft=((size-Math.max(size,110))/2)+"px";
+    lb.textContent=lv.name.includes("—")?lv.name.split("—")[1].trim():lv.name;
+
+    node.appendChild(pl); node.appendChild(lb);
+    map.appendChild(node);
+    y += size + 78;
+  });
+  map.style.height=(y+10)+"px";
+
+  /* rute putus-putus menembus planet */
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("class","ppath");
+  svg.setAttribute("width",W); svg.setAttribute("height",y+10);
+  const poly=document.createElementNS("http://www.w3.org/2000/svg","polyline");
+  poly.setAttribute("points", pts.map(p=>p[0]+","+p[1]).join(" "));
+  svg.appendChild(poly);
+  map.insertBefore(svg, map.firstChild);
+}
+let _pmResize=null;
+window.addEventListener("resize",()=>{
+  clearTimeout(_pmResize);
+  _pmResize=setTimeout(()=>{ if(!levels.classList.contains("hidden")) renderPlanets(); },200);
+});
+
+function startLevel(i){
+  currentLevel=i; sfx.click(); bgmGameStart();
+  playLoading("karir", CAREER[i].name, ()=>{
+    const lv=CAREER[i];
+    let pool=FULL_POOL.filter(lv.filter);
+    deck=shuffle(pool).slice(0, Math.min(lv.n, pool.length));
+    idx=0; score=0;
+    setupBoardUI({track:true, lives:false, turn:false, chip:lv.name});
+    show(game); render();
+  });
+}
+
 let currentPaket=null;
 function bootMode(m){
-  if(m==="karir"){ missionIdx=0; careerTotal=0; careerMax=0; startMission(); return; }
   if(m==="infinite"){
     deck=shuffle(FULL_POOL.filter(playable)); idx=0; score=0; lives=3;
     answeredTotal=0; runTwistShown=false;
@@ -105,14 +186,6 @@ function bootMode(m){
   show(game); render();
 }
 
-function startMission(){
-  const m=CAREER[missionIdx];
-  let pool=FULL_POOL.filter(m.filter);
-  deck=shuffle(pool).slice(0, Math.min(m.n, pool.length));
-  idx=0; score=0; careerMax+=deck.length;
-  setupBoardUI({track:true, lives:false, turn:false, chip:m.name});
-  show(game); render();
-}
 
 function setupBoardUI(o){
   $("modechip").textContent=o.chip;
@@ -158,6 +231,8 @@ function updateHeader(){
     $("liveschip").textContent="❤".repeat(lives)+"♡".repeat(3-lives);
   }else if(mode==="tanding"){
     $("count").innerHTML="P1 <b>"+p1+"</b> — <b>"+p2+"</b> P2";
+  }else if(mode==="online"){
+    $("count").innerHTML="SKORMU <b>"+score+"</b>";
   }else{
     $("count").innerHTML="MISI SKOR <b>"+score+"</b>";
   }
@@ -221,6 +296,7 @@ function choose(guessAI){
     }else{
       const correct=(guessAI===r.isAI);
       if(mode==="infinite") answeredTotal++;
+      if(mode==="online" && typeof onlineOnAnswer==="function") setTimeout(()=>onlineOnAnswer(correct),0);
       if(correct){score++; sfx.ok();}
       else{
         sfx.no();
@@ -243,7 +319,7 @@ function choose(guessAI){
     const gameOver = (mode==="infinite" && lives<=0);
     const lastRound = (mode!=="infinite" && idx===deck.length-1);
     $("next").textContent = gameOver ? "Lihat Hasil →"
-      : lastRound ? (mode==="karir" ? "Selesaikan Misi →" : "Lihat Hasil →")
+      : lastRound ? "Lihat Hasil →"
       : "Spesimen Berikutnya →";
     $("next").focus();
   }, delay);
@@ -269,32 +345,23 @@ function next(){
   idx++;
   if(idx<deck.length){ render(); return; }
 
-  if(mode==="tanding"){ endTanding(); return; }
-  /* karir: misi selesai */
-  careerTotal+=score;
-  const m=CAREER[missionIdx];
-  if(score>=m.pass){
-    missionIdx++;
-    if(missionIdx>=CAREER.length){ playTwistEnding(()=>endCareer(true)); }
-    else{ briefNextMission(); }
-  }else{
-    endCareer(false);
+  if(mode==="online"){
+    if(typeof onlineLocalDone==="function") onlineLocalDone();
+    return;
   }
+  if(mode==="tanding"){ endTanding(); return; }
+  /* karir: level selesai */
+  const lv=CAREER[currentLevel];
+  const passed = score>=lv.pass;
+  if(passed){
+    careerProg.done[currentLevel]=true;
+    careerProg.unlocked=Math.max(careerProg.unlocked, Math.min(currentLevel+1, CAREER.length-1));
+    careerSave(careerProg);
+  }
+  if(passed && lv.final){ playTwistEnding(()=>endCareerFinal()); return; }
+  showLevelResult(passed, lv);
 }
 
-function briefNextMission(){
-  const m=CAREER[missionIdx];
-  show(end);
-  $("endmode").textContent="MISI LULUS ✓";
-  $("finalScore").textContent=score; $("finalTotal").textContent="/"+deck.length;
-  $("coinbar").classList.add("hidden");
-  $("namebox").classList.add("hidden");
-  $("verdictMsg").textContent="Lanjut ke "+m.name+". "+m.brief;
-  $("findingText").innerHTML="Tingkat kesulitan naik. Perhatikan pola yang sudah kau pelajari — dan jangan terlalu percaya pada pola itu.";
-  $("restart").textContent="Mulai "+m.name.split("—")[0].trim()+" →";
-  $("restart").onclick=()=>{sfx.click(); startMission();};
-  sfx.done();
-}
 
 /* ================= LAYAR AKHIR ================= */
 function endScreenBase(title, sc, total, msg, finding, showCoin, showName){
@@ -315,6 +382,8 @@ function endScreenBase(title, sc, total, msg, finding, showCoin, showName){
   if(showName){ $("nameinput").value = (typeof PLAYER!=="undefined" && PLAYER) ? PLAYER : ""; }
   $("restart").textContent="Main Lagi";
   $("restart").onclick=()=>{sfx.click(); startGame(mode);};
+  $("tolab").textContent="Kembali ke Lab";
+  $("tolab").onclick=()=>{sfx.click(); bgmGameStop(); show(hub);};
 }
 
 function endInfinite(){
@@ -340,26 +409,43 @@ function endTanding(){
   pendingLB=null;
 }
 
-function endCareer(passed){
-  if(passed){
-    rankIdx=Math.min(RANKS.length-1, 1+Math.floor(careerTotal/careerMax*(RANKS.length-1)));
-    $("rank-label").textContent="Pangkat: "+RANKS[rankIdx];
-    sfx.done();
-    endScreenBase("KARIR TUNTAS — PANGKAT: "+RANKS[rankIdx], careerTotal, careerMax,
-      "Tiga misi selesai. Pangkatmu: "+RANKS[rankIdx]+".",
-      "Semakin tinggi misinya, semakin kabur batas manusia–mesin. Jebakan di Misi 2 dan spesimen visual di Misi 3 menunjukkan hal yang sama: <b>keahlian menunda kekalahan, tapi tidak membatalkannya.</b> Verifikasi sumber tetap senjata utama.",
-      true, true);
-    pendingLB={score:careerTotal, mode:"KARIR"};
-  }else{
-    sfx.lose();
-    endScreenBase("MISI GAGAL", score, deck.length,
-      "Skor di bawah ambang lulus ("+CAREER[missionIdx].pass+"). Karir forensik berhenti di sini — untuk kali ini.",
-      "Kegagalan di lab lebih murah daripada kegagalan di dunia nyata, tempat salah menilai keaslian konten bisa berarti menyebarkan hoaks. <b>Ulangi misinya; pola butuh latihan.</b>",
-      true, false);
-    pendingLB=null;
-    $("restart").textContent="Ulangi Misi";
-    $("restart").onclick=()=>{sfx.click(); startMission();};
-  }
+function showLevelResult(passed, lv){
+  if(passed) sfx.done(); else sfx.lose();
+  const isLastBeforeFinal = currentLevel===CAREER.length-2;
+  endScreenBase(
+    passed ? lv.name+" ✓ TUNTAS" : lv.name+" — GAGAL",
+    score, deck.length,
+    passed
+      ? (isLastBeforeFinal
+          ? "Gerbang terbuka. Planet terbesar menunggumu — dan sesuatu terasa tidak beres di inti arsip."
+          : "Planet ditaklukkan. Koordinat planet berikutnya telah terbuka di peta.")
+      : "Skor di bawah ambang lulus ("+lv.pass+"). Planet ini belum menyerah — dan kamu juga jangan.",
+    passed
+      ? "Tiap planet menaikkan kabutnya: pola yang berhasil di level sebelumnya belum tentu berlaku di level berikutnya. Itulah sifat konten sintetis — <b>ia berevolusi lebih cepat dari intuisi.</b>"
+      : "Kegagalan di lab lebih murah daripada di dunia nyata, tempat salah menilai keaslian bisa berarti ikut menyebarkan hoaks. <b>Baca lagi penjelasan tiap spesimen; pola butuh latihan.</b>",
+    true, false);
+  const nextExists = passed && currentLevel<CAREER.length-1;
+  $("restart").textContent = passed ? (nextExists?"Planet Berikutnya →":"Peta Level") : "Ulangi Level";
+  $("restart").onclick = ()=>{ sfx.click();
+    if(!passed){ startLevel(currentLevel); }
+    else if(nextExists){ startLevel(currentLevel+1); }
+    else { renderPlanets(); show(levels); }
+  };
+  $("tolab").textContent="Peta Level";
+  $("tolab").onclick=()=>{ sfx.click(); renderPlanets(); show(levels); };
+}
+
+function endCareerFinal(){
+  rankIdx=RANKS.length-1;
+  sfx.done();
+  const total=CAREER.length;
+  endScreenBase("EKSPEDISI TUNTAS — PANGKAT: "+RANKS[rankIdx], score, deck.length,
+    "Sebelas planet ditaklukkan sampai Inti Arsip. Pangkatmu: "+RANKS[rankIdx]+".",
+    "Semakin dekat ke inti, semakin kabur batas manusia–mesin — dan di inti, batas itu runtuh sama sekali. <b>Keahlian menunda kekalahan, tapi verifikasi sumber yang membatalkannya.</b>",
+    true, true);
+  pendingLB={score:score, mode:"KARIR"};
+  $("tolab").textContent="Kembali ke Lab";
+  $("tolab").onclick=()=>{ sfx.click(); bgmGameStop(); show(hub); };
 }
 
 /* ================= LEADERBOARD ================= */
@@ -374,12 +460,16 @@ $("saveScore").addEventListener("click",()=>{
 function openBoard(){ lbRender($("lbList")); show(board); }
 
 /* ================= EVENTS ================= */
-document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>startGame(m.dataset.start)));
+document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>{ if(m.dataset.start==="tanding"){ sfx.click(); show(duelSec); } else startGame(m.dataset.start); }));
 $("btnHuman").addEventListener("click",()=>choose(false));
 $("btnAI").addEventListener("click",()=>choose(true));
 $("next").addEventListener("click",next);
-$("tolab").addEventListener("click",()=>{sfx.click(); bgmGameStop(); show(hub);});
-$("quit").addEventListener("click",()=>{sfx.click(); bgmGameStop(); show(hub);});
+$("tolab").onclick=()=>{sfx.click(); bgmGameStop(); show(hub);}; // default; layar level menimpanya
+$("quit").addEventListener("click",()=>{
+  sfx.click();
+  if(mode==="online" && typeof onlineAbort==="function") onlineAbort();
+  bgmGameStop(); show(hub);
+});
 $("openBoard").addEventListener("click",()=>{sfx.click(); openBoard();});
 document.querySelectorAll(".backhub").forEach(b=>b.addEventListener("click",()=>{sfx.click(); show(hub);}));
 
@@ -422,6 +512,17 @@ $("wipeData").addEventListener("click",()=>{
   try{ localStorage.removeItem(LB_KEY); localStorage.removeItem(PLAYER_KEY); }catch(e){}
   location.reload();
 });
+
+/* progres karir di menu */
+function refreshCareerChip(){
+  const el=document.querySelector('.mitem[data-start="karir"] .mi-desc');
+  if(!el) return;
+  const doneCount=careerProg.done.filter(Boolean).length;
+  el.textContent = doneCount>0 ? "peta planet · "+doneCount+"/"+CAREER.length+" ditaklukkan" : "peta planet · 11 level";
+}
+refreshCareerChip();
+const _careerSaveOrig=careerSave;
+careerSave=function(pr){ _careerSaveOrig(pr); refreshCareerChip(); };
 
 document.addEventListener("keydown",e=>{
   if(game.classList.contains("hidden")){

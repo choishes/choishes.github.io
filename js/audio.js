@@ -47,8 +47,38 @@ const trackIntro = new Audio("assets/bgm/The_Third_Moon.mp3");
 trackIntro.loop = true; trackIntro.preload = "auto";
 const trackGame  = new Audio("assets/bgm/Cinematic_Retro_Synth_Progression.mp3");
 trackGame.loop = true; trackGame.preload = "auto";
-const trackTwist = new Audio("assets/bgm/Observing_the_Glass_Moon.mp3");
-trackTwist.loop = true; trackTwist.preload = "auto";
+/* Musik twist memakai DUA instans yang saling crossfade di ujung lagu,
+   sehingga loop terdengar mulus tanpa jeda/putus. */
+const TW_SRC="assets/bgm/Observing_the_Glass_Moon.mp3";
+const TW_XFADE=2200; // ms panjang crossfade
+const twistLoop=(function(){
+  const a=new Audio(TW_SRC), bAlt=new Audio(TW_SRC);
+  [a,bAlt].forEach(x=>{x.preload="auto"; x.loop=false;});
+  let cur=a, nxt=bAlt, on=false, watch=null, swapping=false;
+  function tick(){
+    if(!on || swapping) return;
+    const d=cur.duration;
+    if(d && !isNaN(d) && cur.currentTime > d - TW_XFADE/1000){
+      swapping=true;
+      nxt.currentTime=0; nxt.volume=0;
+      nxt.play().then(()=>{
+        fade(nxt,bgmVol,TW_XFADE); fade(cur,0,TW_XFADE);
+        setTimeout(()=>{ const t=cur; cur=nxt; nxt=t; swapping=false; }, TW_XFADE+80);
+      }).catch(()=>{ swapping=false; });
+    }
+  }
+  return {
+    start(){
+      on=true; swapping=false;
+      cur.currentTime=0; cur.volume=0;
+      cur.play().then(()=>fade(cur,bgmVol,300)).catch(()=>{});
+      clearInterval(watch); watch=setInterval(tick,150);
+    },
+    stop(){ on=false; clearInterval(watch); fade(cur,0,800); fade(nxt,0,800); },
+    setVolume(v){ if(on){ if(!cur.paused && !swapping) cur.volume=v; } },
+    get playing(){ return on; }
+  };
+})();
 let ambient = null; // fallback generatif untuk jalur game
 
 function fade(el, to, ms=700){
@@ -114,15 +144,14 @@ function bgmGameStop(){
 function bgmTwistStart(){
   currentCtx="twist";
   if(!bgmOn) return;
-  trackTwist.volume=0; trackTwist.currentTime=0;
-  trackTwist.play().then(()=>fade(trackTwist,bgmVol,300)).catch(()=>{}); // fade singkat: lagunya sendiri sudah fade-in
+  twistLoop.start(); // crossfade-loop, tanpa jeda di titik ulang
 }
 function bgmTwistStop(){
   if(currentCtx==="twist") currentCtx=null;
-  fade(trackTwist,0,800);
+  twistLoop.stop();
 }
 
-function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); fade(trackTwist,0,300); stopAmbient(); }
+function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); twistLoop.stop(); stopAmbient(); }
 
 /* ---------- API untuk layar Pengaturan ---------- */
 let bgmVol = 0.35; // 0..1, dikontrol slider
@@ -131,13 +160,13 @@ function setBgmVolume(v){
   bgmVol = Math.max(0, Math.min(1, v));
   if(!trackIntro.paused) trackIntro.volume = bgmVol;
   if(!trackGame.paused)  trackGame.volume  = bgmVol;
-  if(!trackTwist.paused) trackTwist.volume = bgmVol;
+  twistLoop.setVolume(bgmVol);
 }
 function setBgm(on){
   bgmOn = on;
   if(!on){ bgmStopAll(); return; }
   if(currentCtx==="intro") { trackIntro.volume=0; trackIntro.play().then(()=>fade(trackIntro,bgmVol,600)).catch(()=>{}); }
-  else if(currentCtx==="twist"){ trackTwist.volume=0; trackTwist.play().then(()=>fade(trackTwist,bgmVol,600)).catch(()=>{}); }
+  else if(currentCtx==="twist"){ twistLoop.start(); }
   else if(currentCtx==="game"){ trackGame.volume=0; trackGame.play().then(()=>fade(trackGame,bgmVol,600)).catch(()=>startAmbient()); }
 }
 function setSfx(on){ sfxOn = on; if(on) sfx.click(); }

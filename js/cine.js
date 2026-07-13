@@ -108,7 +108,7 @@ async function runCinematic(){
   story.classList.add("hidden");
 
   /* --- FASE 3: NAMA / MAJU --- */
-  if(returning){ await flashMaju(PLAYER); finishCinematic(); }
+  if(returning){ await flashMaju(PLAYER); await playLaunch(); finishCinematic(); }
   else showNameStage();
 }
 
@@ -126,6 +126,7 @@ async function submitName(){
   document.getElementById("cname").classList.add("hidden");
   sfx.ok();
   await flashMaju(n);
+  await playLaunch();
   finishCinematic();
 }
 
@@ -140,6 +141,70 @@ async function flashMaju(n){
   mj.classList.add("hidden"); mj.classList.remove("in");
 }
 
+/* ---- PELUNCURAN ROKET: warp kokpit + gemuruh + fade cahaya ---- */
+function startWarp(cv){
+  const c2=cv.getContext("2d");
+  cv.width=cv.clientWidth||innerWidth; cv.height=cv.clientHeight||innerHeight;
+  const mk=()=>({a:Math.random()*Math.PI*2, r:Math.random()*46+6, sp:Math.random()*1.6+.5});
+  const S=Array.from({length:170},mk);
+  let speed=1, run=true;
+  (function f(){
+    if(!run) return;
+    const W=cv.width,H=cv.height,CX=W/2,CY=H*0.55,MAX=Math.hypot(W,H)/2;
+    c2.fillStyle="rgba(3,6,10,.38)"; c2.fillRect(0,0,W,H);
+    speed*=1.035;
+    for(const s of S){
+      const r0=s.r; s.r+=s.sp*speed;
+      const x0=CX+Math.cos(s.a)*r0, y0=CY+Math.sin(s.a)*r0;
+      const x1=CX+Math.cos(s.a)*s.r, y1=CY+Math.sin(s.a)*s.r;
+      c2.strokeStyle="rgba(220,240,255,"+Math.min(1,s.r/220)+")";
+      c2.lineWidth=Math.min(2.6, s.r/160+.4);
+      c2.beginPath(); c2.moveTo(x0,y0); c2.lineTo(x1,y1); c2.stroke();
+      if(s.r>MAX) Object.assign(s,mk());
+    }
+    requestAnimationFrame(f);
+  })();
+  return ()=>{run=false;};
+}
+
+function launchRumble(sec){
+  if(!sfxOn) return;
+  try{
+    const c=ctx();
+    const o=c.createOscillator(); o.type="sawtooth";
+    o.frequency.setValueAtTime(36,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(130,c.currentTime+sec);
+    const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=240;
+    const g=c.createGain();
+    g.gain.setValueAtTime(0.0001,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.09,c.currentTime+0.35);
+    g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+sec);
+    o.connect(lp); lp.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime+sec);
+    const buf=c.createBuffer(1,Math.floor(c.sampleRate*sec),c.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(i/d.length);
+    const n=c.createBufferSource(); n.buffer=buf;
+    const bp=c.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=850;
+    const ng=c.createGain(); ng.gain.value=0.05;
+    n.connect(bp); bp.connect(ng); ng.connect(c.destination); n.start();
+  }catch(e){}
+}
+
+async function playLaunch(){
+  if(cineReduced) return;
+  const st=document.getElementById("claunch");
+  st.classList.remove("hidden");
+  const stopWarp=startWarp(document.getElementById("warp"));
+  launchRumble(2.9);
+  await wait(2150);
+  document.getElementById("whiteout").style.opacity="1"; // cahaya menelan kokpit
+  beep(1200,.5,"sine",.05);
+  await wait(560);
+  stopWarp();
+  st.classList.add("hidden");
+}
+
 function finishCinematic(){
   skipRequested=true;
   bgmIntroStop(); // fade-out Cold Light of Dawn
@@ -147,6 +212,7 @@ function finishCinematic(){
   setTimeout(()=>{
     cine.classList.add("hidden");
     document.body.classList.remove("noscroll");
+    document.getElementById("whiteout").style.opacity="0";
     revealHub();
   }, cineReduced?0:700);
 }

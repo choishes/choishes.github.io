@@ -44,6 +44,14 @@
   <div id="cmaju" class="cstage hidden">
     <div id="cmajutext" class="cmaju">MAJU!</div>
   </div>
+
+  <!-- fase peluncuran roket ke void -->
+  <div id="claunch" class="cstage hidden">
+    <canvas id="warp"></canvas>
+    <div class="cockpitv"></div>
+    <div class="hudlaunch">SISTEM PELUNCURAN AKTIF · MENUJU LAB</div>
+  </div>
+  <div id="whiteout"></div>
 </div>
 
 <!-- layar loading sinematik antar-mode -->
@@ -132,6 +140,41 @@
           </button>
         </nav>
         <div class="hidden" id="rank-label"></div>
+      </section>
+
+      <!-- ============ PETA LEVEL KARIR ============ -->
+      <section id="levels" class="center hidden">
+        <div class="eyebrow">MODE KARIR — PETA EKSPEDISI</div>
+        <p class="sub" style="margin-bottom:6px">Sepuluh planet menuju <b style="color:#ffc247">Inti Arsip</b>. Taklukkan satu demi satu.</p>
+        <div class="planetmap" id="planetMap"></div>
+        <div class="plegend"><span class="lg done"></span> selesai &nbsp; <span class="lg open"></span> terbuka &nbsp; <span class="lg lock"></span> terkunci</div>
+        <div class="endbtns" style="margin-top:18px">
+          <button class="cta ghost backhub">← Kembali</button>
+        </div>
+      </section>
+
+      <!-- ============ MODE TANDING (pilih arena) ============ -->
+      <section id="duel" class="center hidden">
+        <div class="eyebrow">MODE TANDING — PILIH ARENA</div>
+        <div id="duelMenu" style="margin-top:18px">
+          <button class="cta wide" id="duelLocal">🎮 &nbsp;1 PERANGKAT — BERGANTIAN</button>
+          <div class="duelsep">— ATAU ONLINE (P2P) —</div>
+          <button class="cta wide ghost" id="duelHost">📡 &nbsp;BUAT ROOM</button>
+          <div class="namerow" style="margin-top:12px; max-width:340px; margin-left:auto; margin-right:auto">
+            <input id="joinCode" maxlength="4" placeholder="KODE ROOM" autocomplete="off" style="text-transform:uppercase">
+            <button class="cta small" id="duelJoin">GABUNG</button>
+          </div>
+          <p class="duelhint">Online: kamu dan temanmu membuka situs ini di perangkat masing-masing.
+          Satu orang membuat room, satunya memasukkan kode. Koneksi langsung antar-perangkat (PeerJS).</p>
+        </div>
+        <div id="duelWait" class="hidden" style="margin-top:18px">
+          <div class="roomcode" id="roomCode">····</div>
+          <p class="sub" style="margin-bottom:8px">Bagikan kode ini ke lawanmu. Menunggu koneksi…</p>
+          <div class="clog" id="duelStatus">menyiapkan saluran…</div>
+        </div>
+        <div class="endbtns" style="margin-top:22px">
+          <button class="cta ghost backhub" id="duelBack">← Kembali</button>
+        </div>
       </section>
 
       <!-- ============ GAME ============ -->
@@ -292,6 +335,9 @@
 <script src="js/leaderboard.js"></script>
 <script src="js/ending.js"></script>
 <script src="js/cine.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"
+  onerror="var s=document.createElement('script');s.src='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';document.head.appendChild(s)"></script>
 <script src="js/game.js"></script>
+<script src="js/online.js"></script>
 </body>
 </html>
