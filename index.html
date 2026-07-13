@@ -158,14 +158,14 @@
         <div class="eyebrow">MODE TANDING — PILIH ARENA</div>
         <div id="duelMenu" style="margin-top:18px">
           <button class="cta wide" id="duelLocal">🎮 &nbsp;1 PERANGKAT — BERGANTIAN</button>
-          <div class="duelsep">— ATAU ONLINE (P2P) —</div>
+          <div class="duelsep">— ATAU ONLINE —</div>
           <button class="cta wide ghost" id="duelHost">📡 &nbsp;BUAT ROOM</button>
           <div class="namerow" style="margin-top:12px; max-width:340px; margin-left:auto; margin-right:auto">
             <input id="joinCode" maxlength="4" placeholder="KODE ROOM" autocomplete="off" style="text-transform:uppercase">
             <button class="cta small" id="duelJoin">GABUNG</button>
           </div>
           <p class="duelhint">Online: kamu dan temanmu membuka situs ini di perangkat masing-masing.
-          Satu orang membuat room, satunya memasukkan kode. Koneksi langsung antar-perangkat (PeerJS).</p>
+          Satu orang membuat room, satunya memasukkan kode. Data lewat server relay, jadi jalan lintas jaringan.</p>
         </div>
         <div id="duelWait" class="hidden" style="margin-top:18px">
           <div class="roomcode" id="roomCode">····</div>
@@ -335,8 +335,6 @@
 <script src="js/leaderboard.js"></script>
 <script src="js/ending.js"></script>
 <script src="js/cine.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"
-  onerror="var s=document.createElement('script');s.src='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';document.head.appendChild(s)"></script>
 <script src="js/game.js"></script>
 <script src="js/online.js"></script>
 </body>

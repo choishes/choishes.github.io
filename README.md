@@ -187,9 +187,9 @@ pemulihan → pengungkapan bahwa seluruh arsip (termasuk yang berlabel
 
 ## Multiplayer Online — cara kerja & hosting gratis
 
-### Yang sudah jalan sekarang: duel P2P (tanpa server)
+### Cara kerja sekarang: duel via relay WebSocket (Deno Deploy)
 
-Menu **TANDING** kini membuka pilihan arena: 1 perangkat (bergantian) atau
+Menu **TANDING** membuka pilihan arena: 1 perangkat (bergantian) atau
 **online**. Cara main online:
 
 1. Kedua pemain membuka situs (GitHub Pages) di perangkat masing-masing.
@@ -198,40 +198,33 @@ Menu **TANDING** kini membuka pilihan arena: 1 perangkat (bergantian) atau
 4. Keduanya memainkan paket & urutan soal yang identik; progres lawan
    tampil live di chip atas; hasil akhir dibandingkan otomatis.
 
-Teknologinya **WebRTC via PeerJS**: kedua browser terhubung *langsung*
-satu sama lain (peer-to-peer). Satu-satunya pihak ketiga adalah broker
-publik PeerJS (gratis, hanya untuk "berkenalan" — data permainan tidak
-lewat sana). Karena itu fitur ini jalan dari hosting statis murni,
-tanpa deploy server, tanpa akun tambahan.
+Teknologinya: **WebSocket ke satu server relay kecil** (`server/lobby.ts`,
+deploy ke Deno Deploy). Semua data duel (mulai, progres, selesai) lewat
+server itu — bukan koneksi P2P langsung antar-browser. Ini sengaja
+menggantikan pendekatan WebRTC/PeerJS sebelumnya, karena P2P murni sering
+gagal begitu dua pemain beda perangkat & beda jaringan (mis. satu di WiFi,
+satu di data seluler): NAT/firewall banyak jaringan mobile bersifat
+simetris dan memblokir *hole-punching* WebRTC tanpa server TURN. Relay
+WebSocket tidak butuh hal itu sama sekali — selama kedua device bisa akses
+internet dan buka `wss://` ke server, koneksi jalan.
 
-Keterbatasan yang jujur: (1) butuh saling berbagi kode room lewat chat/
-lisan — tidak ada daftar "siapa yang online"; (2) segelintir jaringan
-kampus/kantor yang sangat ketat bisa memblokir WebRTC; (3) broker publik
-PeerJS adalah layanan komunitas — untuk produksi serius sebaiknya
-self-host PeerServer.
+Setup:
+1. Deploy `server/lobby.ts` ke Deno Deploy (gratis, tanpa kartu kredit) —
+   lihat komentar di atas file itu untuk langkahnya.
+2. Salin URL yang didapat (`https://NAMAPROYEK.deno.dev`), ubah ke
+   `wss://NAMAPROYEK.deno.dev`, dan isi ke konstanta `OL_WS_URL` di
+   `js/online.js`.
+3. Upload ulang situs statis (GitHub Pages) — selesai.
 
-### Upgrade berikutnya: lobby "siapa yang online" (butuh server kecil)
+Keterbatasan yang jujur: (1) satu instance server gratis Deno Deploy
+punya batas request/koneksi bulanan — cukup untuk demo/kelas, bukan
+skala produksi besar; (2) state room disimpan di memori proses, jadi
+reset kalau server redeploy/idle-restart; (3) belum ada daftar "siapa
+yang online" — masih berbagi kode room lewat chat/lisan.
 
-Untuk matchmaking otomatis (lihat daftar pemain online → klik untuk
-menantang), perlu satu server WebSocket kecil. Kodenya SUDAH disiapkan
-di `server/lobby.ts` (~80 baris) lengkap dengan protokolnya.
+### Upgrade berikutnya: papan skor global
 
-**Rekomendasi hosting gratis (per pertengahan 2026 — cek ulang syaratnya):**
-
-| Layanan | Cocok untuk | Catatan |
-|---|---|---|
-| **Deno Deploy** | `server/lobby.ts` ini, apa adanya | Paling mudah: login GitHub, tunjuk file, deploy. Free tier longgar, tanpa kartu kredit. WebSocket didukung. |
-| **Cloudflare Workers** | relay WS + Durable Objects | Free tier besar; kode perlu ditulis ulang ke gaya Workers. |
-| **Glitch / Render free** | server Node kecil | Render free tidur saat idle (koneksi WS putus) — kurang ideal untuk lobby. |
-| **PeerServer self-host** | mengganti broker publik PeerJS | Bisa ditumpangkan di layanan Node gratis mana pun. |
-
-Langkah Deno Deploy ada di komentar atas `server/lobby.ts`. Setelah
-server hidup, client tinggal diganti dari PeerJS ke WebSocket lobby —
-struktur pesannya sudah dirancang serupa supaya migrasinya kecil.
-
-### Kenapa tidak papan skor global sekalian?
-
-Server lobby yang sama bisa dipakai menyimpan skor global (tambah
+Server relay yang sama bisa dipakai menyimpan skor global (tambah
 penyimpanan Deno KV, ±20 baris). Dicatat sebagai pengembangan lanjutan
 di laporan — menunjukkan pemahaman arsitektur tanpa membebani deadline.
 
