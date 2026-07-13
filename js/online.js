@@ -33,56 +33,170 @@ function olCleanup(){
 
 /* ---------- HOST ---------- */
 function olHost(){
-  if(typeof Peer==="undefined"){ olStatus("PeerJS gagal dimuat — cek koneksi internet."); return; }
+  if(typeof Peer === "undefined"){
+    olStatus("PeerJS gagal dimuat — cek koneksi internet.");
+    return;
+  }
+
   sfx.click();
   $("duelMenu").classList.add("hidden");
   $("duelWait").classList.remove("hidden");
-  const code=olCode();
-  $("roomCode").textContent=code;
+
+  const code = olCode();
+  $("roomCode").textContent = code;
+
   olStatus("menghubungi broker…");
-  olIsHost=true;
-  olPeer=new Peer(OL_PREFIX+code.toLowerCase());
-  olPeer.on("open",()=>olStatus("room aktif · menunggu lawan…"));
-  olPeer.on("error",e=>{
-    if(e.type==="unavailable-id"){ olCleanup(); olHost(); } // kode bentrok → undi ulang
-    else olStatus("gangguan koneksi: "+e.type);
+  olIsHost = true;
+
+  olPeer = new Peer(
+    OL_PREFIX + code.toLowerCase()
+  );
+
+  olPeer.on("open", id => {
+    console.log("HOST OPEN:", id);
+    olStatus("room aktif · menunggu lawan…");
   });
-  olPeer.on("connection",conn=>{
-    if(olConn){ conn.close(); return; } // room penuh
-    olConn=conn; olWire();
-    conn.on("open",()=>{
-      olStatus("lawan terhubung! menyiapkan arena…");
-      currentPaket=PAKET[Math.floor(Math.random()*PAKET.length)];
-      const order=shuffle(currentPaket.soal.map((_,i)=>i));
-      conn.send({t:"start", paketId:currentPaket.id, order, name:PLAYER||"HOST"});
-      olBegin(currentPaket, order);
+
+  olPeer.on("error", e => {
+    console.error("HOST ERROR:", e);
+
+    if(e.type === "unavailable-id"){
+      olCleanup();
+      olHost(); // buat kode baru kalau bentrok
+    } else {
+      olStatus(
+        "gangguan koneksi: " + e.type
+      );
+    }
+  });
+
+  olPeer.on("connection", conn => {
+
+    if(olConn){
+      conn.close(); // room penuh
+      return;
+    }
+
+    console.log(
+      "PLAYER CONNECTED:",
+      conn.peer
+    );
+
+    olConn = conn;
+    olWire();
+
+    conn.on("open", () => {
+
+      console.log(
+        "DATA CHANNEL OPEN"
+      );
+
+      olStatus(
+        "lawan terhubung! menyiapkan arena…"
+      );
+
+      currentPaket =
+        PAKET[
+          Math.floor(
+            Math.random() *
+            PAKET.length
+          )
+        ];
+
+      const order =
+        shuffle(
+          currentPaket.soal.map(
+            (_,i)=>i
+          )
+        );
+
+      conn.send({
+        t:"start",
+        paketId:currentPaket.id,
+        order,
+        name:PLAYER || "HOST"
+      });
+
+      olBegin(
+        currentPaket,
+        order
+      );
+    });
+
+    conn.on("error", e => {
+      console.error(
+        "HOST CONNECTION ERROR:",
+        e
+      );
     });
   });
 }
-
 /* ---------- JOIN ---------- */
 function olJoin(){
-  if(typeof Peer==="undefined"){ olStatus("PeerJS gagal dimuat — cek koneksi internet."); return; }
-  const code=($("joinCode").value||"").trim().toUpperCase();
-  if(code.length!==4){ beep(160,.1,"sawtooth",.03); return; }
+  if(typeof Peer==="undefined"){
+    olStatus("PeerJS gagal dimuat — cek koneksi internet.");
+    return;
+  }
+
+  const code = ($("joinCode").value || "")
+    .trim()
+    .toUpperCase();
+
+  if(code.length !== 4){
+    beep(160,.1,"sawtooth",.03);
+    return;
+  }
+
   sfx.click();
   $("duelMenu").classList.add("hidden");
   $("duelWait").classList.remove("hidden");
-  $("roomCode").textContent=code;
-  olStatus("mencari room "+code+"…");
-  olIsHost=false;
-  olPeer=new Peer();
-  olPeer.on("error",e=>{
-    if(e.type==="peer-unavailable") olStatus("room "+code+" tidak ditemukan. Cek kodenya.");
-    else olStatus("gangguan koneksi: "+e.type);
-  });
-  olPeer.on("open",()=>{
-    olConn=olPeer.connect(OL_PREFIX+code.toLowerCase(), {reliable:true});
-    olWire();
-    olConn.on("open",()=>{
+  $("roomCode").textContent = code;
+  olStatus("mencari room " + code + "…");
+
+  olIsHost = false;
+  olPeer = new Peer();
+
+  olPeer.on("open", id => {
+    console.log("JOIN OPEN:", id);
+
+    olConn = olPeer.connect(
+      OL_PREFIX + code.toLowerCase(),
+      { reliable: true }
+    );
+
+    console.log(
+      "CONNECT TO:",
+      OL_PREFIX + code.toLowerCase()
+    );
+
+    olConn.on("open", () => {
+      console.log("CONNECTED!");
       olStatus("terhubung! menunggu host memulai…");
-      olConn.send({t:"hello", name:PLAYER||"TAMU"});
+
+      olConn.send({
+        t:"hello",
+        name:PLAYER || "TAMU"
+      });
     });
+
+    olConn.on("error", e => {
+      console.error("CONNECTION ERROR:", e);
+    });
+  });
+
+  olPeer.on("error", e => {
+    console.error("JOIN ERROR:", e);
+
+    if(e.type === "peer-unavailable"){
+      olStatus(
+        "room " + code +
+        " tidak ditemukan. Cek kodenya."
+      );
+    } else {
+      olStatus(
+        "gangguan koneksi: " + e.type
+      );
+    }
   });
 }
 
