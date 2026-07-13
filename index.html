@@ -8,31 +8,30 @@
 </head>
 <body>
 
+<!-- latar luar angkasa -->
+<canvas id="space"></canvas>
+
 <!-- ============ CINEMATIC INTRO ============ -->
 <div id="cine">
   <button id="cskip" class="hidden">SKIP »</button>
 
-  <!-- fase 0: gerbang masuk (membuka izin audio browser) -->
   <div id="cgate" class="cstage">
     <div class="clogo in" style="font-size:38px">SIN<span>YAL</span></div>
     <button id="centerbtn">▶ &nbsp;MASUKI LAB</button>
     <div class="chint" style="position:static;margin-top:22px">GUNAKAN HEADPHONE UNTUK PENGALAMAN TERBAIK</div>
   </div>
 
-  <!-- fase 1: boot -->
   <div id="cboot" class="cstage hidden">
     <div id="clogo" class="clogo">SIN<span>YAL</span></div>
     <div class="cbar"><div id="cfill"></div></div>
     <div id="clog" class="clog">menghubungkan…</div>
   </div>
 
-  <!-- fase 2: narasi -->
   <div id="cstory" class="cstage hidden">
     <p id="cline" class="cline"></p>
     <div id="chint" class="chint">KLIK UNTUK LANJUT</div>
   </div>
 
-  <!-- fase 3: nama -->
   <div id="cname" class="cstage hidden">
     <div class="cask">DUNIA MEMANGGILMU, PENDEKAR MANUSIA.</div>
     <div class="cask big">SIAPA NAMAMU?</div>
@@ -42,7 +41,6 @@
     </div>
   </div>
 
-  <!-- fase 4: maju -->
   <div id="cmaju" class="cstage hidden">
     <div id="cmajutext" class="cmaju">MAJU!</div>
   </div>
@@ -53,45 +51,44 @@
 
     <div class="bar">
       <div class="brand"><span class="dot"></span>SINYAL // LAB FORENSIK MEDIA</div>
-      <div class="barright">
-        <div class="count" id="count">v0.3</div>
-        <button class="icon-btn" id="bgmToggle" aria-label="Musik latar">♪ BGM OFF</button>
-        <button class="icon-btn" id="sfxToggle" aria-label="Efek suara">🔊 SFX ON</button>
-      </div>
+      <div class="count" id="count">v1.0</div>
     </div>
 
     <div class="body">
 
-      <!-- ============ HUB ============ -->
+      <!-- ============ MENU UTAMA ============ -->
       <section id="hub" class="center">
         <div class="title stagger">SIN<span class="accent">YAL</span></div>
         <div class="opchip stagger" id="hubGreet"></div>
-        <p class="sub stagger">Teks, gambar, dan video sintetis kini bercampur dengan karya manusia.
-          Uji indramu di tiga arena — <b style="color:#eaf6f3">bisakah kamu membedakannya?</b></p>
 
-        <div class="modules">
-          <button class="module m-teks stagger" data-start="karir">
-            <div class="mtag">MODE 01</div>
-            <div class="mname">KARIR</div>
-            <div class="minfo">Naik pangkat lewat 3 misi bertingkat. Lulus ambang skor untuk lanjut.</div>
-            <div class="mbest" id="rank-label">Pangkat: KADET</div>
+        <nav class="menu">
+          <button class="mitem stagger" data-start="karir">
+            <span class="mi-idx">01</span>
+            <span class="mi-name">KARIR</span>
+            <span class="mi-desc">3 misi · sistem pangkat</span>
           </button>
-          <button class="module m-gambar stagger" data-start="infinite">
-            <div class="mtag">MODE 02</div>
-            <div class="mname">INFINITE</div>
-            <div class="minfo">Spesimen tanpa akhir, 3 nyawa. Seberapa jauh kamu bertahan?</div>
-            <div class="mbest" id="best-infinite">Rekor: —</div>
+          <button class="mitem stagger" data-start="infinite">
+            <span class="mi-idx">02</span>
+            <span class="mi-name">INFINITE</span>
+            <span class="mi-desc"><span id="best-infinite">tanpa akhir · 3 nyawa</span></span>
           </button>
-          <button class="module m-video stagger" data-start="tanding">
-            <div class="mtag">MODE 03</div>
-            <div class="mname">TANDING</div>
-            <div class="minfo">Duel 2 pemain di satu perangkat. Spesimen sama, insting beda.</div>
-            <div class="mbest">Siapa lebih tajam?</div>
+          <button class="mitem stagger" data-start="tanding">
+            <span class="mi-idx">03</span>
+            <span class="mi-name">TANDING</span>
+            <span class="mi-desc">duel 2 pemain · 1 perangkat</span>
           </button>
-        </div>
-
-        <button class="cta ghost wide stagger" id="openBoard">☰ PAPAN SKOR</button>
-        <div class="introfoot stagger">TOMBOL 1 / 2 UNTUK MENJAWAB · ENTER UNTUK LANJUT</div>
+          <div class="mdiv stagger"></div>
+          <button class="mitem sub stagger" id="openBoard">
+            <span class="mi-idx"></span><span class="mi-name">PAPAN SKOR</span><span class="mi-desc"></span>
+          </button>
+          <button class="mitem sub stagger" id="openSettings">
+            <span class="mi-idx"></span><span class="mi-name">PENGATURAN</span><span class="mi-desc"></span>
+          </button>
+          <button class="mitem sub stagger" id="openCredits">
+            <span class="mi-idx"></span><span class="mi-name">TENTANG KAMI</span><span class="mi-desc"></span>
+          </button>
+        </nav>
+        <div class="hidden" id="rank-label"></div>
       </section>
 
       <!-- ============ GAME ============ -->
@@ -147,7 +144,6 @@
           <p id="findingText"></p>
         </div>
 
-        <!-- input nama untuk papan skor -->
         <div class="namebox hidden" id="namebox">
           <label for="nameinput">CATAT KE PAPAN SKOR</label>
           <div class="namerow">
@@ -162,23 +158,93 @@
         </div>
       </section>
 
-      <!-- ============ LEADERBOARD ============ -->
+      <!-- ============ PAPAN SKOR ============ -->
       <section id="board" class="center hidden">
         <div class="eyebrow">PAPAN SKOR LOKAL</div>
-        <p class="sub" style="margin-bottom:16px">Tersimpan di perangkat ini. Papan skor global butuh backend — lihat README.</p>
+        <p class="sub" style="margin-bottom:16px">Tersimpan di perangkat ini.</p>
         <div class="lb" id="lbList"></div>
         <div class="endbtns" style="margin-top:22px">
-          <button class="cta ghost" id="boardBack">← Kembali</button>
+          <button class="cta ghost backhub">← Kembali</button>
+        </div>
+      </section>
+
+      <!-- ============ PENGATURAN ============ -->
+      <section id="settings" class="center hidden">
+        <div class="eyebrow">PENGATURAN</div>
+        <div class="setlist" style="margin-top:14px">
+          <div class="setrow">
+            <div class="setinfo"><b>Musik Latar</b><span>intro &amp; dalam game</span></div>
+            <button class="switch on" id="setBgm" role="switch" aria-checked="true" aria-label="Musik latar"><span></span></button>
+          </div>
+          <div class="setrow">
+            <div class="setinfo"><b>Volume Musik</b><span id="volLabel">35%</span></div>
+            <input type="range" id="setVol" min="0" max="100" value="35" aria-label="Volume musik">
+          </div>
+          <div class="setrow">
+            <div class="setinfo"><b>Efek Suara</b><span>blip · scan · fanfare</span></div>
+            <button class="switch on" id="setSfx" role="switch" aria-checked="true" aria-label="Efek suara"><span></span></button>
+          </div>
+          <div class="setrow">
+            <div class="setinfo"><b>Partikel Latar</b><span>debu bintang melayang</span></div>
+            <button class="switch on" id="setFx" role="switch" aria-checked="true" aria-label="Partikel latar"><span></span></button>
+          </div>
+          <div class="setrow">
+            <div class="setinfo"><b>Nama Operator</b><span>dipakai di menu &amp; papan skor</span></div>
+            <div class="setname">
+              <input id="renameInput" maxlength="12" autocomplete="off">
+              <button class="cta small ghost" id="renameSave">GANTI</button>
+            </div>
+          </div>
+          <div class="setrow">
+            <div class="setinfo"><b>Putar Ulang Intro</b><span>tonton lagi pembukaan sinematik</span></div>
+            <button class="cta small ghost" id="replayIntro">PUTAR</button>
+          </div>
+          <div class="setrow danger">
+            <div class="setinfo"><b>Hapus Data</b><span>nama, rekor, dan papan skor di perangkat ini</span></div>
+            <button class="cta small ghost dangerbtn" id="wipeData">HAPUS</button>
+          </div>
+          <div class="sethint">PENGATURAN AUDIO &amp; VISUAL BERLAKU SEKETIKA</div>
+        </div>
+        <div class="endbtns" style="margin-top:22px">
+          <button class="cta ghost backhub">← Kembali</button>
+        </div>
+      </section>
+
+      <!-- ============ TENTANG KAMI ============ -->
+      <section id="credits" class="center hidden">
+        <div class="credhead">
+          <div class="eyebrow">KRU LAB SINYAL</div>
+          <p class="credsub">PROYEK PEMINATAN KAJIAN MEDIA — PRODUKSI &amp; ANALISIS APLIKASI<br>ILMU KOMUNIKASI · UNIVERSITAS ISLAM INDONESIA · 2026</p>
+        </div>
+        <div class="credlist">
+          <div class="credgroup">
+            <div class="credrole">DEVELOPER</div>
+            <div class="credrow"><span class="crednm">Muhammad Zaki Tasnim Mubarak</span><span class="crednim">24321148</span></div>
+          </div>
+          <div class="credgroup">
+            <div class="credrole">PRESENTASI (PPT)</div>
+            <div class="credrow"><span class="crednm">Syahadan Deka Allesio Destiansyah</span><span class="crednim">24321173</span></div>
+            <div class="credrow"><span class="crednm">Haidar Al Ghozi</span><span class="crednim">24321180</span></div>
+          </div>
+          <div class="credgroup">
+            <div class="credrole">LAPORAN</div>
+            <div class="credrow"><span class="crednm">Maulana Malik Alfajri</span><span class="crednim">24321054</span></div>
+            <div class="credrow"><span class="crednm">D. Rajbani Gibran Ahmad</span><span class="crednim">24321052</span></div>
+          </div>
+        </div>
+        <div class="endbtns" style="margin-top:22px">
+          <button class="cta ghost backhub">← Kembali</button>
         </div>
       </section>
 
     </div>
-    <div class="foot">DEMO EDUKASI · PROYEK KAJIAN MEDIA — PRODUKSI &amp; ANALISIS APLIKASI</div>
+    <div class="foot">DEMO EDUKASI · KELOMPOK SINYAL — KAJIAN MEDIA UII · 2026</div>
   </div>
 </div>
 
 <script src="js/bank.js"></script>
 <script src="js/audio.js"></script>
+<script src="js/space.js"></script>
 <script src="js/leaderboard.js"></script>
 <script src="js/cine.js"></script>
 <script src="js/game.js"></script>

@@ -2,7 +2,8 @@
    SINYAL — GAME LOGIC (Karir / Infinite / Tanding)
    ================================================================ */
 const $=id=>document.getElementById(id);
-const hub=$("hub"), game=$("game"), end=$("end"), board=$("board");
+const hub=$("hub"), game=$("game"), end=$("end"), board=$("board"),
+      settings=$("settings"), credits=$("credits");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 const playable = s => s.type==="teks" || (s.src && s.src.length>0);
@@ -19,7 +20,7 @@ const TANDING_N=6;
 
 /* ================= NAVIGASI LAYAR ================= */
 function show(sec){
-  [hub,game,end,board].forEach(s=>s.classList.add("hidden"));
+  [hub,game,end,board,settings,credits].forEach(s=>s.classList.add("hidden"));
   sec.classList.remove("hidden");
 }
 
@@ -304,16 +305,55 @@ $("saveScore").addEventListener("click",()=>{
 function openBoard(){ lbRender($("lbList")); show(board); }
 
 /* ================= EVENTS ================= */
-document.querySelectorAll(".module").forEach(m=>m.addEventListener("click",()=>startGame(m.dataset.start)));
+document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>startGame(m.dataset.start)));
 $("btnHuman").addEventListener("click",()=>choose(false));
 $("btnAI").addEventListener("click",()=>choose(true));
 $("next").addEventListener("click",next);
 $("tolab").addEventListener("click",()=>{sfx.click(); bgmGameStop(); show(hub);});
 $("quit").addEventListener("click",()=>{sfx.click(); bgmGameStop(); show(hub);});
 $("openBoard").addEventListener("click",()=>{sfx.click(); openBoard();});
-$("boardBack").addEventListener("click",()=>{sfx.click(); show(hub);});
-$("bgmToggle").addEventListener("click",e=>toggleBgm(e.currentTarget));
-$("sfxToggle").addEventListener("click",e=>toggleSfx(e.currentTarget));
+document.querySelectorAll(".backhub").forEach(b=>b.addEventListener("click",()=>{sfx.click(); show(hub);}));
+
+/* pengaturan */
+$("openSettings").addEventListener("click",()=>{
+  sfx.click();
+  $("renameInput").value = (typeof PLAYER!=="undefined") ? PLAYER : "";
+  show(settings);
+});
+$("openCredits").addEventListener("click",()=>{sfx.click(); show(credits);});
+
+/* saklar audio & visual */
+function wireSwitch(id, fn){
+  const el=$(id);
+  el.addEventListener("click",()=>{
+    const on=!el.classList.contains("on");
+    el.classList.toggle("on",on);
+    el.setAttribute("aria-checked",on);
+    fn(on);
+  });
+}
+wireSwitch("setBgm", on=>setBgm(on));
+wireSwitch("setSfx", on=>setSfx(on));
+wireSwitch("setFx",  on=>{ if(window.spaceFX) spaceFX(on); });
+$("setVol").addEventListener("input",e=>{
+  const v=e.target.value;
+  $("volLabel").textContent=v+"%";
+  setBgmVolume(v/100);
+});
+$("renameSave").addEventListener("click",()=>{
+  const n=$("renameInput").value.trim().toUpperCase().slice(0,12);
+  if(!n) return;
+  savePlayer(n);
+  const greet=$("hubGreet"); if(greet) greet.textContent="OPERATOR: "+n;
+  sfx.ok();
+});
+$("replayIntro").addEventListener("click",()=>{ location.reload(); });
+$("wipeData").addEventListener("click",()=>{
+  if(!confirm("Hapus semua data lokal (nama, rekor, papan skor)?")) return;
+  try{ localStorage.removeItem(LB_KEY); localStorage.removeItem(PLAYER_KEY); }catch(e){}
+  location.reload();
+});
+
 document.addEventListener("keydown",e=>{
   if(game.classList.contains("hidden")){
     if(e.key==="Enter" && !end.classList.contains("hidden") && document.activeElement!==$("nameinput")) $("restart").click();
