@@ -766,7 +766,7 @@ body::before{opacity:.08}
 
 /* --- LAYAR LOADING AWAL --- */
 .storyload{
-  position:fixed; inset:0; z-index:120; display:flex; flex-direction:column;
+  position:fixed; inset:0; z-index:130; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:20px;
   background:radial-gradient(circle at 50% 45%, #0a1420, #04070c 70%);
   opacity:0; transition:opacity .4s ease;
@@ -842,3 +842,22 @@ body::before{opacity:.08}
 .pf-allbar>i{display:block; height:100%; background:linear-gradient(90deg,var(--cyan),var(--violet)); border-radius:5px}
 .pf-allnum{font-family:var(--mono); font-size:11px; color:var(--muted); text-align:right}
 .pf-allnum em{color:var(--dim); font-style:normal; font-size:10px}
+
+
+/* --- GERBANG MULAI PROLOG (berfungsi di semua orientasi, tak terpengaruh
+       media query .vnrotate yang khusus portrait) --- */
+.prolog-start{
+  position:absolute; inset:0; z-index:4; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:16px; text-align:center; padding:24px;
+  background:radial-gradient(circle at 50% 45%, rgba(6,10,16,.92), #04070c 75%);
+}
+.ps-title{font-family:var(--mono); font-weight:700; letter-spacing:.2em;
+  font-size:clamp(18px,4vw,24px); color:#eaf6f3}
+.ps-desc{font-size:14px; line-height:1.8; color:#d7e3e0; max-width:420px}
+.prolog-startbtn{
+  font-family:var(--mono); cursor:pointer; margin-top:6px;
+  padding:14px 30px; border-radius:12px; border:1px solid var(--cyan);
+  background:rgba(63,224,197,.12); color:var(--cyan);
+  font-size:14px; letter-spacing:.14em; font-weight:700; transition:.15s;
+}
+.prolog-startbtn:hover{background:var(--cyan); color:#041713; transform:translateY(-2px)}

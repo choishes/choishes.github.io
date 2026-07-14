@@ -311,29 +311,34 @@ let vnRotatePending=null;
 function runProlog(done){
   const wrap=$("prolog"), v=$("prologVideo");
   if(!wrap || !v || reducedMotion){ done(); return; } // aman & aksesibel
-  const play=()=>_prologPlay(done);
-  const rot=$("vnRotate");
-  /* SELALU tunggu input user dulu (gerbang orientasi/kesiapan) sebelum
-     memutar video, di semua perangkat. Video tidak boleh autoplay tanpa
-     pilihan user. vnRotatePending menyimpan langkah lanjutan yang dipicu
-     saat gerbang ditutup (fullscreen / putar HP / "lanjut saja"). */
-  if(rot){
-    /* pesan gerbang menyesuaikan orientasi supaya masuk akal di semua perangkat */
-    const isPortrait = window.matchMedia && matchMedia("(orientation:portrait)").matches;
-    const mobile = typeof vnIsMobile==="function" && vnIsMobile();
-    const t=rot.querySelector(".vnrotate-title"), d=rot.querySelector(".vnrotate-desc");
-    if(mobile && isPortrait){
-      if(t) t.textContent="PUTAR HP KE SAMPING";
-      if(d) d.innerHTML="Mode cerita paling enak dilihat dalam posisi <b>landscape</b> dan layar penuh. Putar HP-mu ke samping, atau tap tombol di bawah untuk mulai.";
-    }else{
-      if(t) t.textContent="SIAP MENONTON PROLOG?";
-      if(d) d.innerHTML="Untuk pengalaman terbaik, tonton dalam <b>layar penuh</b>. Tekan tombol di bawah untuk mulai.";
-    }
-    vnRotatePending = play;
-    rot.classList.remove("hidden");
+  /* Tampilkan overlay prolog (hitam) + GERBANG MULAI dulu. Video TIDAK
+     autoplay: menunggu user menekan tombol. Gerbang ini pakai #prologStart
+     yang tampil di SEMUA orientasi (beda dari #vnRotate yang di-CSS hanya
+     muncul saat portrait, itu penyebab layar kosong di landscape/desktop). */
+  const gate=$("prologStart");
+  wrap.classList.remove("hidden"); void wrap.offsetWidth; wrap.classList.add("show");
+
+  const isPortrait = window.matchMedia && matchMedia("(orientation:portrait)").matches;
+  const mobile = typeof vnIsMobile==="function" && vnIsMobile();
+  const t=$("prologStartTitle"), d=$("prologStartDesc");
+  if(mobile && isPortrait){
+    if(t) t.textContent="PUTAR HP KE SAMPING";
+    if(d) d.innerHTML="Prolog paling enak ditonton <b>landscape</b> dan layar penuh. Putar HP-mu, lalu tekan mulai.";
   }else{
-    play();
+    if(t) t.textContent="SIAP MENONTON PROLOG?";
+    if(d) d.innerHTML="Untuk pengalaman terbaik, tonton dalam <b>layar penuh</b>.";
   }
+  if(gate) gate.classList.remove("hidden");
+
+  const btn=$("prologStartBtn");
+  const begin=async ()=>{
+    if(btn) btn.onclick=null;
+    if(typeof vnGoFullscreen==="function"){ try{ await vnGoFullscreen(); }catch(e){} } // best effort
+    if(gate) gate.classList.add("hidden");
+    _prologPlay(done);
+  };
+  if(btn) btn.onclick=begin;
+  else begin(); // fallback: tak ada tombol gerbang → langsung proses
 }
 function _prologPlay(done){
   const wrap=$("prolog"), load=$("storyLoad"), v=$("prologVideo");
