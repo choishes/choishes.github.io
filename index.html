@@ -109,24 +109,30 @@
       <!-- ============ MENU UTAMA ============ -->
       <section id="hub" class="center">
         <div class="title stagger">SIN<span class="accent">YAL</span></div>
+        <div class="opchip stagger" id="verChip">v0.00</div>
         <div class="opchip stagger" id="hubGreet"></div>
         <div class="opchip gold stagger hidden" id="endingBadge">◈ ARSIP TERBUKA</div>
 
         <nav class="menu">
-          <button class="mitem stagger" data-start="karir">
+          <button class="mitem stagger" data-start="story">
             <span class="mi-idx">01</span>
+            <span class="mi-name">CERITA</span>
+            <span class="mi-desc">protokol sinyal · kisah visual</span>
+          </button>
+          <button class="mitem stagger" data-start="karir">
+            <span class="mi-idx">02</span>
             <span class="mi-name">KARIR</span>
-            <span class="mi-desc">3 misi · sistem pangkat</span>
+            <span class="mi-desc">peta planet · 11 level</span>
           </button>
           <button class="mitem stagger" data-start="infinite">
-            <span class="mi-idx">02</span>
+            <span class="mi-idx">03</span>
             <span class="mi-name">INFINITE</span>
             <span class="mi-desc"><span id="best-infinite">tanpa akhir · 3 nyawa</span></span>
           </button>
           <button class="mitem stagger" data-start="tanding">
-            <span class="mi-idx">03</span>
+            <span class="mi-idx">04</span>
             <span class="mi-name">TANDING</span>
-            <span class="mi-desc">duel 2 pemain · 1 paket acak</span>
+            <span class="mi-desc">duel 2 pemain · lokal & online</span>
           </button>
           <div class="mdiv stagger"></div>
           <button class="mitem sub stagger" id="openBoard">
@@ -334,6 +340,42 @@
   </div>
 </div>
 
+
+<!-- STORY MODE dipindah ke luar .app agar bisa fullscreen -->
+      <section id="story" class="hidden">
+        <div class="vnstage" id="vnStage">
+          <div class="vnbg" id="vnBg"></div>
+          <div class="vnchar vnL hidden" id="vnCharL"></div>
+          <div class="vnchar vnR hidden" id="vnCharR"></div>
+          <div class="vnfade"></div>
+          <div class="vnflash" id="vnFlash"></div>
+          <div class="vnbox">
+            <span class="vnname" id="vnName"></span>
+            <div class="vntext" id="vnText"></div>
+            <div class="vnhint">▼ klik / enter</div>
+          </div>
+          <div class="vnchoices hidden" id="vnChoices"></div>
+          <div class="vnchapter hidden" id="vnChapter">
+            <div class="vnchapline"></div>
+            <div class="vnchaptitle" id="vnChapterTitle"></div>
+            <div class="vnchapsub" id="vnChapterSub"></div>
+            <div class="vnchapline"></div>
+          </div>
+          <button class="vnexit" id="vnExit" aria-label="Keluar cerita">✕</button>
+          <button class="vnauto" id="vnAuto" aria-label="Putar otomatis">▶ AUTO</button>
+          <div class="vnrotate hidden" id="vnRotate">
+            <div class="vnrotate-inner">
+              <div class="vnrotate-icon">📱↻</div>
+              <div class="vnrotate-title">PUTAR HP KE SAMPING</div>
+              <div class="vnrotate-desc">Mode cerita paling enak dilihat dalam posisi <b>landscape</b> dan layar penuh. Putar HP-mu ke samping, atau tap tombol di bawah.</div>
+              <button class="vnrotate-btn" id="vnFsBtn">MASUK LAYAR PENUH</button>
+              <button class="vnrotate-skip" id="vnRotateSkip">Lanjut saja begini</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+<script src="js/version.js"></script>
 <script src="js/bank.js"></script>
 <script src="js/paket.js"></script>
 <script src="js/audio.js"></script>
@@ -342,6 +384,8 @@
 <script src="js/ending.js"></script>
 <script src="js/cine.js"></script>
 <script src="js/game.js"></script>
+<script src="js/naskah.js"></script>
+<script src="js/story.js"></script>
 <script src="js/online.js"></script>
 </body>
 </html>

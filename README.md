@@ -157,11 +157,12 @@ pembagian peran ada di sana sebagai HTML biasa.
   **Tanding** (duel hot-seat)
 - Pengaturan: musik, volume, SFX, partikel, ganti nama, putar ulang intro,
   hapus data
-- Papan skor lokal (localStorage) — papan skor **global** butuh backend;
-  opsi gratis bila ingin upgrade: Cloudflare Workers KV, PocketBase, Firebase.
-- **Tanding Online (P2P)** — sudah jalan tanpa server: menu TANDING →
-  Buat Room / Gabung dengan kode 4 huruf. Koneksi WebRTC langsung
-  antar-perangkat via broker publik PeerJS.
+- Papan skor **Lokal** (localStorage per perangkat) & **Global** (semua
+  pemain, disimpan di Deno KV lewat server relay) — tab switch di layar
+  Papan Skor.
+- **Tanding Online** — via server relay (`server/lobby.ts`, Deno Deploy):
+  lihat daftar pemain online & klik **AJAK MAIN**, atau Buat Room / Gabung
+  dengan kode 4 huruf untuk main dengan teman tertentu.
 
 ## 7. Twist Ending — `js/ending.js`
 
@@ -227,6 +228,18 @@ yang online" — masih berbagi kode room lewat chat/lisan.
 Server relay yang sama bisa dipakai menyimpan skor global (tambah
 penyimpanan Deno KV, ±20 baris). Dicatat sebagai pengembangan lanjutan
 di laporan — menunjukkan pemahaman arsitektur tanpa membebani deadline.
+
+
+
+## Story Mode "Protokol Sinyal" (baru)
+
+Mode CERITA di menu utama: visual novel 5 bab dengan gambar karakter, transisi
+sinematik antar-bab, dan tantangan soal yang menyatu ke cerita. Endingnya
+bercabang (3 akhir berbeda). Panduan mengganti gambar karakter/latar ada di
+`assets/story/PROMPTS.md`. Riwayat versi ada di `CLAUDE.md`.
+
+Nomor versi (format X.YZ) ada di `js/version.js` dan tampil otomatis di
+homescreen. Naikkan angka itu tiap update.
 
 ## Etika konten (untuk laporan)
 
