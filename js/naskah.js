@@ -123,6 +123,14 @@ const NASKAH=[
   {l:"\"Tenang, ini yang kulatih.\"", say:"Tenang. Justru ini yang kulatih tiap hari. Percayakan padaku — aku nggak akan gegabah soal nama orang."},
   {l:"\"Aku ngerti rasanya dikhianati.\"", say:"Aku ngerti rasanya takut mengkhianati orang yang percaya sama kita. Makanya aku bakal ekstra hati-hati. Janji."}
 ]},
+{c:"arga", side:"L", mood:"normal"},
+{n:"ARGA", t:"Sebelum mulai — ini bukan pemanasan lagi, jadi pakein trik yang kubilang kemarin ya. Cek dulu: kalimatnya rapi banget dan panjangnya seragam semua nggak? Itu tanda pertama."},
+{c:"vega", side:"R", mood:"normal"},
+{n:"VEGA", t:"Terus scan kata-katanya. Masih ada 'menyelami', 'permadani', 'memanfaatkan', 'mengungkap', 'bernuansa', 'lanskap'? Atau nutup kalimat pakai 'penting untuk diingat bahwa'? Kalau ada, itu bendera merah."},
+{c:"arga", side:"L", mood:"senyum"},
+{n:"ARGA", t:"Jangan lupa juga tanda hubung dramatis tanpa spasi, sama pola tiga-hal-sejajar yang kelewat rapi — 'cepat, efisien, dan andal' gitu. Dan yang paling gampang: ada nggak keraguan kayak 'mungkin' atau 'kayaknya'? Manusia biasanya ragu-ragu dikit, AI jarang."},
+{c:"vega", side:"R", mood:"senyum"},
+{n:"VEGA", t:"Sama triknya kayak kemarin, [NAMA]. Cuma sekarang taruhannya nyata. Pelan-pelan aja, jangan panik."},
 {q:{f:"berita", n:6, pass:4, win:"c2win", lose:"c2lose", title:"AUDIT ARSIP PERS KAMPUS"}},
 
 {lb:"c2lose"},
