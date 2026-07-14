@@ -1,4 +1,4 @@
-const cacheName = 'game-v1';
+const cacheName = 'game-v3';
 const assets = [
   '/',
   '/index.html',
@@ -18,6 +18,7 @@ const assets = [
   '/js/naskah.js',
   '/js/online.js',
   '/js/paket.js',
+  '/js/paket_ekstra.js',
   '/js/space.js',
   '/js/story.js',
   '/js/version.js',
@@ -64,6 +65,10 @@ const assets = [
   '/assets/story/char_dira_marah.png',
   '/assets/story/char_dira_normal.png',
   '/assets/story/char_dira_senyum.png',
+  '/assets/story/char_sari_kaget.png',
+  '/assets/story/char_sari_marah.png',
+  '/assets/story/char_sari_normal.png',
+  '/assets/story/char_sari_senyum.png',
   '/assets/story/char_syn_kaget.png',
   '/assets/story/char_syn_marah.png',
   '/assets/story/char_syn_normal.png',
@@ -75,17 +80,43 @@ const assets = [
 ];
 
 self.addEventListener('install', e => {
+  // Precache per-file, JANGAN addAll. addAll bersifat atomik: kalau SATU
+  // file 404 (mis. gambar Sari yang belum dibuat), seluruh precache gagal
+  // dan tak ada yang tersimpan, sehingga semua aset selalu ambil dari
+  // jaringan (inilah salah satu sebab gambar terasa telat). allSettled
+  // membuat file yang hilang dilewati tanpa menggagalkan sisanya.
+  self.skipWaiting();
   e.waitUntil(
-    caches.open(cacheName).then(cache => {
-      return cache.addAll(assets);
-    })
+    caches.open(cacheName).then(cache =>
+      Promise.allSettled(assets.map(url => cache.add(url)))
+    )
+  );
+});
+
+self.addEventListener('activate', e => {
+  // Buang cache versi lama supaya update JS/gambar benar-benar terpakai.
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== cacheName).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(response => {
-      return response || fetch(e.request);
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        // Simpan aset yang berhasil diambil (termasuk gambar yang belum
+        // sempat di-precache, mis. Sari setelah filenya diunggah) supaya
+        // kunjungan berikutnya instan dari cache.
+        if (res && res.ok && res.type === 'basic') {
+          const copy = res.clone();
+          caches.open(cacheName).then(c => c.put(e.request, copy));
+        }
+        return res;
+      }).catch(() => cached);
     })
   );
 });

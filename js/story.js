@@ -26,9 +26,9 @@ const VN_BG_FALLBACK={
 };
 const VN_FILTER={
   teks1:  s=>s.type==="teks"&&s.level===1,
-  chat:   s=>s.type==="teks"&&s._pk===6,
-  berita: s=>s.type==="teks"&&s._pk===3,
-  akademik:s=>s.type==="teks"&&s._pk===9,
+  chat:   s=>s.type==="teks"&&(s._pk===6||s._pk===16),
+  berita: s=>s.type==="teks"&&(s._pk===3||s._pk===13),
+  akademik:s=>s.type==="teks"&&(s._pk===9||s._pk===19),
   gambar: s=>s.type==="gambar",
   trap:   s=>s.type==="teks"&&s.trap===true,
   final:  s=>s.type==="gambar"||(s.type==="teks"&&s.level===2),
@@ -87,6 +87,7 @@ function startStory(){
   show(storySec);
   document.querySelector(".card").classList.add("bare");
   vnClearAuto(); vnAutoOn=false; vnMusicNow=null; vnSeen=new Set();
+  vnPreloadAll();   // unduh semua gambar story di muka biar tak telat/kedip
   vnResetStage();
   const ab=$("vnAuto"); if(ab){ ab.classList.remove("on"); ab.textContent="▶ AUTO"; }
   vnMaybeSuggestLandscape();
@@ -225,18 +226,55 @@ function vnAdvance(){
   vnIdx++; vnRun();
 }
 
+/* ---------- cache & prapemuatan gambar (perbaikan "telat dimuat") ----------
+   Masalah lama: tiap kali karakter/latar muncul (puluhan kali sepanjang
+   cerita), engine selalu bikin objek Image() baru dan menampilkan siluet
+   placeholder dulu, baru tukar ke gambar asli SETELAH onload. Akibatnya
+   selalu ada kedip placeholder→gambar, bahkan untuk gambar yang sudah
+   pernah tampil. Ukuran file (200 KB pun) tidak berpengaruh karena akar
+   masalahnya di sini, bukan di berat file.
+   Solusi: semua gambar story diunduh sekali di awal (vnPreloadAll) lalu
+   objeknya disimpan. Kalau gambar sudah siap, langsung tampil tanpa
+   placeholder; kalau belum, placeholder dipakai sementara lalu ditukar
+   otomatis begitu selesai. Kalau file tidak ada (mis. Sari belum dibuat),
+   placeholder siluet tetap dipakai sebagai fallback. */
+const VN_IMG_CACHE = Object.create(null);
+function vnPreload(src){
+  let rec = VN_IMG_CACHE[src];
+  if(rec) return rec;
+  rec = { img:new Image() };
+  rec.img.src = src;                 // mulai unduh sekarang
+  VN_IMG_CACHE[src] = rec;
+  return rec;
+}
+/* true kalau gambar sudah selesai diunduh & valid (bukan 404) */
+function vnImgReady(rec){ return rec.img.complete && rec.img.naturalWidth>0; }
+/* unduh semua gambar karakter + latar di muka */
+function vnPreloadAll(){
+  const moods=["normal","senyum","marah","kaget"];
+  Object.keys(VN_CHARS).forEach(id=>moods.forEach(m=>vnPreload("assets/story/char_"+id+"_"+m+".png")));
+  Object.keys(VN_BG_FALLBACK).forEach(k=>vnPreload("assets/story/bg_"+k+".jpg"));
+}
+
 /* ---------- latar & karakter ---------- */
 function vnSetBg(key){
   if(key===vnBgKey) return;
   vnBgKey=key;
   const bg=$("vnBg");
+  const src="assets/story/bg_"+key+".jpg";
+  const rec=vnPreload(src);
   bg.classList.add("fading");
   setTimeout(()=>{
-    bg.style.background=VN_BG_FALLBACK[key]||VN_BG_FALLBACK.lab;
-    bg.style.backgroundSize="cover"; bg.style.backgroundPosition="center";
-    const img=new Image();
-    img.onload=()=>{ if(vnBgKey===key) bg.style.background="url('assets/story/bg_"+key+".jpg') center/cover no-repeat"; };
-    img.src="assets/story/bg_"+key+".jpg";
+    if(vnBgKey!==key){ bg.classList.remove("fading"); return; } // sudah pindah latar
+    if(vnImgReady(rec)){
+      bg.style.background="url('"+src+"') center/cover no-repeat";
+    }else{
+      bg.style.background=VN_BG_FALLBACK[key]||VN_BG_FALLBACK.lab;
+      bg.style.backgroundSize="cover"; bg.style.backgroundPosition="center";
+      rec.img.addEventListener("load", ()=>{
+        if(vnBgKey===key) bg.style.background="url('"+src+"') center/cover no-repeat";
+      }, {once:true});
+    }
     bg.classList.remove("fading");
   }, reducedMotion?0:280);
 }
@@ -244,11 +282,20 @@ function vnShowChar(id, side, mood){
   const slot = side==="R" ? $("vnCharR") : $("vnCharL");
   const other = side==="R" ? $("vnCharL") : $("vnCharR");
   const meta=VN_CHARS[id]||{name:id.toUpperCase(), color:"#3fe0c5"};
+  const src="assets/story/char_"+id+"_"+mood+".png";
   slot.dataset.char=id; slot.dataset.mood=mood;
-  slot.innerHTML='<div class="vnph" style="--cc:'+meta.color+'"><span>'+meta.name[0]+'</span></div>';
-  const img=new Image();
-  img.onload=()=>{ if(slot.dataset.char===id && slot.dataset.mood===mood) slot.innerHTML='<img src="'+img.src+'" alt="'+meta.name+'">'; };
-  img.src="assets/story/char_"+id+"_"+mood+".png";
+  const rec=vnPreload(src);
+  if(vnImgReady(rec)){
+    /* sudah siap → tampil instan, tanpa kedip placeholder */
+    slot.innerHTML='<img src="'+src+'" alt="'+meta.name+'">';
+  }else{
+    /* belum siap / file tak ada → placeholder dulu, tukar saat selesai */
+    slot.innerHTML='<div class="vnph" style="--cc:'+meta.color+'"><span>'+meta.name[0]+'</span></div>';
+    rec.img.addEventListener("load", ()=>{
+      if(slot.dataset.char===id && slot.dataset.mood===mood)
+        slot.innerHTML='<img src="'+src+'" alt="'+meta.name+'">';
+    }, {once:true});
+  }
   slot.classList.remove("in","dim","hidden"); void slot.offsetWidth; slot.classList.add("in");
   /* karakter yg sedang bicara terang, lawan bicara sedikit redup */
   slot.classList.remove("dim");

@@ -20,10 +20,44 @@ riwayat bawah ini.
 - `js/online.js` — multiplayer relay (WebSocket → Deno Deploy)
 - `js/audio.js` — musik: intro, game, twist, title, crisis
 - `js/bank.js` — 16 spesimen gambar + konfigurasi 11 level Karir
-- `js/paket.js` — 100 soal teks (10 paket bertema)
+- `js/paket.js` — 100 soal teks (10 paket bertema, id 1–10)
+- `js/paket_ekstra.js` — 120 soal teks TAMBAHAN (10 paket, id 11–20).
+  TIDAK mendeklarasikan ulang PAKET; hanya `PAKET.push(...)` paket baru,
+  jadi paket.js tak perlu diubah. WAJIB dimuat SETELAH paket.js dan
+  SEBELUM story.js (story.js membangun kolam soalnya sekali saat load).
+  Ada guard anti-dobel berbasis id. Paket 13/16/19 diberi `theme`
+  (berita/chat/akademik) supaya ikut mengisi bab cerita terkait.
+- `js/paket.js` + `js/paket_ekstra.js` = 220 soal total (20 paket).
 - `assets/story/` — gambar karakter & latar Story Mode
 
 ## Riwayat update
+- **v2.18** — TAMBAH 10 paket soal baru (id 11–20, 120 soal unik, total
+  jadi 220) di file baru `js/paket_ekstra.js`. Aditif: push ke array
+  PAKET yang ada, paket.js tak disentuh. index.html menambah satu tag
+  script (setelah paket.js, sebelum story.js). story.js: filter cerita
+  `chat`/`berita`/`akademik` diperluas agar paket bertema baru
+  (16/13/19) ikut mengisi bab 2/3/4, kolam tiap bab naik 10→22.
+  Tanding & Online otomatis mengacak 20 paket. sw.js precache +
+  paket_ekstra.js, cache game-v3.
+- **v2.17** — FIX gambar telat/kedip. Akar masalah bukan ukuran file.
+  (1) story.js: engine dulu bikin Image() baru tiap karakter/latar tampil
+  dan selalu placeholder→swap; sekarang ada cache prapemuatan (VN_IMG_CACHE,
+  vnPreload/vnPreloadAll dipanggil di startStory), gambar yang sudah siap
+  tampil instan tanpa kedip, yang belum pakai placeholder lalu ditukar,
+  file hilang tetap fallback siluet. (2) sw.js: precache diganti dari
+  addAll (atomik, satu 404 menggagalkan semua) ke per-file allSettled,
+  tambah handler activate (buang cache lama), fetch kini runtime-cache
+  aset baru, daftar precache ditambah 4 gambar Sari, cacheName game-v2.
+- **v2.16** — NASKAH v5: 2 bab sisipan baru (BAB 2 "Pesan untuk Ibu" —
+  penipuan chat bot, pool Paket 06; BAB 4 "Yang Dituduh Mesin" — karakter
+  baru SARI, manusia yang dituduh menulis pakai AI, pool Paket 09). Total
+  jadi 8 bab + prolog (label ch1–ch7 + epilog). Pelajaran deteksi AI
+  dipecah satu tema per bab dan dibungkus tebak-tebakan interaktif
+  (bukan ceramah beruntun); seluruh em dash di naskah dihapus supaya
+  dialog "manusia"-nya tidak memakai pola AI yang justru diajarkan game.
+  story.js: filter soal baru `chat` (Paket 06) & `akademik` (Paket 09).
+  Aset baru yang dibutuhkan: char_sari_{normal,senyum,marah,kaget}.png
+  (prompt di assets/story/PROMPTS.md; tanpa file, engine pakai siluet).
 - **v2.10** — MERGE besar: Story Mode digabung ke basis Claude Code (yang
   sudah terhubung Deno). Ditambah: 16 gambar karakter (4 tokoh × 4 ekspresi),
   transisi sinematik antar-bab (kartu judul + fade), efek layar
