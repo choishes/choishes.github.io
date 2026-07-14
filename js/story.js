@@ -329,7 +329,8 @@ function runProlog(done){
       prologCapTimers=PROLOG_CAPTIONS.map(c=>setTimeout(()=>{
         const cap=$("prologCap"); if(cap){ cap.textContent=c.s; cap.classList.remove("in"); void cap.offsetWidth; cap.classList.add("in"); }
       }, c.t*1000));
-      try{ v.currentTime=0; const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){}
+      try{ v.muted=true; v.currentTime=0; const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){}
+      if(typeof bgmTitleStart==="function") bgmTitleStart(); // musik video di-mute, ganti BGM biasa
       prologTimer=setTimeout(finish, 26000); // pengaman kalau 'ended' tak terpanggil
     }, 320);
   };
