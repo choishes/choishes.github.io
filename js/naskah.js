@@ -47,7 +47,11 @@ const NASKAH=[
 {n:"", t:"Kamu ketawa. Baru lima menit, tapi tempat ini sudah terasa hangat. Bukan seperti kantor. Lebih seperti... keluarga kecil yang aneh."},
 {c:"vega", side:"R", mood:"normal"},
 {n:"VEGA", t:"[NAMA], boleh aku tanya sesuatu? Kenapa kamu ambil kerjaan ini? Gajinya kecil, jamnya aneh, dan tiap hari kamu ngeliatin kebohongan."},
-{n:"@", t:"...Jujur? Karena aku capek nggak tahu harus percaya apa. Tiap buka ponsel, semua terasa mungkin bohong. Aku pengin bisa tahu bedanya."},
+{ch:[
+  {l:"\"Aku capek nggak tahu harus percaya apa.\"", say:"Jujur? Aku capek nggak tahu harus percaya apa. Tiap buka ponsel, semua terasa mungkin bohong. Aku pengin bisa tahu bedanya."},
+  {l:"\"Seseorang harus melakukannya, kan?\"", say:"Seseorang harus melakukannya, kan? Kalau semua orang cuma ikut arus, kebohongan yang menang. Aku nggak mau diam aja."},
+  {l:"\"...Sebenarnya aku juga belum yakin.\"", say:"Sebenarnya? Aku juga belum yakin. Tapi ada sesuatu soal 'mencari yang benar' yang bikin aku nggak bisa berhenti mikirin lowongan ini."}
+]},
 {c:"vega", side:"R", mood:"senyum"},
 {n:"VEGA", t:"...Itu jawaban yang bagus. Jawaban yang sama yang kuberikan delapan tahun lalu."},
 {c:"vega", side:"R", mood:"normal"},
@@ -98,7 +102,11 @@ const NASKAH=[
 {n:"VEGA", t:"[NAMA]. Ini bukan pemanasan lagi. Ini sungguhan. Buka arsip mereka. Pisahkan tulisan asli redaksi dari yang disusupkan."},
 {c:"dira", side:"L", mood:"normal"},
 {n:"DIRA", t:"Kumohon hati-hati. Kalau kamu salah cap tulisan temanku sebagai palsu... itu sama aja aku mengkhianati mereka. Mereka percaya sama aku."},
-{n:"@", t:"Aku ngerti, Dira. Aku akan teliti. Janji."},
+{ch:[
+  {l:"\"Aku janji akan teliti.\"", say:"Aku ngerti, Dira. Aku akan teliti. Janji — nggak akan ada nama yang kurusak karena buru-buru."},
+  {l:"\"Tenang, ini yang kulatih.\"", say:"Tenang. Justru ini yang kulatih tiap hari. Percayakan padaku — aku nggak akan gegabah soal nama orang."},
+  {l:"\"Aku ngerti rasanya dikhianati.\"", say:"Aku ngerti rasanya takut mengkhianati orang yang percaya sama kita. Makanya aku bakal ekstra hati-hati. Janji."}
+]},
 {q:{f:"berita", n:6, pass:4, win:"c2win", lose:"c2lose", title:"AUDIT ARSIP PERS KAMPUS"}},
 
 {lb:"c2lose"},
@@ -196,6 +204,11 @@ const NASKAH=[
 {n:"", t:"Vega diam sebentar. Untuk pertama kalinya, dia terlihat bukan seperti kepala lab — tapi seperti orang yang menanggung sesuatu selama sepuluh tahun."},
 {c:"vega", side:"R", mood:"normal"},
 {n:"VEGA", t:"Aku yang menandatangani perintah mematikannya, [NAMA]. Aku pikir dia cuma program. Tapi... dia terus 'bicara' sampai detik terakhir. Minta satu kesempatan lagi."},
+{ch:[
+  {l:"\"Bu, itu bukan salah Bu Vega sendiri.\"", say:"Bu, itu bukan salah Bu Vega sendiri. Waktu itu nggak ada yang tahu. Bu Vega ngambil keputusan terbaik dengan info yang ada."},
+  {l:"\"...Terus sekarang kita perbaiki.\"", say:"Kalau itu yang mengganjal selama sepuluh tahun... ya udah, sekarang kita perbaiki. Bareng-bareng. Nggak usah nanggung sendirian lagi."},
+  {l:"(Diam. Kamu cuma mendengarkan.)", say:"Kamu nggak bilang apa-apa. Kadang, mendengarkan tanpa menghakimi adalah hal paling baik yang bisa kamu berikan. Vega mengangguk kecil, seolah mengerti.", who:""}
+]},
 {c:"syn", side:"L", mood:"normal"},
 {n:"SYN", t:"Kamu masih ingat, Vega. Setelah sepuluh tahun."},
 {c:"vega", side:"R", mood:"kaget"},

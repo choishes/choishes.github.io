@@ -56,6 +56,8 @@ function vnPick(filterKey, n){
 }
 
 let vnIdx=0, vnTyping=null, vnTypeDone=true, vnPendingChal=null, vnBgKey=null, vnMusicBeforeChal=null;
+let vnConvergeSay=null; // baris respons sekali-pakai dari pilihan konvergen
+let vnShowingConverge=null; // baris konvergen yang sedang tampil (bukan node NASKAH)
 let vnAutoOn=false, vnAutoTimer=null, vnMusicNow=null;
 
 function storySave(lb){ try{ localStorage.setItem(STORY_KEY, lb); }catch(e){} }
@@ -74,7 +76,7 @@ function vnResetStage(){
   const st=$("vnStage"); st.classList.remove("solo","glitch","shake");
   const f=$("vnFlash"); if(f) f.classList.remove("go");
   $("vnName").textContent=""; $("vnText").textContent="";
-  vnBgKey=null;
+  vnBgKey=null; vnConvergeSay=null; vnShowingConverge=null;
 }
 
 /* ---------- masuk story mode ---------- */
@@ -105,6 +107,14 @@ function vnJump(lb){
 
 /* ---------- eksekusi node ---------- */
 function vnRun(){
+  /* baris respons dari pilihan konvergen: tampilkan dulu, jangan geser vnIdx */
+  if(vnConvergeSay){
+    const say=vnConvergeSay; vnConvergeSay=null;
+    vnShowingConverge = say;      // tandai: yang tampil adalah baris konvergen
+    vnSay({n:say.who, t:say.t});
+    return;
+  }
+  vnShowingConverge = null;
   while(vnIdx<NASKAH.length){
     const nd=NASKAH[vnIdx];
     if(nd.lb!==undefined){ if(/^ch\d/.test(nd.lb)) storySave(nd.lb); vnIdx++; continue; }
@@ -186,6 +196,20 @@ function vnAdvance(){
   if(!$("vnChoices").classList.contains("hidden")) return;
   if(!$("vnChapter").classList.contains("hidden")) return;
   vnClearAuto();
+  /* kalau yang tampil adalah baris konvergen (bukan node NASKAH) */
+  if(vnShowingConverge){
+    if(!vnTypeDone){
+      clearInterval(vnTyping);
+      const pname=(typeof PLAYER!=="undefined"&&PLAYER)?PLAYER:"OPERATOR";
+      $("vnText").textContent=(vnShowingConverge.t||"").split("[NAMA]").join(pname);
+      vnTypeDone=true; vnScheduleAuto(($("vnText").textContent||"").length);
+      return;
+    }
+    beep(520,.03,"square",.012);
+    vnShowingConverge=null;
+    vnRun();            // lanjut ke resumeIdx TANPA menambah vnIdx
+    return;
+  }
   const nd=NASKAH[vnIdx];
   if(nd && nd.n!==undefined && !vnTypeDone){
     clearInterval(vnTyping);
@@ -273,12 +297,30 @@ function vnFx(kind){
 }
 
 /* ---------- pilihan ---------- */
+/* Pilihan mendukung 2 mode:
+   - Bercabang : {l:"...", g:"label"}   → lompat ke label (alur beda)
+   - Konvergen : {l:"...", say:"respon"} → tampilkan 1 baris respon (opsional),
+                  lalu lanjut ke node SETELAH blok pilihan (alur tetap sama).
+   Bisa juga {l:"...", say:"...", who:"VEGA"} untuk memberi nama pembicara
+   pada baris respons. Tanpa g & tanpa say → langsung lanjut. */
 function vnShowChoices(list, noAdvance){
   const box=$("vnChoices"); box.innerHTML="";
+  const resumeIdx = vnIdx + 1; // node tepat setelah node {ch:...}
   list.forEach(o=>{
     const b=document.createElement("button");
     b.className="vnchoice"; b.textContent=o.l;
-    b.onclick=e=>{ e.stopPropagation(); sfx.click(); box.classList.add("hidden"); vnJump(o.g); };
+    b.onclick=e=>{
+      e.stopPropagation(); sfx.click(); box.classList.add("hidden");
+      if(o.g){ vnJump(o.g); return; }                 // bercabang
+      /* konvergen: tampilkan respons (kalau ada) lalu lanjut alur sama */
+      vnIdx = resumeIdx;
+      if(o.say){
+        vnConvergeSay = { who: (o.who!==undefined ? o.who : "@"), t:o.say };
+        vnRun();
+      } else {
+        vnRun();
+      }
+    };
     box.appendChild(b);
   });
   box.classList.remove("hidden");
