@@ -390,5 +390,15 @@
 <script src="js/naskah.js"></script>
 <script src="js/story.js"></script>
 <script src="js/online.js"></script>
+
+ <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('service worker terdaftar!', reg))
+        .catch(err => console.log('gagal daftar service worker', err));
+    });
+  }
+</script>
 </body>
 </html>
