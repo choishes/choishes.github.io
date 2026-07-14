@@ -26,7 +26,9 @@ const VN_BG_FALLBACK={
 };
 const VN_FILTER={
   teks1:  s=>s.type==="teks"&&s.level===1,
+  chat:   s=>s.type==="teks"&&s._pk===6,
   berita: s=>s.type==="teks"&&s._pk===3,
+  akademik:s=>s.type==="teks"&&s._pk===9,
   gambar: s=>s.type==="gambar",
   trap:   s=>s.type==="teks"&&s.trap===true,
   final:  s=>s.type==="gambar"||(s.type==="teks"&&s.level===2),

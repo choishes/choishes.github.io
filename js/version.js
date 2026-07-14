@@ -4,7 +4,7 @@
    Angka ini otomatis tampil di homescreen (chip di bawah judul) dan
    di pojok kanan atas. Riwayat lengkap ada di CLAUDE.md.
    ================================================================ */
-const SINYAL_VERSION = "2.15"; // ← update di SINI setiap ada perubahan
+const SINYAL_VERSION = "2.16"; // ← update di SINI setiap ada perubahan
 
 document.addEventListener("DOMContentLoaded", ()=>{
   const v = "v"+SINYAL_VERSION;
