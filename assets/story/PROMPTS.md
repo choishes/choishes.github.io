@@ -27,7 +27,9 @@ Semua di satu folder: **`assets/story/`**
 ```
 char_<tokoh>_<ekspresi>.png
 ```
-- `<tokoh>` = `vega`, `arga`, `dira`, atau `syn`
+- `<tokoh>` = `vega`, `arga`, `dira`, `sari`, atau `syn`
+  (sari = tokoh baru v2.16; sebelum filenya ada, game otomatis pakai
+  siluet placeholder, cerita tetap jalan)
 - `<ekspresi>` = `normal`, `senyum`, `marah`, atau `kaget`
 
 Contoh yang benar:
@@ -92,6 +94,11 @@ Deskripsi fisik tiap tokoh (salin persis biar wajahnya tetap sama):
   berantakan, hoodie gelap bermotif sirkuit cyan, headphone di leher.
 - **DIRA** — perempuan Indonesia awal 20-an berhijab rapi, blazer ungu,
   rompi pers kampus, memegang buku catatan.
+- **SARI** — perempuan Indonesia awal 20-an, kacamata bulat, rambut hitam
+  dikuncir rendah agak berantakan, kardigan biru muda di atas kaos polos,
+  membawa notes kecil bersampul biru lecek dengan noda kopi, ada pulpen
+  terselip di kuncirannya. Kesan: pekerja keras yang kurang tidur tapi
+  matanya hidup.
 - **SYN** — sosok cahaya digital merah-putih yang glitch, tubuh transparan
   seperti hologram, indah tapi bikin merinding. Bukan robot.
 
@@ -99,3 +106,26 @@ Isi bagian ekspresi dengan: `normal` (tenang), `senyum` (ramah),
 `marah` (serius/kesal), `kaget` (mata membelalak, terkejut).
 
 Simpan semua prompt final yang kamu pakai — nanti berguna untuk lampiran laporan.
+
+---
+
+## Aset video & cuts (v2.19)
+
+Letakkan di folder `assets/story/` dengan nama PERSIS berikut:
+
+- `intro_video.mp4` — cutscene prolog ± 25 detik. Di-stream saat mulai
+  cerita (bukan di-precache karena besar). Kalau file tidak ada, prolog
+  otomatis dilewati dan cerita langsung ke BAB 1. Format lain (mis. .webm)
+  perlu penyesuaian pada `<source>` di index.html.
+- `cuts_<kunci>.jpg` — gambar landscape 16:9 untuk adegan fokus layar
+  penuh (tanpa karakter). Kunci yang dipakai naskah:
+  - `cuts_arga_mother.jpg`   — BAB 2, ibu Arga di depan ATM
+  - `cuts_sari_ai.jpg`       — BAB 4, tangkapan layar "99% AI"
+  - `cuts_sari_book.jpg`     — BAB 4, notes biru berpindah tangan
+  - `cuts_dira_envelope.jpg` — BAB 5, foto palsu Dira menerima amplop
+  - `cuts_dira_fake.jpg`     — BAB 5, forensik foto terkupas
+  - `cuts_syn_deprecated.jpg`— BAB 6, ruang server SYN yang ditinggalkan
+  - `cuts_archive_open.jpg`  — BAB 7, lautan label di inti arsip
+
+Tanpa file cuts, engine memakai gradasi gelap sebagai fallback dan
+narasinya tetap tampil, jadi aman untuk deploy bertahap.

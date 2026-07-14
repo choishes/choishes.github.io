@@ -1,4 +1,4 @@
-const cacheName = 'game-v3';
+const cacheName = 'game-v4';
 const assets = [
   '/',
   '/index.html',
@@ -21,6 +21,7 @@ const assets = [
   '/js/paket_ekstra.js',
   '/js/space.js',
   '/js/story.js',
+  '/js/profil.js',
   '/js/version.js',
 
   // file audio background musik dari folder /assets/bgm
@@ -76,7 +77,14 @@ const assets = [
   '/assets/story/char_vega_kaget.png',
   '/assets/story/char_vega_marah.png',
   '/assets/story/char_vega_normal.png',
-  '/assets/story/char_vega_senyum.png'
+  '/assets/story/char_vega_senyum.png',
+  '/assets/story/cuts_archive_open.jpg',
+  '/assets/story/cuts_arga_mother.jpg',
+  '/assets/story/cuts_dira_envelope.jpg',
+  '/assets/story/cuts_dira_fake.jpg',
+  '/assets/story/cuts_sari_ai.jpg',
+  '/assets/story/cuts_sari_book.jpg',
+  '/assets/story/cuts_syn_deprecated.jpg'
 ];
 
 self.addEventListener('install', e => {

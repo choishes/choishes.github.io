@@ -79,6 +79,7 @@ function vnResetStage(){
   const f=$("vnFlash"); if(f) f.classList.remove("go");
   $("vnName").textContent=""; $("vnText").textContent="";
   vnBgKey=null; vnConvergeSay=null; vnShowingConverge=null;
+  if(typeof vnHideCut==="function") vnHideCut();
 }
 
 /* ---------- masuk story mode ---------- */
@@ -100,7 +101,7 @@ function startStory(){
       {l:"MULAI DARI AWAL", g:"ch1"}
     ], true);
   }else{
-    vnJump("ch1");
+    runProlog(()=>vnJump("ch1"));   // loading + cutscene prolog dulu, baru BAB 1
   }
 }
 function vnJump(lb){
@@ -123,6 +124,7 @@ function vnRun(){
     if(nd.lb!==undefined){ if(/^ch\d/.test(nd.lb)) storySave(nd.lb); vnIdx++; continue; }
     if(nd.chapter!==undefined){ vnChapterCard(nd.chapter, nd.sub||""); return; }
     if(nd.bg){ vnSetBg(nd.bg); vnIdx++; continue; }
+    if(nd.cut!==undefined){ vnShowCut(nd.cut, nd); return; }
     if(nd.m){ vnMusic(nd.m); vnIdx++; continue; }
     if(nd.fx){ vnFx(nd.fx); vnIdx++; continue; }
     if(nd.c){ vnShowChar(nd.c, nd.side||"L", nd.mood||"normal"); vnIdx++; continue; }
@@ -254,12 +256,105 @@ function vnPreloadAll(){
   const moods=["normal","senyum","marah","kaget"];
   Object.keys(VN_CHARS).forEach(id=>moods.forEach(m=>vnPreload("assets/story/char_"+id+"_"+m+".png")));
   Object.keys(VN_BG_FALLBACK).forEach(k=>vnPreload("assets/story/bg_"+k+".jpg"));
+  VN_CUTS.forEach(k=>vnPreload("assets/story/cuts_"+k+".jpg"));
+}
+
+/* ---------- CUTS: adegan fokus layar penuh (gambar + teks, tanpa karakter) ----------
+   Node naskah: { cut:"<kunci>", n:"NAMA"|"@"|"", t:"narasi..." }
+   File gambar: assets/story/cuts_<kunci>.jpg (fallback gradasi kalau tak ada).
+   Kunci yang tersedia sesuai aset yang disiapkan: */
+const VN_CUTS=["archive_open","arga_mother","dira_envelope","dira_fake","sari_ai","sari_book","syn_deprecated"];
+function vnHideCut(){
+  const cut=$("vnCut"); if(cut && !cut.classList.contains("hidden")) cut.classList.add("hidden");
+}
+function vnShowCut(key, nd){
+  const cut=$("vnCut"); if(!cut){ vnSay(nd); return; } // aman kalau elemen belum ada
+  vnHideChar("all");                       // adegan fokus: tanpa karakter
+  const src="assets/story/cuts_"+key+".jpg";
+  const rec=vnPreload(src);
+  const fb="radial-gradient(900px 520px at 50% 35%, rgba(63,224,197,.10), transparent), linear-gradient(180deg,#0a1420,#05080e)";
+  if(vnImgReady(rec)){
+    cut.style.background="#000 url('"+src+"') center/cover no-repeat";
+  }else{
+    cut.style.background=fb;
+    rec.img.addEventListener("load", ()=>{
+      cut.style.background="#000 url('"+src+"') center/cover no-repeat";
+    }, {once:true});
+  }
+  cut.classList.remove("hidden"); void cut.offsetWidth; cut.classList.add("show");
+  vnSay(nd);                                // narasi tampil di kotak dialog seperti biasa
+}
+
+/* ---------- LOADING AWAL + CUTSCENE PROLOG (video) ----------
+   startStory (mulai baru) memanggil runProlog(done):
+   1) Layar loading memastikan intro_video termuat penuh.
+   2) Video prolog diputar dengan caption; ada tombol SKIP + konfirmasi.
+   3) Selesai / di-skip / video hilang → done() lanjut ke BAB 1.
+   File video: assets/story/intro_video.mp4 (set di <source> index.html). */
+const PROLOG_CAPTIONS=[
+  {t:0.4, s:"Kota Sanira. Tahun 2031."},
+  {t:5,   s:"Siapa pun kini bisa membuat wajah, suara, dan berita hanya dari beberapa kata."},
+  {t:11,  s:"Yang perlahan hilang bukan kebenaran, tapi keyakinan kita untuk mempercayai apa pun."},
+  {t:18,  s:"Di sudut kota, satu lab kecil menyalakan lampunya."},
+];
+let prologDone=false, prologTimer=null, prologCapTimers=null;
+function prologCleanup(){
+  if(prologTimer){ clearTimeout(prologTimer); prologTimer=null; }
+  if(prologCapTimers){ prologCapTimers.forEach(id=>clearTimeout(id)); prologCapTimers=null; }
+  const v=$("prologVideo"); if(v){ try{ v.pause(); }catch(e){} }
+}
+function runProlog(done){
+  const wrap=$("prolog"), load=$("storyLoad"), v=$("prologVideo");
+  if(!wrap || !v || reducedMotion){ done(); return; } // aman & aksesibel
+  prologDone=false;
+  const finish=()=>{
+    if(prologDone) return; prologDone=true; prologCleanup();
+    wrap.classList.remove("show");
+    setTimeout(()=>{ wrap.classList.add("hidden"); done(); }, reducedMotion?0:500);
+  };
+
+  /* --- FASE LOADING --- */
+  load.classList.remove("hidden"); void load.offsetWidth; load.classList.add("show");
+  const fill=$("storyLoadFill");
+  let pct=0;
+  const tick=setInterval(()=>{ pct=Math.min(95, pct+Math.random()*16+5); if(fill) fill.style.width=pct+"%"; }, 280);
+
+  let started=false;
+  const startPlay=()=>{
+    if(started) return; started=true;
+    clearInterval(tick); if(fill) fill.style.width="100%";
+    setTimeout(()=>{
+      load.classList.remove("show"); load.classList.add("hidden");
+      wrap.classList.remove("hidden"); void wrap.offsetWidth; wrap.classList.add("show");
+      prologCapTimers=PROLOG_CAPTIONS.map(c=>setTimeout(()=>{
+        const cap=$("prologCap"); if(cap){ cap.textContent=c.s; cap.classList.remove("in"); void cap.offsetWidth; cap.classList.add("in"); }
+      }, c.t*1000));
+      try{ v.currentTime=0; const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){}
+      prologTimer=setTimeout(finish, 26000); // pengaman kalau 'ended' tak terpanggil
+    }, 320);
+  };
+  const bail=()=>{ clearInterval(tick); load.classList.add("hidden"); load.classList.remove("show"); if(!prologDone){ prologDone=true; done(); } };
+
+  v.addEventListener("canplaythrough", startPlay, {once:true});
+  v.addEventListener("ended", finish, {once:true});
+  v.addEventListener("error", bail, {once:true});
+  setTimeout(()=>{ if(!started && v.readyState>=3) startPlay(); }, 7000);  // koneksi lambat → mulai kalau cukup
+  setTimeout(()=>{ if(!started) bail(); }, 12000);                         // video gagal → lewati
+
+  /* tombol skip + popup konfirmasi */
+  const skip=$("prologSkip"), cf=$("prologConfirm"), yes=$("prologYes"), no=$("prologNo");
+  if(skip) skip.onclick=()=>{ if(cf) cf.classList.remove("hidden"); };
+  if(no)   no.onclick=()=>{ if(cf) cf.classList.add("hidden"); };
+  if(yes)  yes.onclick=()=>{ if(cf) cf.classList.add("hidden"); finish(); };
+
+  try{ v.load(); }catch(e){}
 }
 
 /* ---------- latar & karakter ---------- */
 function vnSetBg(key){
   if(key===vnBgKey) return;
   vnBgKey=key;
+  vnHideCut();   // kembali ke adegan normal → tutup layer cut
   const bg=$("vnBg");
   const src="assets/story/bg_"+key+".jpg";
   const rec=vnPreload(src);
@@ -279,6 +374,7 @@ function vnSetBg(key){
   }, reducedMotion?0:280);
 }
 function vnShowChar(id, side, mood){
+  vnHideCut();   // karakter muncul → keluar dari mode cut
   const slot = side==="R" ? $("vnCharR") : $("vnCharL");
   const other = side==="R" ? $("vnCharL") : $("vnCharR");
   const meta=VN_CHARS[id]||{name:id.toUpperCase(), color:"#3fe0c5"};

@@ -3,7 +3,8 @@
    ================================================================ */
 const $=id=>document.getElementById(id);
 const hub=$("hub"), game=$("game"), end=$("end"), board=$("board"),
-      settings=$("settings"), credits=$("credits"), levels=$("levels"), duelSec=$("duel"), storyScr=$("story");
+      settings=$("settings"), credits=$("credits"), levels=$("levels"), duelSec=$("duel"), storyScr=$("story"),
+      profilScr=$("profil");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 const playable = s => s.type==="teks" || (s.src && s.src.length>0);
@@ -34,7 +35,7 @@ let answeredTotal=0, runTwistShown=false; // pemicu twist ending
 
 /* ================= NAVIGASI LAYAR ================= */
 function show(sec){
-  [hub,game,end,board,settings,credits,levels,duelSec,storyScr].forEach(s=>s.classList.add("hidden"));
+  [hub,game,end,board,settings,credits,levels,duelSec,storyScr,profilScr].forEach(s=>s.classList.add("hidden"));
   sec.classList.remove("hidden");
   /* menu awal tampil polos tanpa kartu; layar lain memakai kartu */
   document.querySelector(".card").classList.toggle("bare", sec===hub || sec===levels || sec===storyScr);
@@ -301,6 +302,7 @@ function choose(guessAI){
       const seg=$("seg"+idx); seg.classList.remove("now"); seg.classList.add((c1&&c2)?"done":(!c1&&!c2)?"wrong":"now");
     }else{
       const correct=(guessAI===r.isAI);
+      if(typeof profilRecord==="function") profilRecord(r, correct);
       if(mode==="infinite") answeredTotal++;
       if(mode==="online" && typeof onlineOnAnswer==="function") setTimeout(()=>onlineOnAnswer(correct),0);
       if(correct){score++; sfx.ok();}
@@ -406,6 +408,7 @@ function endInfinite(){
     "Mode tanpa akhir meniru kondisi nyata: konten datang terus-menerus, dan kelelahan menurunkan akurasi. Moderator konten profesional menghadapi ini setiap hari. <b>Deteksi manual tidak bisa diskalakan.</b>",
     false, true);
   pendingLB={score:score, mode:"INFINITE"};
+  autoSubmitGlobal(pendingLB);
 }
 
 function endTanding(){
@@ -454,17 +457,29 @@ function endCareerFinal(){
     "Semakin dekat ke inti, semakin kabur batas manusia–mesin — dan di inti, batas itu runtuh sama sekali. <b>Keahlian menunda kekalahan, tapi verifikasi sumber yang membatalkannya.</b>",
     true, true);
   pendingLB={score:score, mode:"KARIR"};
+  autoSubmitGlobal(pendingLB);
   $("tolab").textContent="Kembali ke Lab";
   $("tolab").onclick=()=>{ sfx.click(); bgmGameStop(); show(hub); };
 }
 
 /* ================= LEADERBOARD ================= */
 let pendingLB=null;
+/* Kirim skor ke papan GLOBAL secara otomatis di akhir run karir/infinite,
+   memakai nama operator yang sudah tersimpan (tanpa perlu klik simpan).
+   Ditandai globalDone agar tombol simpan manual tidak mengirim dua kali. */
+function autoSubmitGlobal(pl){
+  if(!pl || pl.globalDone) return;
+  if(typeof lbSubmitGlobal!=="function") return;
+  const nm=(typeof PLAYER!=="undefined" && PLAYER) ? PLAYER : "OPERATOR";
+  lbSubmitGlobal(nm, pl.score, pl.mode);
+  pl.globalDone=true;
+}
 $("saveScore").addEventListener("click",()=>{
   if(!pendingLB) return;
   const nm=$("nameinput").value;
   lbAdd(nm, pendingLB.score, pendingLB.mode);
-  if(typeof lbSubmitGlobal==="function") lbSubmitGlobal(nm, pendingLB.score, pendingLB.mode);
+  /* global sudah dikirim otomatis; hanya kirim di sini kalau belum */
+  if(typeof lbSubmitGlobal==="function" && !pendingLB.globalDone) lbSubmitGlobal(nm, pendingLB.score, pendingLB.mode);
   pendingLB=null; sfx.ok();
   $("namebox").classList.add("hidden");
   openBoard();
@@ -498,6 +513,12 @@ $("quit").addEventListener("click",()=>{
   bgmGameStop(); show(hub);
 });
 $("openBoard").addEventListener("click",()=>{sfx.click(); openBoard();});
+$("openProfil").addEventListener("click",()=>{ sfx.click(); if(typeof profilRender==="function") profilRender($("profilBody")); show(profilScr); });
+$("profilReset").addEventListener("click",()=>{
+  if(typeof profilReset==="function" && confirm("Hapus semua data Profil Detektor di perangkat ini?")){
+    profilReset(); sfx.ok(); profilRender($("profilBody"));
+  }
+});
 document.querySelectorAll(".backhub").forEach(b=>b.addEventListener("click",()=>{sfx.click(); show(hub);}));
 
 /* pengaturan */
@@ -534,6 +555,7 @@ $("renameSave").addEventListener("click",()=>{
   sfx.ok();
 });
 $("replayIntro").addEventListener("click",()=>{ location.reload(); });
+$("replayProlog").addEventListener("click",()=>{ sfx.click(); if(typeof runProlog==="function") runProlog(()=>{}); });
 $("wipeData").addEventListener("click",()=>{
   if(!confirm("Hapus semua data lokal (nama, rekor, papan skor)?")) return;
   try{ localStorage.removeItem(LB_KEY); localStorage.removeItem(PLAYER_KEY); }catch(e){}

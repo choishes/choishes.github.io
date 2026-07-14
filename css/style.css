@@ -745,3 +745,100 @@ body::before{opacity:.08}
   font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-decoration:underline}
 /* di landscape, overlay saran tak perlu muncul */
 @media (orientation:landscape){ .vnrotate{display:none !important} }
+
+/* ================================================================
+   TAMBAHAN v2.19 — CUTS, LOADING PROLOG, CUTSCENE, PROFIL DETEKTOR
+   ================================================================ */
+
+/* --- CUTS: adegan fokus layar penuh di dalam panggung VN --- */
+.vncut{
+  position:absolute; inset:0; z-index:3;
+  background:#000 center/cover no-repeat;
+  opacity:0; transition:opacity .55s ease; pointer-events:none;
+}
+.vncut.show{opacity:1}
+.vncut::after{ /* vignette + gradasi bawah agar teks tetap terbaca */
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(120% 90% at 50% 35%, transparent 55%, rgba(2,5,9,.55) 100%),
+    linear-gradient(180deg, rgba(2,5,9,.25) 0%, transparent 22%, transparent 55%, rgba(2,5,9,.85) 100%);
+}
+
+/* --- LAYAR LOADING AWAL --- */
+.storyload{
+  position:fixed; inset:0; z-index:120; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:20px;
+  background:radial-gradient(circle at 50% 45%, #0a1420, #04070c 70%);
+  opacity:0; transition:opacity .4s ease;
+}
+.storyload.show{opacity:1}
+.sl-logo{font-family:var(--mono); font-weight:800; letter-spacing:.32em; font-size:34px; color:#eaf6f3}
+.sl-logo span{color:var(--cyan); text-shadow:0 0 22px rgba(63,224,197,.5)}
+.sl-bar{width:min(320px,72vw); height:4px; border-radius:4px; background:rgba(255,255,255,.08); overflow:hidden}
+.sl-bar>div{height:100%; width:0; background:linear-gradient(90deg,var(--cyan),var(--violet)); box-shadow:0 0 12px var(--cyan); transition:width .3s ease}
+.sl-msg{font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:var(--dim); text-transform:lowercase}
+
+/* --- CUTSCENE PROLOG (video) --- */
+.prolog{
+  position:fixed; inset:0; z-index:121; background:#000;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .5s ease;
+}
+.prolog.show{opacity:1}
+.prolog-video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000}
+.prolog-vig{position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, transparent 20%, transparent 55%, rgba(0,0,0,.9) 100%)}
+.prolog-cap{
+  position:absolute; left:0; right:0; bottom:12%; text-align:center;
+  padding:0 8vw; font-size:clamp(15px,2.4vw,22px); line-height:1.6;
+  color:#f2f8f6; text-shadow:0 2px 18px rgba(0,0,0,.9);
+  opacity:0;
+}
+.prolog-cap.in{animation:prologCap .8s ease forwards}
+@keyframes prologCap{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+.prolog-skip{
+  position:absolute; top:20px; right:20px; z-index:2; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  padding:9px 16px; border-radius:20px; border:1px solid rgba(255,255,255,.35);
+  background:rgba(0,0,0,.4); color:#e9f3f0; backdrop-filter:blur(4px);
+}
+.prolog-skip:hover{border-color:var(--cyan); color:var(--cyan)}
+.prolog-confirm{position:absolute; inset:0; z-index:3; display:flex; align-items:center; justify-content:center;
+  background:rgba(2,5,9,.72); backdrop-filter:blur(3px)}
+.pc-box{width:min(380px,86vw); text-align:center; padding:26px 24px; border-radius:16px;
+  background:rgba(10,16,24,.96); border:1px solid var(--line2)}
+.pc-title{font-family:var(--mono); font-weight:700; letter-spacing:.14em; font-size:18px; color:#eaf6f3; margin-bottom:10px}
+.pc-desc{font-size:13px; line-height:1.6; color:var(--muted); margin-bottom:20px}
+.pc-btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+
+/* --- PROFIL DETEKTOR --- */
+.pf{width:min(560px,94vw); margin:0 auto; text-align:left}
+.pf-hero{display:flex; align-items:center; gap:20px; padding:18px 20px; border-radius:14px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line2); margin-bottom:8px}
+.pf-acc{text-align:center; flex:0 0 auto}
+.pf-accnum{font-family:var(--mono); font-weight:800; font-size:38px; line-height:1; color:var(--cyan); text-shadow:0 0 20px rgba(63,224,197,.4)}
+.pf-acclbl{font-family:var(--mono); font-size:10px; letter-spacing:.24em; color:var(--dim); margin-top:6px}
+.pf-meta{font-size:13px; line-height:1.9; color:var(--muted)}
+.pf-meta b{color:#e9f3f0; font-weight:700}
+.pf-sechead{font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--dim);
+  margin:20px 0 10px; text-transform:uppercase}
+.pf-sechead.pf-warn{color:#ff8080}
+.pf-sechead.pf-good{color:var(--cyan)}
+.pf-cat{padding:12px 14px; border-radius:11px; background:var(--bg2); border:1px solid var(--line2); margin-bottom:8px}
+.pf-cattop,.pf-catop{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px}
+.pf-catname{font-weight:600; font-size:14px; color:#e9f3f0}
+.pf-catpct{font-family:var(--mono); font-size:11px; letter-spacing:.08em; flex:0 0 auto}
+.pf-catpct.warn{color:#ff8080}
+.pf-catpct.good{color:var(--cyan)}
+.pf-bar{height:6px; border-radius:6px; background:rgba(255,255,255,.07); overflow:hidden}
+.pf-bar>i{display:block; height:100%; border-radius:6px}
+.pf-bar>i.warn{background:linear-gradient(90deg,#ff6b6b,#ff9f6b); box-shadow:0 0 10px rgba(255,107,107,.5)}
+.pf-bar>i.good{background:linear-gradient(90deg,var(--cyan),var(--violet)); box-shadow:0 0 10px rgba(63,224,197,.5)}
+.pf-tip{font-size:12px; line-height:1.6; color:var(--muted); margin-top:9px}
+.pf-all{border-top:1px solid var(--line2); padding-top:6px}
+.pf-allrow{display:grid; grid-template-columns:1fr 90px 74px; align-items:center; gap:10px; padding:7px 2px}
+.pf-allname{font-size:12.5px; color:#d7e5e1}
+.pf-allbar{height:5px; border-radius:5px; background:rgba(255,255,255,.07); overflow:hidden}
+.pf-allbar>i{display:block; height:100%; background:linear-gradient(90deg,var(--cyan),var(--violet)); border-radius:5px}
+.pf-allnum{font-family:var(--mono); font-size:11px; color:var(--muted); text-align:right}
+.pf-allnum em{color:var(--dim); font-style:normal; font-size:10px}
