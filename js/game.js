@@ -3,7 +3,7 @@
    ================================================================ */
 const $=id=>document.getElementById(id);
 const hub=$("hub"), game=$("game"), end=$("end"), board=$("board"),
-      settings=$("settings"), credits=$("credits"), levels=$("levels"), duelSec=$("duel");
+      settings=$("settings"), credits=$("credits"), levels=$("levels"), duelSec=$("duel"), storyScr=$("story");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 const playable = s => s.type==="teks" || (s.src && s.src.length>0);
@@ -34,10 +34,10 @@ let answeredTotal=0, runTwistShown=false; // pemicu twist ending
 
 /* ================= NAVIGASI LAYAR ================= */
 function show(sec){
-  [hub,game,end,board,settings,credits,levels,duelSec].forEach(s=>s.classList.add("hidden"));
+  [hub,game,end,board,settings,credits,levels,duelSec,storyScr].forEach(s=>s.classList.add("hidden"));
   sec.classList.remove("hidden");
   /* menu awal tampil polos tanpa kartu; layar lain memakai kartu */
-  document.querySelector(".card").classList.toggle("bare", sec===hub || sec===levels);
+  document.querySelector(".card").classList.toggle("bare", sec===hub || sec===levels || sec===storyScr);
 }
 
 /* ================= LOADING SINEMATIK ================= */
@@ -237,6 +237,8 @@ function updateHeader(){
     $("count").innerHTML="P1 <b>"+p1+"</b> — <b>"+p2+"</b> P2";
   }else if(mode==="online"){
     $("count").innerHTML="SKORMU <b>"+score+"</b>";
+  }else if(mode==="story"){
+    $("count").innerHTML="SKOR <b>"+score+"</b>";
   }else{
     $("count").innerHTML="MISI SKOR <b>"+score+"</b>";
   }
@@ -349,6 +351,10 @@ function next(){
   idx++;
   if(idx<deck.length){ render(); return; }
 
+  if(mode==="story"){
+    if(typeof storyChallengeDone==="function") storyChallengeDone(score);
+    return;
+  }
   if(mode==="online"){
     if(typeof onlineLocalDone==="function") onlineLocalDone();
     return;
@@ -478,6 +484,7 @@ $("lbTabGlobal").addEventListener("click",()=>{ sfx.click(); lbMode="global"; re
 /* ================= EVENTS ================= */
 document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>{
   if(m.dataset.start==="tanding"){ sfx.click(); show(duelSec); if(typeof olEnterLobby==="function") olEnterLobby(); }
+  else if(m.dataset.start==="story"){ if(typeof startStory==="function") startStory(); }
   else startGame(m.dataset.start);
 }));
 $("btnHuman").addEventListener("click",()=>choose(false));
@@ -487,6 +494,7 @@ $("tolab").onclick=()=>{sfx.click(); bgmGameStop(); show(hub);}; // default; lay
 $("quit").addEventListener("click",()=>{
   sfx.click();
   if(mode==="online" && typeof onlineAbort==="function") onlineAbort();
+  if(mode==="story" && typeof storyAbort==="function"){ storyAbort(); return; }
   bgmGameStop(); show(hub);
 });
 $("openBoard").addEventListener("click",()=>{sfx.click(); openBoard();});

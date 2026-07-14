@@ -79,11 +79,45 @@ const twistLoop=(function(){
     get playing(){ return on; }
   };
 })();
+/* Pembuat looper crossfade generik (dipakai twist, title, crisis) */
+function makeLoop(src, xfade){
+  const a=new Audio(src), b=new Audio(src);
+  [a,b].forEach(x=>{x.preload="auto"; x.loop=false;});
+  let cur=a, nxt=b, on=false, watch=null, swapping=false;
+  function tick(){
+    if(!on || swapping) return;
+    const d=cur.duration;
+    if(d && !isNaN(d) && cur.currentTime > d - xfade/1000){
+      swapping=true; nxt.currentTime=0; nxt.volume=0;
+      nxt.play().then(()=>{
+        fade(nxt,bgmVol,xfade); fade(cur,0,xfade);
+        setTimeout(()=>{ const t=cur; cur=nxt; nxt=t; swapping=false; }, xfade+80);
+      }).catch(()=>{ swapping=false; });
+    }
+  }
+  return {
+    start(){ on=true; swapping=false; cur.currentTime=0; cur.volume=0;
+      cur.play().then(()=>fade(cur,bgmVol,600)).catch(()=>{});
+      clearInterval(watch); watch=setInterval(tick,150); },
+    stop(){ on=false; clearInterval(watch); fade(cur,0,800); fade(nxt,0,800); },
+    setVolume(v){ if(on && !cur.paused && !swapping) cur.volume=v; },
+    get playing(){ return on; }
+  };
+}
+/* Jalur STORY: judul (pembuka) & krisis (fase tegang) */
+const titleLoop  = makeLoop("assets/bgm/Cinematic_Title_Sequence_Composition_Guide.mp3", 2600);
+const crisisLoop = makeLoop("assets/bgm/Cinematic_Conflict_and_Resolution.mp3", 2400);
+/* Jalur STORY tambahan: hangat/optimis & melankolis/merenung */
+const warmLoop   = makeLoop("assets/bgm/Optimistic_Game_Soundtrack_Composition_Guide.mp3", 2400);
+const melanLoop  = makeLoop("assets/bgm/Melancholic_Emotional_Musical_Composition.mp3", 2600);
+
 let ambient = null; // fallback generatif untuk jalur game
 
 function fade(el, to, ms=700){
+  const gen = (el.__fadeGen = (el.__fadeGen||0) + 1); // token: batalkan fade lama
   const from=el.volume, start=performance.now();
   function step(t){
+    if(el.__fadeGen!==gen) return; // fade ini sudah digantikan fade baru → berhenti
     const k=Math.min(1,(t-start)/ms);
     el.volume=from+(to-from)*k;
     if(k<1) requestAnimationFrame(step);
@@ -151,7 +185,17 @@ function bgmTwistStop(){
   twistLoop.stop();
 }
 
-function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); twistLoop.stop(); stopAmbient(); }
+function bgmStopAll(){ fade(trackIntro,0,300); fade(trackGame,0,300); twistLoop.stop(); titleLoop.stop(); crisisLoop.stop(); warmLoop.stop(); melanLoop.stop(); stopAmbient(); }
+
+/* Jalur STORY — dipanggil story.js */
+function bgmTitleStart(){ currentCtx="title"; if(!bgmOn) return; twistLoop.stop(); crisisLoop.stop(); warmLoop.stop(); melanLoop.stop(); fade(trackGame,0,300); titleLoop.start(); }
+function bgmTitleStop(){ if(currentCtx==="title") currentCtx=null; titleLoop.stop(); }
+function bgmCrisisStart(){ currentCtx="crisis"; if(!bgmOn) return; twistLoop.stop(); titleLoop.stop(); warmLoop.stop(); melanLoop.stop(); fade(trackGame,0,300); crisisLoop.start(); }
+function bgmCrisisStop(){ if(currentCtx==="crisis") currentCtx=null; crisisLoop.stop(); }
+function bgmWarmStart(){ currentCtx="warm"; if(!bgmOn) return; twistLoop.stop(); titleLoop.stop(); crisisLoop.stop(); melanLoop.stop(); fade(trackGame,0,300); warmLoop.start(); }
+function bgmWarmStop(){ if(currentCtx==="warm") currentCtx=null; warmLoop.stop(); }
+function bgmMelanStart(){ currentCtx="melan"; if(!bgmOn) return; twistLoop.stop(); titleLoop.stop(); crisisLoop.stop(); warmLoop.stop(); fade(trackGame,0,300); melanLoop.start(); }
+function bgmMelanStop(){ if(currentCtx==="melan") currentCtx=null; melanLoop.stop(); }
 
 /* ---------- API untuk layar Pengaturan ---------- */
 let bgmVol = 0.35; // 0..1, dikontrol slider
@@ -161,12 +205,20 @@ function setBgmVolume(v){
   if(!trackIntro.paused) trackIntro.volume = bgmVol;
   if(!trackGame.paused)  trackGame.volume  = bgmVol;
   twistLoop.setVolume(bgmVol);
+  titleLoop.setVolume(bgmVol);
+  crisisLoop.setVolume(bgmVol);
+  warmLoop.setVolume(bgmVol);
+  melanLoop.setVolume(bgmVol);
 }
 function setBgm(on){
   bgmOn = on;
   if(!on){ bgmStopAll(); return; }
   if(currentCtx==="intro") { trackIntro.volume=0; trackIntro.play().then(()=>fade(trackIntro,bgmVol,600)).catch(()=>{}); }
   else if(currentCtx==="twist"){ twistLoop.start(); }
+  else if(currentCtx==="title"){ titleLoop.start(); }
+  else if(currentCtx==="crisis"){ crisisLoop.start(); }
+  else if(currentCtx==="warm"){ warmLoop.start(); }
+  else if(currentCtx==="melan"){ melanLoop.start(); }
   else if(currentCtx==="game"){ trackGame.volume=0; trackGame.play().then(()=>fade(trackGame,bgmVol,600)).catch(()=>startAmbient()); }
 }
 function setSfx(on){ sfxOn = on; if(on) sfx.click(); }

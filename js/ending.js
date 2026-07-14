@@ -20,21 +20,21 @@ const ERR_LINES=[
 
 const REVEAL_LINES=[
   "pemulihan selesai. membuka log arsip…",
-  "» generator: SYN-4.2 — sumber seluruh spesimen",
-  "» termasuk 50 teks berlabel “MANUSIA”",
-  "» termasuk potret, puisi, dan curhat yang kau percaya",
-  "tidak ada manusia di arsip ini.",
-  "selama ini kamu tidak membedakan manusia dari mesin —",
-  "kamu mempercayai label yang tidak pernah kamu verifikasi.",
+  "» sumber semua soal: generator SYN-4.2",
+  "» termasuk 50 teks yang tadi berlabel “MANUSIA”",
+  "» termasuk potret, puisi, dan curhat yang kamu percaya asli",
+  "kesimpulannya: nggak ada manusia di arsip ini.",
+  "jadi selama ini kamu bukan membedakan manusia dari mesin —",
+  "kamu cuma percaya pada label yang nggak pernah kamu cek sendiri.",
 ];
 
 const DEBRIEF_HTML =
-  '<b>FAKTA DI BALIK TWIST:</b> ini fiksi yang menyimpan kebenaran. '
-  +'Seluruh teks berlabel “manusia” di game ini <b>memang ditulis oleh AI</b> '
-  +'selama pengembangan (tercatat di js/paket.js). Foto berlabel asli tetap '
-  +'karya fotografer manusia. Pelajarannya nyata untuk keduanya: skor '
-  +'tertinggi pun tidak berarti bila sumber label tidak pernah diperiksa. '
-  +'<b>Provenance dulu, persepsi kemudian.</b>';
+  '<b>FAKTA DI BALIK TWIST INI:</b> ceritanya fiksi, tapi pesannya nyata. '
+  +'Semua teks yang tadi berlabel “manusia” di game ini <b>memang ditulis oleh AI</b> '
+  +'waktu game dikembangkan (bisa dicek di js/paket.js). Foto yang berlabel asli '
+  +'tetap karya fotografer sungguhan. Intinya sama untuk keduanya: skor setinggi '
+  +'apa pun nggak ada artinya kalau kamu nggak pernah mengecek sumber labelnya. '
+  +'<b>Cek sumbernya dulu, baru percaya.</b>';
 
 const twistReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const tw=id=>document.getElementById(id);
