@@ -5,16 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SINYAL — Lab Forensik Media Sintetis</title>
 <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
+</head>
+<body>
 
-<!-- latar luar angkasa -->
 <canvas id="space"></canvas>
  
-<!-- ============ CINEMATIC INTRO ============ -->
 <div id="cine">
   <button id="cskip" class="hidden">SKIP »</button>
 
@@ -48,7 +46,6 @@
     <div id="cmajutext" class="cmaju">MAJU!</div>
   </div>
 
-  <!-- fase peluncuran roket ke void -->
   <div id="claunch" class="cstage hidden">
     <canvas id="warp"></canvas>
     <div class="cockpitv"></div>
@@ -57,7 +54,6 @@
   <div id="whiteout"></div>
 </div>
 
-<!-- layar loading sinematik antar-mode -->
 <div id="loadscreen" class="hidden">
   <div class="clogo in" style="font-size:30px">SIN<span>YAL</span></div>
   <div class="ldtitle" id="ldTitle">MODE</div>
@@ -65,32 +61,26 @@
   <div class="clog" id="ldLog">menghubungkan…</div>
 </div>
 
-<!-- ============ TWIST ENDING ============ -->
 <div id="twist" class="hidden">
-  <!-- A: intervensi glitch -->
   <div id="twGlitch" class="cstage hidden">
     <div class="twglitch" data-text="SINYAL">SINYAL</div>
     <div class="twwarn">⚠ ANOMALI TERDETEKSI PADA ARSIP</div>
   </div>
-  <!-- B: layar error -->
   <div id="twError" class="cstage hidden">
     <div class="twerrbox">
       <div class="twerrhead">✕ SISTEM SINYAL — KEGAGALAN KRITIS</div>
       <div id="twErrLog" class="twerrlog"></div>
     </div>
   </div>
-  <!-- C: pemulihan -->
   <div id="twLoad" class="cstage hidden">
     <div class="ldtitle">MEMULIHKAN ARSIP…</div>
     <div class="cbar" style="width:min(340px,72vw)"><div id="twFill" class="twfill"></div></div>
     <div class="clog">jangan tutup halaman ini</div>
   </div>
-  <!-- D: pengungkapan -->
   <div id="twReveal" class="cstage hidden">
     <p id="twLine" class="cline"></p>
     <div class="chint">KLIK UNTUK LANJUT</div>
   </div>
-  <!-- E: judul + debrief -->
   <div id="twFinal" class="cstage hidden">
     <div class="twtitle">SIAPA YANG MEMBERI LABEL?</div>
     <div class="twsub">ENDING TERBUKA — ARSIP SINYAL</div>
@@ -109,7 +99,6 @@
 
     <div class="body">
 
-      <!-- ============ MENU UTAMA ============ -->
       <section id="hub" class="center">
         <div class="title stagger">SIN<span class="accent">YAL</span></div>
         <div class="opchip stagger" id="verChip">v0.00</div>
@@ -151,7 +140,6 @@
         <div class="hidden" id="rank-label"></div>
       </section>
 
-      <!-- ============ PETA LEVEL KARIR ============ -->
       <section id="levels" class="center hidden">
         <div class="eyebrow">MODE KARIR — PETA EKSPEDISI</div>
         <p class="sub" style="margin-bottom:6px">Sepuluh planet menuju <b style="color:#ffc247">Inti Arsip</b>. Taklukkan satu demi satu.</p>
@@ -162,7 +150,6 @@
         </div>
       </section>
 
-      <!-- ============ MODE TANDING (pilih arena) ============ -->
       <section id="duel" class="center hidden">
         <div class="eyebrow">MODE TANDING — PILIH ARENA</div>
         <div id="duelMenu" style="margin-top:18px">
@@ -188,7 +175,6 @@
         </div>
       </section>
 
-      <!-- ============ GAME ============ -->
       <section id="game" class="hidden">
         <div class="track" id="track"></div>
         <div class="gamehead">
@@ -222,7 +208,6 @@
         <button class="quit" id="quit">← KEMBALI KE LAB</button>
       </section>
 
-      <!-- ============ END ============ -->
       <section id="end" class="center hidden">
         <div class="eyebrow" id="endmode">HASIL</div>
         <div class="scorebig"><span id="finalScore">0</span><span id="finalTotal"></span></div>
@@ -255,7 +240,6 @@
         </div>
       </section>
 
-      <!-- ============ PAPAN SKOR ============ -->
       <section id="board" class="center hidden">
         <div class="eyebrow">PAPAN SKOR</div>
         <div class="lbtabs">
@@ -269,7 +253,6 @@
         </div>
       </section>
 
-      <!-- ============ PENGATURAN ============ -->
       <section id="settings" class="center hidden">
         <div class="eyebrow">PENGATURAN</div>
         <div class="setlist" style="margin-top:14px">
@@ -297,7 +280,7 @@
             </div>
           </div>
           <div class="setrow">
-            <div class="setinfo"><b>Putar Ulang Intro</b><span>tonton lagi pembukaan sinematik</span></div>
+            <div class="setinfo"><b>Putar Ulang Intro</b><span>tonton lagi pembunakan sinematik</span></div>
             <button class="cta small ghost" id="replayIntro">PUTAR</button>
           </div>
           <div class="setrow danger">
@@ -311,7 +294,6 @@
         </div>
       </section>
 
-      <!-- ============ TENTANG KAMI ============ -->
       <section id="credits" class="center hidden">
         <div class="credhead">
           <div class="eyebrow">KRU LAB SINYAL</div>
@@ -343,40 +325,38 @@
   </div>
 </div>
 
-
-<!-- STORY MODE dipindah ke luar .app agar bisa fullscreen -->
-      <section id="story" class="hidden">
-        <div class="vnstage" id="vnStage">
-          <div class="vnbg" id="vnBg"></div>
-          <div class="vnchar vnL hidden" id="vnCharL"></div>
-          <div class="vnchar vnR hidden" id="vnCharR"></div>
-          <div class="vnfade"></div>
-          <div class="vnflash" id="vnFlash"></div>
-          <div class="vnbox">
-            <span class="vnname" id="vnName"></span>
-            <div class="vntext" id="vnText"></div>
-            <div class="vnhint">▼ klik / enter</div>
-          </div>
-          <div class="vnchoices hidden" id="vnChoices"></div>
-          <div class="vnchapter hidden" id="vnChapter">
-            <div class="vnchapline"></div>
-            <div class="vnchaptitle" id="vnChapterTitle"></div>
-            <div class="vnchapsub" id="vnChapterSub"></div>
-            <div class="vnchapline"></div>
-          </div>
-          <button class="vnexit" id="vnExit" aria-label="Keluar cerita">✕</button>
-          <button class="vnauto" id="vnAuto" aria-label="Putar otomatis">▶ AUTO</button>
-          <div class="vnrotate hidden" id="vnRotate">
-            <div class="vnrotate-inner">
-              <div class="vnrotate-icon">📱↻</div>
-              <div class="vnrotate-title">PUTAR HP KE SAMPING</div>
-              <div class="vnrotate-desc">Mode cerita paling enak dilihat dalam posisi <b>landscape</b> dan layar penuh. Putar HP-mu ke samping, atau tap tombol di bawah.</div>
-              <button class="vnrotate-btn" id="vnFsBtn">MASUK LAYAR PENUH</button>
-              <button class="vnrotate-skip" id="vnRotateSkip">Lanjut saja begini</button>
-            </div>
-          </div>
-        </div>
-      </section>
+<section id="story" class="hidden">
+  <div class="vnstage" id="vnStage">
+    <div class="vnbg" id="vnBg"></div>
+    <div class="vnchar vnL hidden" id="vnCharL"></div>
+    <div class="vnchar vnR hidden" id="vnCharR"></div>
+    <div class="vnfade"></div>
+    <div class="vnflash" id="vnFlash"></div>
+    <div class="vnbox">
+      <span class="vnname" id="vnName"></span>
+      <div class="vntext" id="vnText"></div>
+      <div class="vnhint">▼ klik / enter</div>
+    </div>
+    <div class="vnchoices hidden" id="vnChoices"></div>
+    <div class="vnchapter hidden" id="vnChapter">
+      <div class="vnchapline"></div>
+      <div class="vnchaptitle" id="vnChapterTitle"></div>
+      <div class="vnchapsub" id="vnChapterSub"></div>
+      <div class="vnchapline"></div>
+    </div>
+    <button class="vnexit" id="vnExit" aria-label="Keluar cerita">✕</button>
+    <button class="vnauto" id="vnAuto" aria-label="Putar otomatis">▶ AUTO</button>
+    <div class="vnrotate hidden" id="vnRotate">
+      <div class="vnrotate-inner">
+        <div class="vnrotate-icon">📱↻</div>
+        <div class="vnrotate-title">PUTAR HP KE SAMPING</div>
+        <div class="vnrotate-desc">Mode cerita paling enak dilihat dalam posisi <b>landscape</b> dan layar penuh. Putar HP-mu ke samping, atau tap tombol di bawah.</div>
+        <button class="vnrotate-btn" id="vnFsBtn">MASUK LAYAR PENUH</button>
+        <button class="vnrotate-skip" id="vnRotateSkip">Lanjut saja begini</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <script src="js/version.js"></script>
 <script src="js/bank.js"></script>
@@ -391,10 +371,11 @@
 <script src="js/story.js"></script>
 <script src="js/online.js"></script>
 
- <script>
+<script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      // PERBAIKAN: disesuaikan jadi relative path tanpa slash di awal agar aman di github pages
+      navigator.serviceWorker.register('sw.js')
         .then(reg => console.log('service worker terdaftar!', reg))
         .catch(err => console.log('gagal daftar service worker', err));
     });
