@@ -1,4 +1,4 @@
-const cacheName = 'game-v5';
+const cacheName = 'game-v6';
 const assets = [
   '/',
   '/index.html',
