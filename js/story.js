@@ -91,9 +91,9 @@ function startStory(){
   vnPreloadAll();   // unduh semua gambar story di muka biar tak telat/kedip
   vnResetStage();
   const ab=$("vnAuto"); if(ab){ ab.classList.remove("on"); ab.textContent="▶ AUTO"; }
-  vnMaybeSuggestLandscape();
   const saved=storyLoad();
   if(saved && saved!=="TAMAT" && saved!=="ch1"){
+    vnMaybeSuggestLandscape();
     vnSetBg("lab"); bgmTitleStart();
     $("vnName").style.display="none"; $("vnText").textContent="Berkas kasus lamamu masih terbuka, operator.";
     vnShowChoices([
@@ -101,7 +101,7 @@ function startStory(){
       {l:"MULAI DARI AWAL", g:"ch1"}
     ], true);
   }else{
-    runProlog(()=>vnJump("ch1"));   // loading + cutscene prolog dulu, baru BAB 1
+    runProlog(()=>vnJump("ch1"));   // runProlog menampilkan peringatan landscape dulu, lalu prolog, baru BAB 1
   }
 }
 function vnJump(lb){
@@ -303,9 +303,41 @@ function prologCleanup(){
   if(prologCapTimers){ prologCapTimers.forEach(id=>clearTimeout(id)); prologCapTimers=null; }
   const v=$("prologVideo"); if(v){ try{ v.pause(); }catch(e){} }
 }
+/* Prolog: TAMPILKAN peringatan landscape dulu (mobile+portrait),
+   tunggu user menutupnya (fullscreen/putar/lanjut), BARU putar video.
+   vnRotatePending menyimpan langkah lanjutan agar dipicu saat overlay
+   rotate ditutup (lihat vnRotateResolve). */
+let vnRotatePending=null;
 function runProlog(done){
-  const wrap=$("prolog"), load=$("storyLoad"), v=$("prologVideo");
+  const wrap=$("prolog"), v=$("prologVideo");
   if(!wrap || !v || reducedMotion){ done(); return; } // aman & aksesibel
+  const play=()=>_prologPlay(done);
+  const rot=$("vnRotate");
+  /* SELALU tunggu input user dulu (gerbang orientasi/kesiapan) sebelum
+     memutar video, di semua perangkat. Video tidak boleh autoplay tanpa
+     pilihan user. vnRotatePending menyimpan langkah lanjutan yang dipicu
+     saat gerbang ditutup (fullscreen / putar HP / "lanjut saja"). */
+  if(rot){
+    /* pesan gerbang menyesuaikan orientasi supaya masuk akal di semua perangkat */
+    const isPortrait = window.matchMedia && matchMedia("(orientation:portrait)").matches;
+    const mobile = typeof vnIsMobile==="function" && vnIsMobile();
+    const t=rot.querySelector(".vnrotate-title"), d=rot.querySelector(".vnrotate-desc");
+    if(mobile && isPortrait){
+      if(t) t.textContent="PUTAR HP KE SAMPING";
+      if(d) d.innerHTML="Mode cerita paling enak dilihat dalam posisi <b>landscape</b> dan layar penuh. Putar HP-mu ke samping, atau tap tombol di bawah untuk mulai.";
+    }else{
+      if(t) t.textContent="SIAP MENONTON PROLOG?";
+      if(d) d.innerHTML="Untuk pengalaman terbaik, tonton dalam <b>layar penuh</b>. Tekan tombol di bawah untuk mulai.";
+    }
+    vnRotatePending = play;
+    rot.classList.remove("hidden");
+  }else{
+    play();
+  }
+}
+function _prologPlay(done){
+  const wrap=$("prolog"), load=$("storyLoad"), v=$("prologVideo");
+  if(!wrap || !v){ done(); return; }
   prologDone=false;
   const finish=()=>{
     if(prologDone) return; prologDone=true; prologCleanup();
@@ -543,17 +575,28 @@ async function vnGoFullscreen(){
   /* coba kunci ke landscape kalau didukung (Android Chrome) */
   try{ if(screen.orientation && screen.orientation.lock) await screen.orientation.lock("landscape"); }catch(e){}
 }
+/* Tutup overlay landscape, lalu jalankan langkah lanjutan bila ada
+   (mis. mulai video prolog setelah peringatan ditutup). */
+function vnRotateResolve(){
+  const ov=$("vnRotate"); if(ov) ov.classList.add("hidden");
+  if(vnRotatePending){ const f=vnRotatePending; vnRotatePending=null; f(); }
+}
 if($("vnFsBtn")) $("vnFsBtn").addEventListener("click",async e=>{
   e.stopPropagation(); sfx.click();
   await vnGoFullscreen();
-  $("vnRotate").classList.add("hidden");
+  vnRotateResolve();
 });
 if($("vnRotateSkip")) $("vnRotateSkip").addEventListener("click",e=>{
-  e.stopPropagation(); sfx.click(); $("vnRotate").classList.add("hidden");
+  e.stopPropagation(); sfx.click(); vnRotateResolve();
 });
 /* kalau user memutar ke landscape sendiri, tutup overlay */
 window.addEventListener("orientationchange",()=>{
-  setTimeout(()=>{ if(!storySec.classList.contains("hidden")) vnMaybeSuggestLandscape(); }, 300);
+  setTimeout(()=>{
+    if(storySec.classList.contains("hidden")) return;
+    const portrait = window.matchMedia && matchMedia("(orientation:portrait)").matches;
+    if(!portrait && vnRotatePending){ vnRotateResolve(); }  // sudah landscape → lanjut prolog
+    else vnMaybeSuggestLandscape();
+  }, 300);
 });
 
 $("vnExit").addEventListener("click",e=>{ e.stopPropagation(); sfx.click(); vnClearAuto(); vnStopAllStoryMusic();
