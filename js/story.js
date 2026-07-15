@@ -308,6 +308,22 @@ function prologCleanup(){
    vnRotatePending menyimpan langkah lanjutan agar dipicu saat overlay
    rotate ditutup (lihat vnRotateResolve). */
 let vnRotatePending=null;
+/* Jeda/lanjut animasi bintang latar selama prolog. Canvas rAF yang jalan
+   bareng decode video fullscreen sering bikin video patah-patah di laptop.
+   Status FX pengguna disimpan agar dipulihkan persis seperti semula. */
+let prologSpacePrev=true, prologSpacePaused=false;
+function prologPauseSpace(){
+  if(prologSpacePaused) return;
+  const sp=document.getElementById("space");
+  prologSpacePrev = sp ? (sp.style.display!=="none") : true;
+  if(typeof spaceFX==="function") spaceFX(false);
+  prologSpacePaused=true;
+}
+function prologResumeSpace(){
+  if(!prologSpacePaused) return;
+  if(typeof spaceFX==="function") spaceFX(prologSpacePrev);
+  prologSpacePaused=false;
+}
 function runProlog(done){
   const wrap=$("prolog"), v=$("prologVideo");
   if(!wrap || !v || reducedMotion){ done(); return; } // aman & aksesibel
@@ -346,6 +362,7 @@ function _prologPlay(done){
   prologDone=false;
   const finish=()=>{
     if(prologDone) return; prologDone=true; prologCleanup();
+    prologResumeSpace();  // nyalakan lagi bintang sesuai setelan semula
     wrap.classList.remove("show");
     setTimeout(()=>{ wrap.classList.add("hidden"); done(); }, reducedMotion?0:500);
   };
@@ -367,11 +384,12 @@ function _prologPlay(done){
         const cap=$("prologCap"); if(cap){ cap.textContent=c.s; cap.classList.remove("in"); void cap.offsetWidth; cap.classList.add("in"); }
       }, c.t*1000));
       try{ v.muted=true; v.currentTime=0; const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){}
+      prologPauseSpace();  // hentikan animasi bintang biar video mulus (anti patah-patah)
       if(typeof bgmTitleStart==="function") bgmTitleStart(); // musik video di-mute, ganti BGM biasa
       prologTimer=setTimeout(finish, 26000); // pengaman kalau 'ended' tak terpanggil
     }, 320);
   };
-  const bail=()=>{ clearInterval(tick); load.classList.add("hidden"); load.classList.remove("show"); if(!prologDone){ prologDone=true; done(); } };
+  const bail=()=>{ clearInterval(tick); load.classList.add("hidden"); load.classList.remove("show"); prologResumeSpace(); if(!prologDone){ prologDone=true; done(); } };
 
   v.addEventListener("canplaythrough", startPlay, {once:true});
   v.addEventListener("ended", finish, {once:true});
