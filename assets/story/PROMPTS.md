@@ -164,3 +164,82 @@ File: `char_<tokoh>_<ekspresi>.png` — tanpa file, engine pakai siluet.
 
 Tanpa file latar, engine memakai gradasi fallback (sudah disetel di
 naskah2.js), jadi babak II bisa dideploy sebelum asetnya jadi.
+
+---
+
+## Cutscene & item BABAK II (v2.28)
+
+### Gaya umum (pakai untuk semua di bawah)
+Ilustrasi digital sinematik, rasio 16:9 untuk cutscene, palet gelap
+bergaya neon-noir fiksi ilmiah lembut (biru es, cyan, sentuhan
+oranye/ungu), grain halus, pencahayaan dramatis, tanpa teks/tulisan di
+gambar, tanpa wajah manusia close-up (kecuali disebut). Konsisten dengan
+dunia SINYAL: kota label ASLI/PALSU, arsip, sinyal.
+
+### Cutscene Babak II — file: assets/story/cuts_<kunci>.jpg (16:9)
+Node {cut:} sudah dipasang di naskah2.js; tanpa file, tampil gradasi.
+
+- `cuts_b2_menara.jpg` — Interior Menara Arsip dari dalam: rak arsip
+  raksasa menjulang ratusan meter ke atas dalam cahaya biru dingin,
+  lift kaca kecil di kejauhan, kabut tipis. Satu laci arsip di tengah
+  menyala merah samar (kesan "PALSU"), sisanya biru. Skala megah, sepi,
+  menekan. Tanpa orang.
+- `cuts_b2_bawah.jpg` — Kota Bawah: distrik kumuh vertikal di bawah
+  jalur layang beton, pipa-pipa raksasa, hujan turun terus, genangan
+  memantulkan neon redup warung-warung, tangga besi berkarat, tali
+  jemuran. Hangat tapi terlupakan. Boleh ada siluet orang jauh.
+- `cuts_b2_relay.jpg` — Stasiun Relai 7 dari luar, malam: menara
+  pemancar tua berkarat menjulang di padang ilalang, langit ungu gelap,
+  satu jendela persegi menyala oranye di dasar menara, antena parabola
+  tua. Kesan rahasia, terlarang, "harusnya mati tapi hidup".
+- `cuts_b2_putih.jpg` — Ruang Putih (ruang memori): ruang tak berbatas
+  serba putih bercahaya lembut dari segala arah, partikel data/cahaya
+  melayang seperti debu emas-biru, sesosok siluet perempuan berjas lab
+  setengah terbentuk dari partikel cahaya di tengah (punggung/samar,
+  tanpa detail wajah). Tenang, sakral, sedih.
+- `cuts_b2_fajar.jpg` — "Fajar menyala": panorama kota Sanira malam
+  dari atas, dan SETIAP layar (papan iklan, jendela, jalan) menyala
+  seragam dengan cahaya dingin yang sama, seolah satu perintah
+  menguasai semuanya. Di langit, cahaya pucat mulai merekah seperti
+  fajar buatan. Megah dan mengancam.
+
+### Latar tambahan (kalau ingin versi non-cutscene, 16:9 .jpg)
+Sudah didaftarkan sebelumnya: bg_menara, bg_bawah, bg_relay, bg_putih.
+Boleh dibuat dari deskripsi cutscene di atas tapi lebih kosong di tengah
+(ada ruang buat karakter berdiri) dan sedikit lebih redup.
+
+### Gambar ITEM koleksi — file: assets/story/item_<id>.png
+PNG latar TRANSPARAN, objek tunggal di tengah, gaya ikon "koleksi
+museum": render 3/4 view, pencahayaan lembut, sedikit glow tipis sesuai
+kelangkaan (common=netral, rare=biru, epic=ungu). Ukuran kira-kira
+256x256, objek mengisi ~80%. Tanpa teks. Tanpa bayangan besar.
+
+- `item_mie.png` — semangkuk mie instan mengepul, sumpit menyandar.
+- `item_kopi_arga.png` — sachet kopi terbuka + gelas plastik kecil berisi kopi.
+- `item_notes.png` — buku catatan kecil bersampul biru, lecek, ada noda
+  kopi bulat, sudut halaman terlipat, pulpen terselip.
+- `item_foto_dira.png` — selembar foto polaroid dengan gambar "glitch"
+  digital di permukaannya, sudut sedikit terangkat, kesan dimanipulasi.
+- `item_kunci_syn.png` — pecahan kunci kristal/data bercahaya merah-putih,
+  bentuk retak seperti serpihan, glow lembut.
+- `item_kartu_renata.png` — kartu identitas pegawai lawas, foto perempuan
+  samar (rambut diikat asal), warna pudar, lubang lanyard di atas.
+- `item_bubur.png` — mangkok bubur ayam sederhana dengan sendok, uap tipis.
+- `item_relai.png` — kotak relai elektronik tua, antena kecil, satu LED
+  merah menyala, kabel terurai, bekas debu.
+- `item_pena_senja.png` — pena perak antik elegan dengan ukiran halus,
+  glow ungu tipis (epic).
+- `item_lencana.png` — lencana logam "Divisi Siber", lambang perisai +
+  sirkuit, sedikit tergores.
+- `item_sinyal_ibu.png` — gelombang sinyal bercahaya berbentuk pola
+  morse (titik-garis) melayang di atas keping pemancar kecil, glow biru
+  kosmik (epic).
+- `item_detektor.png` — medali/sertifikat kecil berbentuk lensa dengan
+  pita, ukiran mata + garis pindai.
+- `item_mata_elang.png` — lensa/monokel berteknologi dengan iris seperti
+  mata elang, garis HUD tipis, glow ungu (epic).
+- `item_bintang.png` — bintang/planet mungil misterius bercahaya, sedikit
+  cincin tipis, glow ungu-biru, kesan "rahasia" (epic).
+
+Tanpa file item, koleksi otomatis pakai ikon emoji sebagai fallback,
+jadi fitur tetap berfungsi penuh sebelum aset digambar.

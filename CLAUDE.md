@@ -45,7 +45,32 @@ riwayat bawah ini.
   archive_open, arga_mother, dira_envelope, dira_fake, sari_ai, sari_book,
   syn_deprecated. Tanpa file, engine pakai gradasi/siluet (cerita tetap jalan).
 
+- `js/dev.js` — PANEL DEV TERSEMBUNYI (bukan untuk pemain). Buka: URL
+  `#dev`, ketik "dev", atau Ctrl+Shift+D. Fitur: loncat ke bab mana pun
+  (Babak I & II), toggle KUNCI JAWABAN (sorot jawaban benar + alasan via
+  monkey-patch window.render), luncurkan quiz per kategori pool, uji
+  prolog/profil/papan skor, reset progres/profil, status simpanan.
+  Aditif: inject label __dev_back untuk balik dari quiz; guard di vnEnd
+  ("dev*" tak menimpa save). Dimuat TERAKHIR di index.html.
+
+- `js/items.js` — SISTEM KOLEKSI ITEM. 14 item terbuka otomatis via
+  milestone (masuk bab, tamat babak, akurasi profil, buka dev). Aditif:
+  monkey-patch window.vnJump/vnEnd/profilRecord + sisipkan blok "KOLEKSI
+  ITEM" ke layar Profil (patch profilRender). Gambar item_<id>.png;
+  tanpa gambar pakai emoji fallback. Reset via panel dev.
+
 ## Riwayat update
+- **v2.28** — (1) Panel dev sekarang dibuka lewat PLANET rahasia di layar
+  Pengaturan (ketuk 3x); pemicu ketik "dev" DIHAPUS (cegah tak sengaja);
+  hotkey Ctrl+Shift+D & #dev tetap ada. (2) SISTEM KOLEKSI ITEM baru
+  (js/items.js): 14 item kolektibel, dicek di layar Profil, notifikasi
+  saat dapat, aditif via monkey-patch. Item rahasia "Bintang" didapat
+  saat membuka panel dev. (3) 5 cutscene {cut:} disisipkan ke Babak II
+  (b2_menara/bawah/relay/putih/fajar). (4) Prompt cutscene, latar, & item
+  ditambah ke PROMPTS.md. sw.js precache items.js, cache game-v13.
+- **v2.27** — PANEL DEV tersembunyi (js/dev.js baru). Lihat struktur file.
+  Guard vnEnd: key diawali "dev" tidak menyimpan "TAMAT" (quiz dev tidak
+  merusak progres pemain). sw.js precache dev.js, cache game-v12.
 - **v2.26** — REVISI NASKAH BABAK II (naskah2.js v2): bahasa jadi santai
   senada babak I (nggak/kayak, kalimat pendek, humor Arga), tiap bab
   diperpanjang (~390 node, +30%; adegan baru: warung bubur Kota Bawah,

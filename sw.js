@@ -1,4 +1,4 @@
-const cacheName = 'game-v11';
+const cacheName = 'game-v13';
 const assets = [
   '/',
   '/index.html',
@@ -17,6 +17,8 @@ const assets = [
   '/js/leaderboard.js',
   '/js/naskah.js',
   '/js/naskah2.js',
+  '/js/items.js',
+  '/js/dev.js',
   '/js/online.js',
   '/js/paket.js',
   '/js/paket_ekstra.js',
