@@ -115,6 +115,7 @@ function vnRun(){
   if(vnConvergeSay){
     const say=vnConvergeSay; vnConvergeSay=null;
     vnShowingConverge = say;      // tandai: yang tampil adalah baris konvergen
+    vnHideCut();
     vnSay({n:say.who, t:say.t});
     return;
   }
@@ -130,9 +131,9 @@ function vnRun(){
     if(nd.c){ vnShowChar(nd.c, nd.side||"L", nd.mood||"normal"); vnIdx++; continue; }
     if(nd.hide){ vnHideChar(nd.hide); vnIdx++; continue; }
     if(nd.g){ vnIdx=labelIndex(nd.g); continue; }
-    if(nd.n!==undefined){ vnSay(nd); return; }
-    if(nd.ch){ vnShowChoices(nd.ch); return; }
-    if(nd.q){ vnChallenge(nd.q); return; }
+    if(nd.n!==undefined){ vnHideCut(); vnSay(nd); return; }
+    if(nd.ch){ vnHideCut(); vnShowChoices(nd.ch); return; }
+    if(nd.q){ vnHideCut(); vnChallenge(nd.q); return; }
     if(nd.end){ vnEnd(nd.end); return; }
     vnIdx++;
   }
@@ -255,10 +256,30 @@ function vnImgReady(rec){ return rec.img.complete && rec.img.naturalWidth>0; }
 function vnPreloadAll(){
   const moods=["normal","senyum","marah","kaget"];
   Object.keys(VN_CHARS).forEach(id=>moods.forEach(m=>vnPreload("assets/story/char_"+id+"_"+m+".png")));
-  Object.keys(VN_BG_FALLBACK).forEach(k=>vnPreload("assets/story/bg_"+k+".jpg"));
-  VN_CUTS.forEach(k=>vnPreload("assets/story/cuts_"+k+".jpg"));
+  Object.keys(VN_BG_FALLBACK).forEach(k=>vnPreloadBg(k));
+  VN_CUTS.forEach(k=>vnPreloadCut(k));
 }
 
+/* coba .jpg dulu, kalau gagal coba .png (untuk aset yang di-upload sebagai PNG) */
+function vnImgSrc(base){
+  const jpg=base+".jpg", png=base+".png";
+  const rec=VN_IMG_CACHE[jpg]||VN_IMG_CACHE[png];
+  if(rec && vnImgReady(rec)) return rec.img.src;
+  // kembalikan jpg sebagai default; vnPreload akan coba png jika jpg belum siap
+  return jpg;
+}
+function vnPreloadBg(key){
+  const base="assets/story/bg_"+key;
+  const rj=vnPreload(base+".jpg");
+  // mulai preload png paralel supaya siap kalau jpg gagal
+  vnPreload(base+".png");
+  return rj;
+}
+function vnPreloadCut(key){
+  const base="assets/story/cuts_"+key;
+  vnPreload(base+".jpg");
+  vnPreload(base+".png");
+}
 /* ---------- CUTS: adegan fokus layar penuh (gambar + teks, tanpa karakter) ----------
    Node naskah: { cut:"<kunci>", n:"NAMA"|"@"|"", t:"narasi..." }
    File gambar: assets/story/cuts_<kunci>.jpg (fallback gradasi kalau tak ada).
@@ -268,21 +289,25 @@ function vnHideCut(){
   const cut=$("vnCut"); if(cut && !cut.classList.contains("hidden")) cut.classList.add("hidden");
 }
 function vnShowCut(key, nd){
-  const cut=$("vnCut"); if(!cut){ vnSay(nd); return; } // aman kalau elemen belum ada
-  vnHideChar("all");                       // adegan fokus: tanpa karakter
-  const src="assets/story/cuts_"+key+".jpg";
-  const rec=vnPreload(src);
+  const cut=$("vnCut"); if(!cut){ vnSay(nd); return; }
+  vnHideChar("all");
+  const base="assets/story/cuts_"+key;
+  const rj=vnPreload(base+".jpg");
+  const rp=vnPreload(base+".png");
   const fb="radial-gradient(900px 520px at 50% 35%, rgba(63,224,197,.10), transparent), linear-gradient(180deg,#0a1420,#05080e)";
-  if(vnImgReady(rec)){
-    cut.style.background="#000 url('"+src+"') center/cover no-repeat";
-  }else{
+  function applyReady(){
+    if(vnImgReady(rj)){ cut.style.background="#000 url('"+base+".jpg') center/cover no-repeat"; return true; }
+    if(vnImgReady(rp)){ cut.style.background="#000 url('"+base+".png') center/cover no-repeat"; return true; }
+    return false;
+  }
+  if(!applyReady()){
     cut.style.background=fb;
-    rec.img.addEventListener("load", ()=>{
-      cut.style.background="#000 url('"+src+"') center/cover no-repeat";
-    }, {once:true});
+    const swap=()=>applyReady();
+    rj.img.addEventListener("load", swap, {once:true});
+    rp.img.addEventListener("load", swap, {once:true});
   }
   cut.classList.remove("hidden"); void cut.offsetWidth; cut.classList.add("show");
-  vnSay(nd);                                // narasi tampil di kotak dialog seperti biasa
+  vnSay(nd);
 }
 
 /* ---------- LOADING AWAL + CUTSCENE PROLOG (video) ----------
@@ -410,21 +435,25 @@ function _prologPlay(done){
 function vnSetBg(key){
   if(key===vnBgKey) return;
   vnBgKey=key;
-  vnHideCut();   // kembali ke adegan normal → tutup layer cut
+  vnHideCut();
+  const base="assets/story/bg_"+key;
+  const rj=vnPreload(base+".jpg");
+  const rp=vnPreload(base+".png");
   const bg=$("vnBg");
-  const src="assets/story/bg_"+key+".jpg";
-  const rec=vnPreload(src);
   bg.classList.add("fading");
   setTimeout(()=>{
-    if(vnBgKey!==key){ bg.classList.remove("fading"); return; } // sudah pindah latar
-    if(vnImgReady(rec)){
-      bg.style.background="url('"+src+"') center/cover no-repeat";
-    }else{
+    if(vnBgKey!==key){ bg.classList.remove("fading"); return; }
+    function applyReady(){
+      if(vnImgReady(rj)){ bg.style.background="url('"+base+".jpg') center/cover no-repeat"; return true; }
+      if(vnImgReady(rp)){ bg.style.background="url('"+base+".png') center/cover no-repeat"; return true; }
+      return false;
+    }
+    if(!applyReady()){
       bg.style.background=VN_BG_FALLBACK[key]||VN_BG_FALLBACK.lab;
       bg.style.backgroundSize="cover"; bg.style.backgroundPosition="center";
-      rec.img.addEventListener("load", ()=>{
-        if(vnBgKey===key) bg.style.background="url('"+src+"') center/cover no-repeat";
-      }, {once:true});
+      const swap=()=>{ if(vnBgKey===key) applyReady(); };
+      rj.img.addEventListener("load", swap, {once:true});
+      rp.img.addEventListener("load", swap, {once:true});
     }
     bg.classList.remove("fading");
   }, reducedMotion?0:280);
