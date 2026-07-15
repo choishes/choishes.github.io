@@ -15,6 +15,13 @@ riwayat bawah ini.
 - `index.html` — semua layar (hub, story, game, levels, duel, dll)
 - `js/version.js` — nomor versi (sumber tunggal)
 - `js/naskah.js` — isi cerita Story Mode (aman diedit tanpa sentuh engine)
+- `js/naskah2.js` — NASKAH BABAK II "Protokol Fajar" (sekuel). Aditif:
+  merge tokoh baru ke VN_CHARS, tambah 4 latar ke VN_BG_FALLBACK, ganti
+  node {end:"epilog"} jadi pilihan jembatan (lanjut babak II / tamat),
+  lalu push NASKAH2 ke NASKAH. WAJIB dimuat SETELAH naskah.js DAN
+  SETELAH story.js (VN_BG_FALLBACK baru ada setelah story.js). Label
+  ch9–ch13 cocok regex simpan /^ch\d/ jadi save/resume otomatis jalan.
+  Ada guard anti dobel (cek label ch9).
 - `js/story.js` — engine visual novel
 - `js/game.js` — logika Karir / Infinite / Tanding / Story
 - `js/online.js` — multiplayer relay (WebSocket → Deno Deploy)
@@ -39,6 +46,36 @@ riwayat bawah ini.
   syn_deprecated. Tanpa file, engine pakai gradasi/siluet (cerita tetap jalan).
 
 ## Riwayat update
+- **v2.26** — REVISI NASKAH BABAK II (naskah2.js v2): bahasa jadi santai
+  senada babak I (nggak/kayak, kalimat pendek, humor Arga), tiap bab
+  diperpanjang (~390 node, +30%; adegan baru: warung bubur Kota Bawah,
+  doodle "jangan lupa jemput" Renata, keraguan Nara soal Senja, rekaman
+  ibu yang lebih emosional). STRUKTUR JADI BUILD-UP MURNI: dua ending
+  lama (Terang/Senyap) dan epilog2 DIHAPUS. Twist Senja tetap klimaks
+  BAB 12, tapi BAB 13 kini kekalahan: Fajar menyala, SYN-0 disandera di
+  intinya, tim dilabeli PALSU & buron ke Kota Bawah, ditutup sinyal
+  Renata "Tunggu ibu" → BERSAMBUNG KE FINALE: SINYAL (open ending).
+  Cache game-v11.
+- **v2.25** — SEKUEL: BABAK II "PROTOKOL FAJAR" (js/naskah2.js baru,
+  5 bab ch9–ch13 + epilog2). Nada lebih serius & fiksi: kota dengan
+  label ASLI/PALSU pada arsip warga; yang PALSU "dihapus" dari dunia.
+  3 tokoh baru (NARA arsiparis, ELIAS kapten siber, SENJA kurator agung)
+  dan 4 latar baru (menara, bawah, relay, putih). Misteri SYN-0 dibuka:
+  SYN-0 = "Mercusuar", sistem label pertama buatan RENATA, ibu pemain,
+  yang dihapus dari arsip. TWIST: pelakunya selama ini adalah SENJA
+  (mentor Vega, direktur proyek lama): memalsukan label 40 tahun,
+  menghapus Renata, membangun SYN-4.2, merekayasa banjir konten, bahkan
+  memancing pemain masuk lab (kunci biometrik garis darah Renata).
+  2 ending (Terang/Senyap) + cliffhanger Babak III (sinyal Renata dari
+  luar kota). Akhir epilog babak I kini pilihan jembatan; TAMAT lama
+  tetap tersedia. index.html: script naskah2 SETELAH story.js. sw.js:
+  precache naskah2.js + 4 bg + 12 sprite baru, cache game-v10. Prompt
+  aset di PROMPTS.md; tanpa aset, siluet/gradasi fallback tetap jalan.
+- **v2.20–v2.24** — Rangkaian hotfix prolog: BGM biasa menimpa audio
+  video (mute); gerbang mulai sebelum video di semua orientasi
+  (#prologStart, perbaikan card kosong akibat media query .vnrotate);
+  replay prolog dari Pengaturan; starfield dijeda saat video (anti
+  patah-patah di laptop).
 - **v2.19** — Lima fitur besar:
   (1) PROFIL DETEKTOR (js/profil.js baru) — analitik kelemahan berbasis
   cue, tersimpan lokal, diakses dari tombol homescreen "PROFIL DETEKTOR"

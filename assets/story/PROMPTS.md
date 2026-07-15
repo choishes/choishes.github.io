@@ -129,3 +129,38 @@ Letakkan di folder `assets/story/` dengan nama PERSIS berikut:
 
 Tanpa file cuts, engine memakai gradasi gelap sebagai fallback dan
 narasinya tetap tampil, jadi aman untuk deploy bertahap.
+
+---
+
+## Aset BABAK II — Protokol Fajar (v2.25)
+
+### Tokoh baru (4 ekspresi masing-masing: normal, senyum, marah, kaget)
+File: `char_<tokoh>_<ekspresi>.png` — tanpa file, engine pakai siluet.
+
+- **NARA** — perempuan Indonesia akhir belasan/awal 20-an, arsiparis;
+  rambut pendek sebahu dengan jepit sederhana, seragam kerja menara
+  biru-abu dengan lencana arsip, sarung tangan katun putih arsiparis,
+  bekas gelang benang lusuh dari Kota Bawah di pergelangan. Kesan:
+  cekatan, keras kepala, mata yang cepat menangkap detail.
+- **ELIAS** — laki-laki Indonesia 40-an, kapten Divisi Siber; potongan
+  cepak beruban di pelipis, jas hujan gelap di atas seragam, tablet
+  penyidik selalu di tangan kiri, garis wajah tegas dan lelah. Kesan:
+  kaku, prosedural, tapi lurus.
+- **SENJA** — perempuan Indonesia 60-an, Kurator Agung; rambut perak
+  disanggul rapi, kacamata baca berantai, selendang tenun abu-perak di
+  atas blazer gelap, membawa pena perak antik. Kesan: hangat seperti
+  pustakawan tua... dengan tatapan yang sedikit terlalu tenang.
+  (PENTING: dia tampil ramah di awal; jangan buat terlihat jahat.)
+
+### Latar baru (16:9, file .jpg)
+- `bg_menara.jpg` — interior Menara Arsip Nasional: rak arsip ratusan
+  meter menjulang, lift kaca, cahaya biru dingin, kabut tipis pendingin.
+- `bg_bawah.jpg` — Kota Bawah: distrik kumuh di bawah jalur layang,
+  pipa raksasa, hujan abadi menetes dari kota atas, neon redup, genangan.
+- `bg_relay.jpg` — interior Stasiun Relai 7: menara pemancar tua,
+  mesin berkarat bercampur rak server baru, cahaya oranye trafo, debu.
+- `bg_putih.jpg` — Ruang Putih: ruang memori tanpa batas, putih lembut
+  bercahaya dari segala arah, partikel data melayang samar, minimalis.
+
+Tanpa file latar, engine memakai gradasi fallback (sudah disetel di
+naskah2.js), jadi babak II bisa dideploy sebelum asetnya jadi.
