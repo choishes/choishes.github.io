@@ -135,10 +135,6 @@ const NASKAH2=[
 {c:"vega", side:"R", mood:"normal"},
 {n:"VEGA", t:"[NAMA]. Dengar aku. Kalau label-label ini dipalsukan, arsip aslinya kemungkinan masih terkubur di lapisan bawah sistem. Pemalsu selalu ninggalin jejak. Kamu sendiri yang ngajarin aku itu lagi bulan-bulan kemarin."},
 {n:"VEGA", t:"Jadi sekarang kita kerja. Pilah tumpukan berkas ini. Pisahkan rekayasa dari yang asli. Bukan buat klien. Buat keluargamu."},
-{ch:[
-  {l:"Bandingkan dengan Notes Biru Sari", need:"notes", assist:1, say:"Kamu keluarkan notes biru lecek itu, bandingkan pola tulisan tangan dan jejak revisinya dengan berkas Renata. \"Yang asli selalu ninggalin proses,\" gumammu. Nara melongo. \"Kamu... bawa-bawa buku catatan orang lain ke mana-mana?\" Tapi metodenya jalan."},
-  {l:"Pilah manual dari nol", say:"Nggak ada pembanding. Kamu andalkan mata dan nalar, satu berkas demi satu berkas."}
-]},
 {q:{f:"berita", n:6, pass:4, win:"c9win", lose:"c9lose", title:"AUDIT MENARA · BERKAS RENATA"}},
 
 {lb:"c9lose"},
@@ -286,10 +282,6 @@ const NASKAH2=[
 {n:"ARGA", t:"Nah soal itu... ada kabar buruk. Stasiun ini tahu bakal digeledah cepat atau lambat. Log, dokumen, rekaman di dalam sistemnya, sebagian itu UMPAN. Sengaja ditanam biar penggeledahnya bawa pulang bukti palsu."},
 {c:"vega", side:"R", mood:"normal"},
 {n:"VEGA", t:"Bukti palsu yang kalau dibawa ke pengadilan bakal gugur, dan pelakunya bebas selamanya. Ini lapisan paling licin sejauh ini, [NAMA]. Jangan pegang cirinya. Pegang nalarnya."},
-{ch:[
-  {l:"Cocokkan log dengan Kartu Pegawai Renata", need:"kartu_renata", assist:1, say:"Kamu sandingkan kartu pegawai ibumu dengan log akses stasiun. Nomor proyek, format lama, gaya penandaan, semuanya cocok dengan tangan Renata, bukan tempelan. Umpan-umpan Senja jadi lebih gampang dikenali begitu kamu tahu seperti apa yang ASLI."},
-  {l:"Saring umpan tanpa pembanding", say:"Nggak ada acuan. Kamu harus baca tiap dokumen dari nalar mentah. Hati-hati, sebagian sengaja dibuat meyakinkan."}
-]},
 {q:{f:"trap", n:6, pass:5, win:"c11win", lose:"c11lose", title:"STASIUN 7 · LAPISAN UMPAN"}},
 
 {lb:"c11lose"},
@@ -342,10 +334,6 @@ const NASKAH2=[
 {c:"syn", side:"R", mood:"marah"},
 {n:"SYN-0", t:"Bagian yang nyebut namanya dirusak dari luar, bertahun-tahun lalu. Seseorang nyoba banget ngehapus kesaksian ini. Hampir berhasil. Tapi aku nyimpen pecahannya. Semuanya."},
 {n:"SYN-0", t:"Susun ulang, anak Renata. Pisahin pecahan memori asli dari suntikan perusaknya. Cuma kamu yang bisa, dan kamu udah dilatih buat ini tanpa kamu sadar. Ini kesaksian ibumu. Jangan sampai salah satu keping pun."},
-{ch:[
-  {l:"Sisipkan Serpihan Kunci SYN ke inti", need:"kunci_syn", assist:2, say:"Kamu tempelkan serpihan kunci lama itu ke inti Mercusuar. SYN-0 bergetar, lalu stabil. \"...Terima kasih. Dengan ini aku bisa menahan pecahan memori lebih lama. Cepat, susun sebelum jendelanya menutup.\" Rekonstruksi jadi jauh lebih jelas."},
-  {l:"Susun ulang dengan tangan gemetar", say:"Nggak ada penstabil. Pecahan memori melayang cepat dan rapuh. Kamu harus tangkap yang benar sebelum hilang."}
-]},
 {q:{f:"final", n:8, pass:6, win:"c12win", lose:"c12lose", title:"REKONSTRUKSI KESAKSIAN RENATA"}},
 
 {lb:"c12lose"},
@@ -447,10 +435,6 @@ const NASKAH2=[
 {n:"", t:"Tapi jalur turun terdekat lewat simpul jaringan lama, dan Fajar udah mulai nyebar: gerbang-gerbang digital nulis ulang daftar cekalnya tiap menit, dan wajah kalian ada di semua daftar itu. Arga cuma bisa ngebobol satu celah, sekali, sebentar."},
 {c:"arga", side:"L", mood:"normal"},
 {n:"ARGA", t:"Celahnya kubuka sembilan puluh detik. Sistem cekal bakal nyodorin data kalian bolak-balik buat mancing kesalahan. Yang boleh lolos cuma identitas yang bener. Salah verifikasi, gerbang ngunci, kita ketangkep di sini. [NAMA]... kayak biasa. Kamu yang pegang."},
-{ch:[
-  {l:"Kunci frekuensi lewat Relai Tua Ibu", need:"relai", assist:2, say:"Arga menyambungkan relai tua ibumu ke gerbang. Frekuensi lama Renata jadi jangkar: di tengah banjir data Fajar, identitas yang ASLI berpendar beda. \"Ibumu ninggalin kompas buat kita,\" bisik Arga. Jalan tembus jadi kelihatan."},
-  {l:"Terobos dengan insting saja", say:"Sembilan puluh detik. Jutaan data. Cuma nalarmu yang jadi saringan. Ayo."}
-]},
 {q:{f:"final", n:10, pass:7, win:"c13win", lose:"c13lose", title:"MENEMBUS GERBANG FAJAR"}},
 
 {lb:"c13lose"},

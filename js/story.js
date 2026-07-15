@@ -507,11 +507,31 @@ function vnFx(kind){
 function vnShowChoices(list, noAdvance){
   const box=$("vnChoices"); box.innerHTML="";
   const resumeIdx = vnIdx + 1; // node tepat setelah node {ch:...}
+  /* peta nama item untuk hint pilihan ber-syarat item */
+  const itemName = id=>{ try{ const it=(window.ITEMS_all?window.ITEMS_all():[]).find(x=>x.id===id); return it?it.name:id; }catch(e){ return id; } };
+  const owns = id=>{ try{ return !!(window.ITEMS_has && window.ITEMS_has(id)); }catch(e){ return false; } };
   list.forEach(o=>{
     const b=document.createElement("button");
-    b.className="vnchoice"; b.textContent=o.l;
+    b.className="vnchoice";
+    /* --- pilihan yang butuh item koleksi --- */
+    if(o.need){
+      const have=owns(o.need);
+      b.classList.add("vnchoice-item");
+      if(have){
+        b.classList.add("has");
+        b.innerHTML='<span class="vc-badge">🎒 PAKAI</span>'+o.l;
+      }else{
+        b.classList.add("locked");
+        b.disabled=true;
+        b.innerHTML='<span class="vc-badge lock">🔒</span>'+o.l+'<span class="vc-hint">butuh: '+itemName(o.need)+'</span>';
+        box.appendChild(b);
+        return; // terkunci: tak bisa diklik
+      }
+    }
+    b.textContent=b.textContent|| o.l; if(!o.need) b.textContent=o.l;
     b.onclick=e=>{
       e.stopPropagation(); sfx.click(); box.classList.add("hidden");
+      if(o.assist){ window.vnStoryAssist=(window.vnStoryAssist||0)+o.assist; } // bantuan utk challenge berikutnya
       if(o.g){ vnJump(o.g); return; }                 // bercabang
       /* konvergen: tampilkan respons (kalau ada) lalu lanjut alur sama */
       vnIdx = resumeIdx;
@@ -530,17 +550,21 @@ function vnShowChoices(list, noAdvance){
 /* ---------- jembatan ke tantangan soal ---------- */
 function vnChallenge(q){
   vnClearAuto();
-  vnPendingChal=q;
+  /* bantuan dari pemakaian item koleksi: turunkan ambang lulus & tandai chip */
+  let assist=0;
+  if(window.vnStoryAssist){ assist=window.vnStoryAssist; window.vnStoryAssist=0; }
+  const qEff = assist>0 ? Object.assign({}, q, { pass: Math.max(1, (q.pass||0)-assist) }) : q;
+  vnPendingChal=qEff;
   vnMusicBeforeChal = vnMusicNow; // ingat musik adegan buat dipulihkan nanti
   mode="story";
   /* pindah ke musik game untuk sesi soal — paksa mulai ulang */
   bgmTitleStop(); bgmCrisisStop(); bgmTwistStop();
   bgmGameStop();               // reset currentCtx dulu…
   bgmGameStart();              // …lalu mulai bersih (lolos guard)
-  deck = vnPick(q.f, q.n);     // pilih acak, utamakan yang belum pernah muncul
-  playLoading("story", q.title, ()=>{
+  deck = vnPick(qEff.f, qEff.n);     // pilih acak, utamakan yang belum pernah muncul
+  playLoading("story", qEff.title + (assist>0?" · +BANTUAN ITEM":""), ()=>{
     idx=0; score=0;
-    setupBoardUI({track:true, lives:false, turn:false, chip:q.title});
+    setupBoardUI({track:true, lives:false, turn:false, chip:qEff.title});
     show(game); render();
   });
 }
@@ -566,8 +590,11 @@ function storyAbort(){
 /* ---------- tamat ---------- */
 function vnEnd(key){
   vnClearAuto();
-  storySave("TAMAT");
-  try{ localStorage.setItem("sinyal_story_end_"+key,"1"); }catch(e){}
+  /* key dev (mis. devquiz dari panel dev) tidak boleh menimpa progres asli */
+  if(!/^dev/.test(String(key))){
+    storySave("TAMAT");
+    try{ localStorage.setItem("sinyal_story_end_"+key,"1"); }catch(e){}
+  }
   const box=$("vnChoices"); box.classList.remove("hidden"); box.innerHTML="";
   const b=document.createElement("button");
   b.className="vnchoice"; b.textContent="◈ KEMBALI KE LAB";

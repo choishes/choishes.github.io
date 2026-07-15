@@ -280,6 +280,10 @@ const NASKAH=[
 {n:"VEGA", t:"Berarti tugasmu jelas, [NAMA]. Bedah campuran itu di depan publik. Tunjukkan mana kalimat yang lahir dari empat belas wawancara, mana yang lahir dari satu kali klik."},
 {c:"arga", side:"R", mood:"senyum"},
 {n:"ARGA", t:"Petunjuk terakhir dariku. Tulisan orang yang beneran riset itu berani spesifik. Nomor halaman, nama lembaga, angka yang ganjil. Mesin sukanya aman: bulat, umum, nggak bisa disalahin. Dan dia suka muter, kesimpulannya cuma ngulang kalimat awal."},
+{ch:[
+  {l:"Buka Notes Biru Sari sebagai bukti proses", need:"notes", assist:1, say:"Kamu buka notes bersampul biru itu di depan sidang. Coretan, tanda tanya, revisi berlapis, sembilan versi. \"Ini yang nggak dimiliki mesin,\" katamu. \"Ini jejak orang yang benar-benar berpikir.\" Publik mulai diam. Satu bukti nyata lebih kuat dari seratus argumen."},
+  {l:"Bedah tanpa alat bantu", say:"Nggak ada properti, nggak ada trik. Cuma kamu, layar, dan nalar. Ayo kita buktikan pelan-pelan."}
+]},
 {q:{f:"akademik", n:6, pass:4, win:"c4win", lose:"c4lose", title:"SIDANG TERBUKA · MEMBELA SARI"}},
 
 {lb:"c4lose"},

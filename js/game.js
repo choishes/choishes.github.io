@@ -500,6 +500,7 @@ $("lbTabGlobal").addEventListener("click",()=>{ sfx.click(); lbMode="global"; re
 document.querySelectorAll(".mitem[data-start]").forEach(m=>m.addEventListener("click",()=>{
   if(m.dataset.start==="tanding"){ sfx.click(); show(duelSec); if(typeof olEnterLobby==="function") olEnterLobby(); }
   else if(m.dataset.start==="story"){ if(typeof startStory==="function") startStory(); }
+  else if(m.dataset.start==="wordgame"){ sfx.click(); if(typeof startWordGame==="function") startWordGame(); }
   else startGame(m.dataset.start);
 }));
 $("btnHuman").addEventListener("click",()=>choose(false));
@@ -555,7 +556,16 @@ $("renameSave").addEventListener("click",()=>{
   sfx.ok();
 });
 $("replayIntro").addEventListener("click",()=>{ location.reload(); });
-$("replayProlog").addEventListener("click",()=>{ sfx.click(); if(typeof runProlog==="function") runProlog(()=>{}); });
+$("replayProlog").addEventListener("click",()=>{ sfx.click();
+  if(typeof runProlog!=="function") return;
+  /* overlay prolog berada di dalam #story; tampilkan section-nya dulu
+     agar terlihat (kalau tidak, overlay ikut tersembunyi). Kembali ke
+     hub setelah prolog selesai / dilewati. */
+  if(typeof vnResetStage==="function") vnResetStage();
+  show(storyScr);
+  document.querySelector(".card").classList.add("bare");
+  runProlog(()=>{ show(hub); });
+});
 $("wipeData").addEventListener("click",()=>{
   if(!confirm("Hapus semua data lokal (nama, rekor, papan skor)?")) return;
   try{ localStorage.removeItem(LB_KEY); localStorage.removeItem(PLAYER_KEY); }catch(e){}

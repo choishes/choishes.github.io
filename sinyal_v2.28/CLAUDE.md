@@ -59,18 +59,7 @@ riwayat bawah ini.
   ITEM" ke layar Profil (patch profilRender). Gambar item_<id>.png;
   tanpa gambar pakai emoji fallback. Reset via panel dev.
 
-- `js/wordgame.js` — MINIGAME "SUSUN KATA": susun huruf jadi kata bertema
-  (petunjuk + tile teracak) bertimer. Overlay mandiri (#wordgame), tak
-  menyentuh show(). Tombol hub data-start="wordgame" (intercept di game.js).
-
 ## Riwayat update
-- **v2.29** — (1) ITEM BISA DIPAKAI DI CERITA: vnShowChoices dukung pilihan
-  ber-syarat item (`need`) + `assist`; vnChallenge memakai assist untuk
-  menurunkan ambang lulus. 5 momen "pakai item" sebelum kasus (BAB 4 Notes;
-  BAB 9 Notes; BAB 11 Kartu Renata; BAB 12 Serpihan Kunci SYN; BAB 13 Relai).
-  Pilihan terkunci tampil hint item → dorong koleksi. (2) MINIGAME baru
-  "SUSUN KATA" (js/wordgame.js): susun huruf bertimer, 25 kata bertema,
-  menu hub #05. sw.js precache wordgame.js, cache game-v14.
 - **v2.28** — (1) Panel dev sekarang dibuka lewat PLANET rahasia di layar
   Pengaturan (ketuk 3x); pemicu ketik "dev" DIHAPUS (cegah tak sengaja);
   hotkey Ctrl+Shift+D & #dev tetap ada. (2) SISTEM KOLEKSI ITEM baru
